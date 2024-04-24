@@ -3,3 +3,4 @@
 ^Makefile$
 ^workflow$
 ^.*CITATION.cff$
+^\.github$
