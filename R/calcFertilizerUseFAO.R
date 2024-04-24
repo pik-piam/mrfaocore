@@ -13,7 +13,6 @@
 #' }
 #'
 calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
-
   ## read FAO data on fertilizer by nutrient
   if (subtype == "N") {
     nutrient <- "3102|Nutrient nitrogen N (total)"
@@ -39,7 +38,8 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
   numCountries <- toolAggregate(numCountries, rel = regionMapping, weight = NULL,
                                 from = "CountryCode", to = "RegionCode", dim = 1)
   worldRegionNutrientPerArea <- toolAggregate(nutrientPerArea, rel = regionMapping,
-                                        weight = NULL, from = "CountryCode", to = "RegionCode", dim = 1) / numCountries
+                                              weight = NULL, from = "CountryCode",
+                                              to = "RegionCode", dim = 1) / numCountries
 
   .calibratingWorldAverages <- function(reg, x, data, glo = FALSE) {
     tmp <- x[reg, , ]

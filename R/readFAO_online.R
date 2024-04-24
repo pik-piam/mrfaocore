@@ -42,7 +42,7 @@
 #' a <- readSource("FAO_online", "Crop")
 #' }
 #' @importFrom data.table fread
-#' @importFrom dplyr summarise filter group_by ungroup %>%
+#' @importFrom dplyr summarise filter group_by ungroup %>% .data
 #' @importFrom tidyr pivot_longer starts_with
 #' @importFrom tools file_ext file_path_sans_ext
 #' @importFrom utils unzip
@@ -177,7 +177,8 @@ readFAO_online <- function(subtype) { # nolint
   # Load FAO specific countries (not included in country2iso.csv in madrat)
   faoIsoFaoCode <- toolGetMapping("FAOiso_faocode_online.csv", where = "mrcommons")
   # convert data frame into named vector as required by toolCountry2isocode
-  faoIsoFaoCode <- structure(as.character(faoIsoFaoCode$ISO), names = as.character(faoIsoFaoCode$Country))
+  faoIsoFaoCode <- as.character(faoIsoFaoCode$ISO)
+  names(faoIsoFaoCode) <- as.character(faoIsoFaoCode$Country)
   # look up ISO codes using central definition and extra FAO mapping from line above
   # ignore warnings from FAO aggregate and other irrelevant regions
   ignoreRegions <- c("Africa", "Americas", "Asia", "Australia & New Zealand", "Caribbean",
@@ -280,7 +281,7 @@ readFAO_online <- function(subtype) { # nolint
   # this leads to duplicate rows when converting to magclass, sum these up first below
   if (subtype == "Trade") {
     tmp <- fao %>%
-      filter(.data$ItemCodeItem == "1848|Other food") %>%
+      filter(.data$ItemCodeItem == "1848|Other food") %>% # nolint: object_usage_linter
       group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
       summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
       ungroup()

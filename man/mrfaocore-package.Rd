@@ -16,7 +16,20 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Pascal Sauer \email{pascal.sauer@pik-potsdam.de}
+\strong{Maintainer}: David Chen \email{david.chen@pik-potsdam.de}
+
+Authors:
+\itemize{
+  \item Ulrich Kreidenweis \email{@pik-potsdam.de}
+  \item Abhijeet Mishra
+  \item Kristine Karstens
+  \item Benjamin Leon Bodirsky
+  \item Debbora Leip
+  \item Mishko Stevanovic
+  \item Benjamin Leon Bodrisky
+  \item David Klein
+  \item Edna Molina Bacca
+}
 
 }
 \keyword{internal}

@@ -4,3 +4,8 @@
 ^workflow$
 ^.*CITATION.cff$
 ^\.github$
+^.*\.Rproj$
+^\.Rproj\.user$
+^.lintr$
+^tests/.lintr$
+^codecov\.yml$

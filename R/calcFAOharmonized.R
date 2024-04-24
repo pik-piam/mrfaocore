@@ -11,8 +11,6 @@
 #' @importFrom utils read.csv
 
 calcFAOharmonized <- function() {
-
-
   # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
   cbCrop <- readSource("FAO_online", "CBCrop")
   cbLive <- readSource("FAO_online", "CBLive")
@@ -25,19 +23,19 @@ calcFAOharmonized <- function() {
 
   faoData <- mbind(cb, fs)
 
-   ## in addition harvested area from Crops Primary
+  ## in addition harvested area from Crops Primary
 
   prod <- readSource("FAO_online", "Crop", convert = TRUE)
 
   ## aggregate Prod to CB units
   aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
-    # remove  aggregate categories
+  # remove  aggregate categories
   remove <- setdiff(getNames(prod, dim = 1), aggregation$ProductionItem)
   prod <- prod[, , remove, invert = TRUE]
 
   areaHarvested <- toolAggregate(prod, rel = aggregation, from = "ProductionItem", to = "FoodBalanceItem",
-                                  dim = 3.1, partrel = TRUE)[, , "area_harvested"]
+                                 dim = 3.1, partrel = TRUE)[, , "area_harvested"]
 
   commonyears <- intersect(getYears(areaHarvested), getYears(faoData))
 
@@ -57,7 +55,7 @@ calcFAOharmonized <- function() {
   cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
   faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
   rm(fodder, fodderAggregated)
-gc()
+  gc()
 
   faoData[is.na(faoData)] <- 0
 

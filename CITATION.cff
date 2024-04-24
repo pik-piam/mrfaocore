@@ -2,13 +2,32 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 title: 'mrfaocore: One-line description of this awesome package'
-version: 0.0.2
+version: 0.1.0
 date-released: '2024-04-24'
 abstract: One-paragraph description of this awesome package.
 authors:
-- family-names: Sauer
-  given-names: Pascal
-  email: pascal.sauer@pik-potsdam.de
+- family-names: Kreidenweis
+  given-names: Ulrich
+  email: '@pik-potsdam.de'
+- family-names: Mishra
+  given-names: Abhijeet
+- family-names: Karstens
+  given-names: Kristine
+- family-names: Leon Bodirsky
+  given-names: Benjamin
+- family-names: Leip
+  given-names: Debbora
+- family-names: Stevanovic
+  given-names: Mishko
+- family-names: Leon Bodrisky
+  given-names: Benjamin
+- family-names: Chen
+  given-names: David
+  email: david.chen@pik-potsdam.de
+- family-names: Klein
+  given-names: David
+- family-names: Molina Bacca
+  given-names: Edna
 license: LGPL-3.0
 repository-code: https://github.com/pik-piam/mrfaocore
 

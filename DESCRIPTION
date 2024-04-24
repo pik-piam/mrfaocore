@@ -1,14 +1,35 @@
 Type: Package
 Package: mrfaocore
 Title: One-line description of this awesome package
-Version: 0.0.2
+Version: 0.1.0
 Date: 2024-04-24
-Authors@R:
-    person("Pascal", "Sauer", , "pascal.sauer@pik-potsdam.de", role = c("aut", "cre"))
+Authors@R: c(person("Ulrich", "Kreidenweis", email = "@pik-potsdam.de", role = "aut"),
+             person("Abhijeet", "Mishra", role = "aut"),
+             person("Kristine", "Karstens", role = "aut"),
+             person("Benjamin", "Leon Bodirsky", role = "aut"),
+             person("Debbora", "Leip", role = "aut"),
+             person("Mishko", "Stevanovic", role = "aut"),
+             person("Benjamin", "Leon Bodrisky", role = "aut"),
+             person("David", "Chen", email = "david.chen@pik-potsdam.de", role = c("aut","cre")),
+             person("David", "Klein", role = "aut"),
+             person("Edna", "Molina Bacca", role = "aut"))
 Description: One-paragraph description of this awesome package.
+Depends:
+    R (>= 2.10.0),
+    magclass (>= 3.17),
+    madrat (>= 2.20.9),
+    mrdrivers (>= 1.0.0),
+    mstools
+Imports:
+    data.table,
+    dplyr,
+    GDPuc,
+    tidyr,
+    withr
+Suggests:
+    testthat,
+    XML
 License: LGPL-3
 URL: https://github.com/pik-piam/mrfaocore
-Suggests:
-    testthat
 Encoding: UTF-8
 RoxygenNote: 7.3.1

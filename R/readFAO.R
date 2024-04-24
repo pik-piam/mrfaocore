@@ -82,7 +82,7 @@ readFAO <- function(subtype) {
     PricesProducerAnnual    = "Prices_E_All_Data.zip",
     PricesProducerAnnualLCU = "Prices_E_All_Data.zip",
     ValueOfProd             = "Value_of_Production_E_All_Data.zip"
-    )
+  )
 
 
   file <- toolSubtypeSelect(subtype, files)
@@ -160,7 +160,7 @@ readFAO <- function(subtype) {
   if (length(notInclCoun) > 0) {
     vcat(1, "The following countries were not included due to missing ISO codes:",
          "\n", paste(notInclCoun, "\n"), "-> Consider an update of FAOiso_faocode.csv", "\n")
- }
+  }
   fao <- fao[fao$CountryCode %in% faoIsoFaoCode$CountryCode, ]
   gc()
   fao$ISO <- fao$CountryCode
@@ -208,8 +208,8 @@ readFAO <- function(subtype) {
 
   if (length(elementShort) > 0) {
     for (i in seq_len(nrow(elementShort))) {
-      fao$ElementShort[fao$ElementCode == elementShort[i, "ElementCode"]
-                       & fao$Unit == elementShort[i, "Unit"]] <- as.character(elementShort[i, "ElementShort"])
+      fao$ElementShort[fao$ElementCode == elementShort[i, "ElementCode"]                       &
+                         fao$Unit == elementShort[i, "Unit"]] <- as.character(elementShort[i, "ElementShort"])
     }
   }
 
@@ -222,9 +222,9 @@ readFAO <- function(subtype) {
   gc()
 
   faoMag <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
-                       temporal = 1,
-                       spatial = 2,
-                       datacol = 5)
+                      temporal = 1,
+                      spatial = 2,
+                      datacol = 5)
   if (subtype == "EmisAgBurnCropResid" || subtype == "EmisAgCropResid" || subtype == "EmisLuForest") {
     getNames(faoMag, dim = 1) <- gsub("\\r", "", getNames(faoMag, dim = 1))
   }
