@@ -3,7 +3,7 @@ Package: mrfaocore
 Title: One-line description of this awesome package
 Version: 0.1.0
 Date: 2024-04-24
-Authors@R: c(person("Ulrich", "Kreidenweis", email = "@pik-potsdam.de", role = "aut"),
+Authors@R: c(person("Ulrich", "Kreidenweis", role = "aut"),
              person("Abhijeet", "Mishra", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Benjamin", "Leon Bodirsky", role = "aut"),
