@@ -1,7 +1,7 @@
 Type: Package
 Package: mrfaocore
 Title: One-line description of this awesome package
-Version: 0.1.0.9001
+Version: 0.2.0
 Date: 2024-04-26
 Authors@R: c(person("Ulrich", "Kreidenweis", role = "aut"),
              person("Abhijeet", "Mishra", role = "aut"),
