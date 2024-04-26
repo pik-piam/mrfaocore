@@ -20,7 +20,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Ulrich Kreidenweis \email{@pik-potsdam.de}
+  \item Ulrich Kreidenweis
   \item Abhijeet Mishra
   \item Kristine Karstens
   \item Benjamin Leon Bodirsky
