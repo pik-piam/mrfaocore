@@ -175,10 +175,10 @@ readFAO_online <- function(subtype) { # nolint
   # ---- Assigning the ISO codes to countries ----
 
   # Load FAO specific countries (not included in country2iso.csv in madrat)
-  faoIsoFaoCode <- toolGetMapping("FAOiso_faocode_online.csv", where = "mrfaocore")
+  faoIsoFaoCodeMapping <- toolGetMapping("FAOiso_faocode_online.csv", where = "mrfaocore")
   # convert data frame into named vector as required by toolCountry2isocode
-  faoIsoFaoCode <- as.character(faoIsoFaoCode$ISO)
-  names(faoIsoFaoCode) <- as.character(faoIsoFaoCode$Country)
+  faoIsoFaoCode <- as.character(faoIsoFaoCodeMapping$ISO)
+  names(faoIsoFaoCode) <- as.character(faoIsoFaoCodeMapping$Country)
   # look up ISO codes using central definition and extra FAO mapping from line above
   # ignore warnings from FAO aggregate and other irrelevant regions
   ignoreRegions <- c("Africa", "Americas", "Asia", "Australia & New Zealand", "Caribbean",
