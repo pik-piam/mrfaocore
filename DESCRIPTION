@@ -1,8 +1,8 @@
 Type: Package
 Package: mrfaocore
 Title: One-line description of this awesome package
-Version: 0.2.0.9001
-Date: 2024-04-26
+Version: 0.2.0.9002
+Date: 2024-04-30
 Authors@R: c(person("Ulrich", "Kreidenweis", role = "aut"),
              person("Abhijeet", "Mishra", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -24,6 +24,7 @@ Imports:
     data.table,
     dplyr,
     GDPuc,
+    magpiesets (>= 0.44.2),
     tidyr,
     withr
 Suggests:
