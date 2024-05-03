@@ -26,7 +26,7 @@ readFishstatJ_FAO <- function(subtype = "Production") { # nolint: object_name_li
   isocodeFAO <- toolGetMapping("FAOiso_faocode.csv", where = "mrfaocore")
 
   # Reads data
-  data <- read.csv(file = paste(path.package("mrcommons"), paste0("extdata/sectoral/", file), sep = "/"))
+  data <- read.csv(file = paste(path.package("mrfaocore"), paste0("extdata/sectoral/", file), sep = "/"))
 
   # Function to clean-up the data
   faoCleaning <- function(data = data, mapping = isocodeFAO,
