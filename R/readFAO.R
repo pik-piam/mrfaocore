@@ -154,12 +154,12 @@ readFAO <- function(subtype) {
   }
 
   # collect the countries that do not exist in the data
-  faoIsoFaoCode <- toolGetMapping("FAOiso_faocode.csv", where = "mrcommons")
+  faoIsoFaoCode <- toolGetMapping("FAOiso_faocode.csv", where = "mrfaocore")
   notIncl <- countryandcode$Country[!countryandcode$CountryCode %in% faoIsoFaoCode$CountryCode]
   notInclCoun <- notIncl[!grepl("(Total)", notIncl)]
   if (length(notInclCoun) > 0) {
     vcat(1, "The following countries were not included due to missing ISO codes:",
-         "\n", paste(notInclCoun, "\n"), "-> Consider an update of FAOiso_faocode.csv", "\n")
+         "\n", paste(notInclCoun, "\n"), "-> Consider an update of FAOiso_faocode.csv in mrfaocore", "\n")
   }
   fao <- fao[fao$CountryCode %in% faoIsoFaoCode$CountryCode, ]
   gc()

@@ -23,7 +23,7 @@ readFishstatJ_FAO <- function(subtype = "Production") { # nolint: object_name_li
 
   # Subsetting based on type of requested output
   file <- toolSubtypeSelect(subtype, files)
-  isocodeFAO <- toolGetMapping("FAOiso_faocode.csv", where = "mrcommons")
+  isocodeFAO <- toolGetMapping("FAOiso_faocode.csv", where = "mrfaocore")
 
   # Reads data
   data <- read.csv(file = paste(path.package("mrcommons"), paste0("extdata/sectoral/", file), sep = "/"))
