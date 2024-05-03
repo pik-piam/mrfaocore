@@ -314,7 +314,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
       x <- mbind(x, mne)
     }
     ## Adjust prices of live animal weight to the carcass weight
-    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrcommons")
+    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrfaocore")
     for (item in mapping$FAO_carcass) {
       itemn <- gsub("([0-9]+).*$", "\\1", item)
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]

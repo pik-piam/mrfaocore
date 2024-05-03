@@ -235,7 +235,7 @@ convertFAO <- function(x, subtype) { # nolint: cyclocomp_linter.
       x <- mbind(x, mne)
     }
     ## Adjust prices of live animal weight to the carcass weith
-    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrcommons")
+    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrfaocore")
     for (item in mapping$FAO_carcass) {
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
       countries <- unique(rownames(which(!is.na(x[, , item]), arr.ind = TRUE)))
@@ -254,7 +254,7 @@ convertFAO <- function(x, subtype) { # nolint: cyclocomp_linter.
       x <- mbind(x, mne)
     }
     ## Adjust prices of live animal weight to the carcass weith
-    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrcommons")
+    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrfaocore")
     for (item in mapping$FAO_carcass) {
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
       countries <- unique(rownames(which(!is.na(x[, , item]), arr.ind = TRUE)))
