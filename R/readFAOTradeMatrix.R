@@ -78,7 +78,7 @@ readFAOTradeMatrix <- function(subtype) { # nolint
 
   # ---- Reformat elements ----
 
-  elementShort <- toolGetMapping("FAOelementShort.csv", where = "mrcommons")
+  elementShort <- toolGetMapping("FAOelementShort.csv", where = "mrfaocore")
   # keep relevant rows only
   elementShort <- elementShort[elementShort$ElementCode %in% fao$ElementCode, ]
 

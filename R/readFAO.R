@@ -195,7 +195,7 @@ readFAO <- function(subtype) {
   }
 
   ### use ElementShort or a combination of Element and Unit instead of ElementCode
-  faoElementShort <- toolGetMapping("FAOelementShort.csv", where = "mrcommons")
+  faoElementShort <- toolGetMapping("FAOelementShort.csv", where = "mrfaocore")
 
   elementShort <- faoElementShort
 
