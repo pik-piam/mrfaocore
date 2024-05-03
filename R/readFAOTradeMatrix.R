@@ -63,7 +63,7 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   # ---- Assigning the ISO codes to countries ----
 
   # Load FAO specific countries (not included in country2iso.csv in madrat)
-  faoIsoFaoCodeMapping <- toolGetMapping("FAOiso_faocode_online.csv", where = "mrcommons")
+  faoIsoFaoCodeMapping <- toolGetMapping("FAOiso_faocode_online.csv", where = "mrfaocore")
   # convert data frame into named vector as required by toolCountry2isocode
   faoIsoFaoCode <- as.character(faoIsoFaoCodeMapping$ISO)
   names(faoIsoFaoCode) <- as.character(faoIsoFaoCodeMapping$Country)
