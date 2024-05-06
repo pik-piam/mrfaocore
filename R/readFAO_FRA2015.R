@@ -64,7 +64,7 @@ readFAO_FRA2015 <- function(subtype) { # nolint
     data$Country <- as.character(data$Country) # nolint
 
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.csv", type = "cell", where = "mappingfolder")
 
     # See how many countries are available in the mapping file
     mapIso <- sort(unique(mapping$iso))
@@ -132,7 +132,7 @@ readFAO_FRA2015 <- function(subtype) { # nolint
     data$Country <- as.character(data$Country) # nolint
 
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.csv", type = "cell", where = "mappingfolder")
 
     # See how many countries are available in the mapping file
     mapIso <- sort(unique(mapping$iso))
@@ -197,7 +197,7 @@ readFAO_FRA2015 <- function(subtype) { # nolint
     data$Country <- as.character(data$Country) # nolint
 
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.csv", type = "cell", where = "mappingfolder")
 
     # See how many countries are available in the mapping file
     mapIso <- sort(unique(mapping$iso))
@@ -264,7 +264,7 @@ readFAO_FRA2015 <- function(subtype) { # nolint
     data$Country <- as.character(data$Country) # nolint
 
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.csv", type = "cell", where = "mappingfolder")
 
     # See how many countries are available in the mapping file
     mapIso <- sort(unique(mapping$iso))
