@@ -4,9 +4,9 @@
 \name{mrfaocore-package}
 \alias{mrfaocore}
 \alias{mrfaocore-package}
-\title{mrfaocore: One-line description of this awesome package}
+\title{mrfaocore: madrat-based package providing core FAO-related preprocessing functions}
 \description{
-One-paragraph description of this awesome package.
+This madrat-based package provides core FAO-related preprocessing functions.
 }
 \seealso{
 Useful links:

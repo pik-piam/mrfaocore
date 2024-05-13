@@ -1,11 +1,16 @@
 cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
-title: 'mrfaocore: One-line description of this awesome package'
-version: 0.2.0.9002
-date-released: '2024-04-30'
-abstract: One-paragraph description of this awesome package.
+title: |-
+  mrfaocore: madrat-based package providing core FAO-related preprocessing
+      functions
+version: 1.0.0
+date-released: '2024-05-07'
+abstract: This madrat-based package provides core FAO-related preprocessing functions.
 authors:
+- family-names: Chen
+  given-names: David
+  email: david.chen@pik-potsdam.de
 - family-names: Kreidenweis
   given-names: Ulrich
 - family-names: Mishra
@@ -20,9 +25,6 @@ authors:
   given-names: Mishko
 - family-names: Leon Bodrisky
   given-names: Benjamin
-- family-names: Chen
-  given-names: David
-  email: david.chen@pik-potsdam.de
 - family-names: Klein
   given-names: David
 - family-names: Molina Bacca
