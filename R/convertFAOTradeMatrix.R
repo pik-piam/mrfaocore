@@ -172,12 +172,12 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
   rm(x)
   gc()
   # currency convert values
-#  if (subtype %in% c("import_value_kcr", "import_value_kli", "import_value_kothers", #nolint
-#                       "export_value_kcr", "export_value_kli", "export_value_kothers")) { #nolint
-#       out <- convertGDP(out, unit_in = "current US$MER", #nolint
-#                        unit_out = "constant 2005 US$MER", #nolint
-#                       replace_NAs = "no_conversion") #nolint
-#                      } #nolint
+  if (subtype %in% c("import_value_kcr", "import_value_kli", "import_value_kothers",
+                       "export_value_kcr", "export_value_kli", "export_value_kothers")) {
+       out <- convertGDP(out, unit_in = "current US$MER",
+                        unit_out = "constant 2017 US$MER",
+                       replace_NAs = "no_conversion")
+                      } 
 
   out <- magpiesort(out)
 
