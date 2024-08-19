@@ -1,5 +1,5 @@
 #' @title calcFertilizerPricesFAO
-#' @description calculates dataset of fertilizer prices in US$MER05/tonne (either referring to the amount of fertilizer
+#' @description calculates dataset of fertilizer prices in US$MER17/tonne (either referring to the amount of fertilizer
 #' product, or to the amount of nutrients within the fertilizer) based on FAO data
 #' @param subtype "N" for fertilizer containing nitrogen, "P" for fertilizer containing phosphorus
 #' @param by "nutrient" if referring to price per amount of nutrients (N or P) within the fertilizer products, or
@@ -22,8 +22,8 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
 
   ## fertilizer price (per amount of fertilizer products)
   # calculate prices for import and export
-  priceImport <- fertByProduct[, , "import_US$MER05", drop = TRUE] / fertByProduct[, , "import", drop = TRUE]
-  priceExport <- fertByProduct[, , "export_US$MER05", drop = TRUE] / fertByProduct[, , "export", drop = TRUE]
+  priceImport <- fertByProduct[, , "import_US$MER17", drop = TRUE] / fertByProduct[, , "import", drop = TRUE]
+  priceExport <- fertByProduct[, , "export_US$MER17", drop = TRUE] / fertByProduct[, , "export", drop = TRUE]
   priceImport[!is.finite(priceImport)] <- 0
   priceExport[!is.finite(priceExport)] <- 0
 
@@ -61,7 +61,7 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
     totalUseProducts <- calcOutput("FertilizerUseFAO", subtype = subtype, by = "product", aggregate = FALSE)
     res <- fertPrice
     weight <- totalUseProducts
-    unit <- "US$MER05/tonne"
+    unit <- "US$MER17/tonne"
   } else if (by == "nutrient") {
     totalUseProducts <- calcOutput("FertilizerUseFAO", subtype = subtype, by = "product", aggregate = FALSE)
     totalUseNutrients <- calcOutput("FertilizerUseFAO", subtype = subtype, by = "nutrient", aggregate = FALSE)
@@ -70,7 +70,7 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
     res <- fertPrice[, years, , drop = TRUE] / avgNutrientContent
     res[!is.finite(res)] <- 0
     weight <- totalUseNutrients[, years, ]
-    unit <- "US$MER05/tonne"
+    unit <- "US$MER17/tonne"
   }
 
   return(list(x = res,
