@@ -11,7 +11,7 @@
 #' Options are all combinations of c("import_value",
 #' "import_qty", "export_value", "export_quantity") X c("kcr", "kli", "kothers"))
 #' import is import side reporting while export is export-sde reporting
-#' @return FAO data as MAgPIE object
+#' @return FAO data as MAgPIE object in Mt or US$ 2017 
 #' @author David C
 #' @seealso [readSource()]
 #' @importFrom GDPuc convertGDP
