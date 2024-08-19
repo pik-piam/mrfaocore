@@ -10,7 +10,6 @@
 #' \dontrun{
 #' calcOutput("FertilizerPricesFAO", subtype = "N", by = "nutrient")
 #' }
-#' @importFrom GDPuc convertGDP
 
 calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
 
@@ -61,7 +60,7 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
     totalUseProducts <- calcOutput("FertilizerUseFAO", subtype = subtype, by = "product", aggregate = FALSE)
     res <- fertPrice
     weight <- totalUseProducts
-    unit <- "US$MER17/tonne"
+    unit <- "US$MER2017/tonne"
   } else if (by == "nutrient") {
     totalUseProducts <- calcOutput("FertilizerUseFAO", subtype = subtype, by = "product", aggregate = FALSE)
     totalUseNutrients <- calcOutput("FertilizerUseFAO", subtype = subtype, by = "nutrient", aggregate = FALSE)
@@ -70,7 +69,7 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
     res <- fertPrice[, years, , drop = TRUE] / avgNutrientContent
     res[!is.finite(res)] <- 0
     weight <- totalUseNutrients[, years, ]
-    unit <- "US$MER17/tonne"
+    unit <- "US$MER2017/tonne"
   }
 
   return(list(x = res,
