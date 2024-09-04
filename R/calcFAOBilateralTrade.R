@@ -108,7 +108,7 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
       unit <- "MtWM"
     } else if (output == "value") {
       out <- out / 1e3 # in millions
-      unit <- "million USD$05"
+      unit <- "million USD$17"
     }
 
   } else if (output == "price") {
@@ -116,7 +116,7 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
     value <- calcOutput("FAOBilateralTrade", output = "value", products = products, prodAgg = FALSE, aggregate = FALSE)
     out <- value / qty
     weight <- qty
-    unit <- "US$05/tDM"
+    unit <- "US$17/tDM"
   }
 
   if (prodAgg) {
