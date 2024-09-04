@@ -16,7 +16,7 @@ Options are all combinations of c("import_value",
 import is import side reporting while export is export-sde reporting}
 }
 \value{
-FAO data as MAgPIE object
+FAO data as MAgPIE object in Mt or US$ 2017
 }
 \description{
 Convert FAOSTAT detailed trade matrix.

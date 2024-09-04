@@ -11,7 +11,7 @@
 #' Options are all combinations of c("import_value",
 #' "import_qty", "export_value", "export_quantity") X c("kcr", "kli", "kothers"))
 #' import is import side reporting while export is export-sde reporting
-#' @return FAO data as MAgPIE object in Mt or US$ 2017 
+#' @return FAO data as MAgPIE object in Mt or US$ 2017
 #' @author David C
 #' @seealso [readSource()]
 #' @importFrom GDPuc convertGDP
@@ -173,11 +173,11 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
   gc()
   # currency convert values
   if (subtype %in% c("import_value_kcr", "import_value_kli", "import_value_kothers",
-                       "export_value_kcr", "export_value_kli", "export_value_kothers")) {
-       out <- convertGDP(out, unit_in = "current US$MER",
-                        unit_out = "constant 2017 US$MER",
-                       replace_NAs = "no_conversion")
-                      } 
+                     "export_value_kcr", "export_value_kli", "export_value_kothers")) {
+    out <- convertGDP(out, unit_in = "current US$MER",
+                      unit_out = "constant 2017 US$MER",
+                      replace_NAs = "no_conversion")
+  }
 
   out <- magpiesort(out)
 
