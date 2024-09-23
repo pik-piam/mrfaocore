@@ -16,7 +16,7 @@ calcFertilizerPricesFAO(subtype = "N", by = "nutrient")
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates dataset of fertilizer prices in US$MER05/tonne (either referring to the amount of fertilizer
+calculates dataset of fertilizer prices in US$MER17/tonne (either referring to the amount of fertilizer
 product, or to the amount of nutrients within the fertilizer) based on FAO data
 }
 \examples{
