@@ -19,7 +19,7 @@
 #' a <- readSource("FAO_online", "Crop", convert = TRUE)
 #' }
 #' @importFrom magclass magpiesort dimExists getItems
-#' @importFrom GDPuc convertGDP
+#' @importFrom GDPuc toolConvertGDP
 #'
 
 ## check why LivePrim has such strange Units such as (0_1Gr/An) and "Yield_(Hg)"
@@ -329,14 +329,14 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
     if (subtype == "PricesProducerAnnual") {
-      x <- convertGDP(x, unit_in = "current US$MER",
-                      unit_out = "constant 2017 US$MER",
-                      replace_NAs = "no_conversion")
+      x <- toolConvertGDP(x, unit_in = "current US$MER",
+                          unit_out = "constant 2017 US$MER",
+                          replace_NAs = "no_conversion")
 
     } else if (subtype == "PricesProducerAnnualLCU") {
-      x <- convertGDP(x, unit_in = "current LCU",
-                      unit_out = "constant 2017 LCU",
-                      replace_NAs = "no_conversion")
+      x <- toolConvertGDP(x, unit_in = "current LCU",
+                          unit_out = "constant 2017 LCU",
+                          replace_NAs = "no_conversion")
     }
 
   } else {
@@ -345,9 +345,9 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
 
   if (subtype == "ValueOfProd") {
     x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"]
-    x2 <- convertGDP(x2, unit_in = "current US$MER",
-                     unit_out = "constant 2017 US$MER",
-                     replace_NAs = "no_conversion")
+    x2 <- toolConvertGDP(x2, unit_in = "current US$MER",
+                         unit_out = "constant 2017 US$MER",
+                         replace_NAs = "no_conversion")
     getNames(x2, dim = 2) <- "Gross_Production_Value_(USDMER17)_(1000_US$)"
     x <- mbind(x, x2)
   }
@@ -355,10 +355,10 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   if (subtype == "FertilizerProducts") {
     currencyDims <- c("import_kUS$", "export_kUS$")
     xCurrentUSD <- x   # nolint
-    x[, , currencyDims] <- convertGDP(x[, , currencyDims],
-                                      unit_in = "current US$MER",
-                                      unit_out = "constant 2017 US$MER",
-                                      replace_NAs = "no_conversion") * 1000
+    x[, , currencyDims] <- toolConvertGDP(x[, , currencyDims],
+                                          unit_in = "current US$MER",
+                                          unit_out = "constant 2017 US$MER",
+                                          replace_NAs = "no_conversion") * 1000
     # for countries with missing conversion factors we assume no inflation:
     x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
@@ -370,10 +370,10 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   if (subtype == "Trade") {
     currencyDims <- c("import_kUS$", "export_kUS$")
     xCurrentUSD <- x   # nolint
-    x[, , currencyDims] <- convertGDP(x[, , currencyDims],
-                                      unit_in = "current US$MER",
-                                      unit_out = "constant 2017 US$MER",
-                                      replace_NAs = "no_conversion") * 1000
+    x[, , currencyDims] <- toolConvertGDP(x[, , currencyDims],
+                                          unit_in = "current US$MER",
+                                          unit_out = "constant 2017 US$MER",
+                                          replace_NAs = "no_conversion") * 1000
     # for countries with missing conversion factors we assume no inflation:
     x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
