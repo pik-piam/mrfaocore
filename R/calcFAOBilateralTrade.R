@@ -108,23 +108,26 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
       unit <- "MtWM"
     } else if (output == "value") {
       out <- out / 1e3 # in millions
-      unit <- "million USD$17"
+      unit <- "million USD$05"
     }
-
+    
   } else if (output == "price") {
     qty <- calcOutput("FAOBilateralTrade", output = "qty", products = products, prodAgg = FALSE, aggregate = FALSE)
     value <- calcOutput("FAOBilateralTrade", output = "value", products = products, prodAgg = FALSE, aggregate = FALSE)
     out <- value / qty
     weight <- qty
-    unit <- "US$17/tDM"
+    unit <- "US$05/tDM"
   }
 
   if (prodAgg) {
     # aggregate to get a preliminary cif/fob ratio
     out[is.na(out)] <- 0
-    mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mrfaocore")
-    out <- toolAggregate(out, rel = mapping, from = "new_FAOoriginalItem_fromWebsite",
+    mapping <- toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
+    mapping <- mapping[which(mapping$FAOoriginalItem_fromWebsite %in% getNames(out)),c("FAOoriginalItem_fromWebsite", "k")]
+    mapping <- mapping[which(mapping$k != ""), ]
+    out <- toolAggregate(out, rel = mapping, from = "FAOoriginalItem_fromWebsite",
                          to = "k", partrel = TRUE, dim = 3.1)
+    
 
     if (output == "qty") {
       attr <- calcOutput("Attributes", aggregate = FALSE)

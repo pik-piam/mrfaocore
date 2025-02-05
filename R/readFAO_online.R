@@ -12,7 +12,9 @@
 #' \item `CBLive`: Commoditiy Balance Livestock (CommodityBalances_LivestockFish_E_All_Data.zip)
 #' \item `Crop`: Production Crops ("Production_Crops_E_All_Data.zip")
 #' \item `CropProc`: Production Crops Processed ("Production_CropsProcessed_E_All_Data.zip")
-#' \item `Fbs`: Food Balance Sheet ("FoodBalanceSheets_E_All_Data.zip")
+#' \item `FB2010`: New Food Balance Sheet, 2010 onwards ("FoodBalanceSheets_E_All_Data.zip")
+#' \item `SUA2010`: New Supply Utilization Accounts, 2010 onwards ("SUA_Crops_Livestock_E_All_Data_(Normalized).zip")
+#' \item `CB2010`: New Commodity Balance Sheets, 2010 onwards ("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip")
 #' \item `Fertilizer`: Fertilizer ("Resources_Fertilizers_E_All_Data.zip")
 #' \item `FertilizerProducts`: Fertilizer by product ("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip")
 #' \item `FertilizerNutrients`: Fertilizer by nutrient ("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip")
@@ -56,6 +58,7 @@ readFAO_online <- function(subtype) { # nolint
     CBCrop                  = c("CommodityBalances_Crops_E_All_Data.zip"),
     CBLive                  = c("CommodityBalances_LivestockFish_E_All_Data.zip"),
     Crop                    = c("Production_Crops_E_All_Data.zip"),
+    CropLive2010            = c("Production_Crops_Livestock_E_All_Data_(Normalized).zip"),
     CropProc                = c("Production_CropsProcessed_E_All_Data.zip"),
     EmisAgBurnCropResid     = c("Emissions_Agriculture_Burning_crop_residues_E_All_Data.zip"),
     EmisAgBurnSavanna       = c("Emissions_Agriculture_Burning_Savanna_E_All_Data.zip"),
@@ -77,8 +80,9 @@ readFAO_online <- function(subtype) { # nolint
     FSCrop                  = c("FoodSupply_Crops_E_All_Data.zip"),
     FSLive                  = c("FoodSupply_LivestockFish_E_All_Data.zip"),
     FbsHistoric             = c("FoodBalanceSheetsHistoric_E_All_Data.zip"),
-    Fbs                     = c("FoodBalanceSheets_E_All_Data_(Normalized).zip"), # old and new FBS
-    # should not be used, use CB and FS or calcFAOharmonized() instead
+    FB2010                  = c("FoodBalanceSheets_E_All_Data_(Normalized).zip"),
+    SUA2010                 = c("SUA_Crops_Livestock_E_All_Data_(Normalized).zip"),
+    CB2010                  = c("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip"),
     Fertilizer              = c("Environment_Fertilizers_E_All_Data.zip"),
     FertilizerNutrients     = c("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip"),
     FertilizerProducts      = c("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip"),
@@ -241,7 +245,9 @@ readFAO_online <- function(subtype) { # nolint
 
   ### convert some units
   fao <- .convertUnit(x = fao, oldUnit = "1000 tonnes", newUnit = "tonnes", factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 t", newUnit = "t", factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000 Head",   newUnit = "Head",   factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 No", newUnit = "No", factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000 number", newUnit = "number", factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000",        newUnit = "number", factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000 Ha",     newUnit = "ha",     factor = 1000)
