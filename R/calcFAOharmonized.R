@@ -19,8 +19,8 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   if (source == "join2010") {
    # take new values from 2010 onwards  
    pre <- calcOutput("FAOharmonized", source = "pre2010")
-   post <- calcOutput("FAOharmonized", source = "post2010")  
-   
+   post <- calcOutput("FAOharmonized", source = "post2010", return = "FB")  
+   pre <- pre[, c(2010:2013), invert = TRUE]
   
   }
 

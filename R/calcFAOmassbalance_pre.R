@@ -161,10 +161,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     
     starches <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
                                                               relationmatrix[grep("Starch of ", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
-    sugar <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("Refined sugar", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
-    otherSugars <-  relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("Glucose|fructose ", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
+    sugar <- .getFAOitemsSUA("sugar")
     molasses <- .getFAOitemsSUA("molasses")
     cereals <- .getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce")) 
     
@@ -180,9 +177,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
 
    # keep the specific ones and all that are mapped
-    keep <- c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
+    keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
               cereals, brans, beers, distillersBrewersG, maizeGluten,
-              sugar, molasses, otherSugars, potato, cassava,  starches, maizeGerm, others, alcohol)
+              sugar, molasses, potato, cassava,  starches, maizeGerm, others, alcohol))
      
    
    sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
@@ -250,7 +247,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     
     namesProcessing <- c("production_estimated", "process_estimated",
                          "milling", "brans1", "branoil1", "flour1", 
-                         "refining", "sugar1", "sugar2", "molasses1", "refiningloss",
+                         "refining", "sugar1", "sugar2", "sugar3", "molasses1", "refiningloss",
                          "extracting", "oil1", "oil2", "oilcakes1", "extractionloss",
                          "fermentation", "alcohol1", "alcohol2", "alcohol3", "alcohol4", "brewers_grain1", "alcoholloss",
                          "distilling", "ethanol1", "distillers_grain1", "distillingloss",
@@ -600,8 +597,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # subtract the starch and keep it in the other_util, afterwards add IEA residual to other_util (stays as is)
   
       prodIn <- "56|Maize (corn)"
-      # liter yield
-      ethanolYieldLiterPerTonMaize <- 408
+      # liter yield multiplied by product attributes 
+      ethanolYieldLiterPerTonMaize <- 408 * 1.136
       
       # liter yield converted to dm (-> extraction factor)
       extractionQuantityMaize <- 0.789 * ethanolYieldLiterPerTonMaize / 1000
@@ -631,8 +628,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           extractionAttribute = "nr",
           prodAttributes = prodAttributes)
 
-      # liter yield for different sources
-      ethanolYieldLiterPerTonSugarcane <- 654
+      # liter yield for different sources per dry matter
+      ethanolYieldLiterPerTonSugarcane <- 0.235
       
       # liter yield converted to dm (-> extraction factor)
       extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000
@@ -650,6 +647,27 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         extractionAttribute = "dm",
         prodAttributes = prodAttributes)
       
+
+  # liter yield for non-centrifugal sugar
+      ethanolYieldLiterPerTonSugar <- 0.5
+      
+      # liter yield converted to dm (-> extraction factor)
+      extractionQuantitySugar <- 0.789 * ethanolYieldLiterPerTonSugar / 1000
+      
+      # ethanol processing from sugarcane (only ethanol1 and distillingloss)
+      object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")] <- .extractGoodFromFlow(
+        object = object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")], # nolint
+        goodIn = "163|Cane sugar, non-centrifugal",
+        from = "other_util",
+        process = "distilling",
+        goodOut = "X001|Ethanol",
+        reportAs = "ethanol1",
+        residual = "distillingloss",
+        extractionQuantity = extractionQuantitySugar,
+        extractionAttribute = "dm",
+        prodAttributes = prodAttributes)
+
+
       return(object)
     }
     
@@ -658,13 +676,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     .sugarProcessing <- function(object) {
       
       goodsIn <- c("156|Sugar cane", "157|Sugar beet")
-      goodsOut <- c("164|Refined sugar", "165|Molasses")
+      goodsOut <- c("164|Refined sugar", "165|Molasses", "163|Cane sugar, non-centrifugal")
       object[, , c(goodsIn, goodsOut)] <- .processingGlobal(object = object[, , c(goodsIn, goodsOut)],
                                                             goodsIn = goodsIn,
                                                             from = "processed",
                                                             process = "refining",
                                                             goodsOut = goodsOut,
-                                                            reportAs = c("sugar1", "molasses1"),
+                                                            reportAs = c("sugar1", "molasses1", "sugar3"),
                                                             residual = "refiningloss")
       
       goodsIn <- c(starches)
@@ -957,7 +975,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                 "ethanol1", "intermediate", "distillers_grain1", "distillingloss")
       fermentationDimensions <- c("production", "production_estimated", "process_estimated", "processed", "fermentation",
                                   "alcohol1", "intermediate", "brewers_grain1", "alcoholloss")
-      refiningDimensions <- c("production", "production_estimated", "process_estimated", "processed", "sugar1", "sugar2",
+      refiningDimensions <- c("production", "production_estimated", "process_estimated", "processed", "sugar1", "sugar2", "sugar3",
                               "molasses1", "refining", "refiningloss")
       extractingDimensions <- c("production", "production_estimated", "process_estimated", "domestic_supply", "processed",
                                 "extracting", "oil1", "oil2", "intermediate", "oilcakes1", "extractionloss")
@@ -967,7 +985,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                       "60|Oil of maize", "36|Oil of rice bran") 
       millingFB <- unique(c(.getFAOitems(c("tece", "rice_pro", "trce"))))
 
-      distillingSUA <- c(.getFAOitemsSUA(c( "maiz")), .getFAOitemsSUA(c("sugr_cane", "ethanol")), "X002|Distillers_grain")
+      distillingSUA <- c(.getFAOitemsSUA(c( "maiz")), .getFAOitemsSUA(c("sugr_cane", "ethanol")), "163|Cane sugar, non-centrifugal", "X002|Distillers_grain")
       distillingSUA <- distillingSUA[-grep("gluten|lour|Germ", distillingSUA)]
 
       distillingFB <- unique(c(.getFAOitems(c("maiz")), .getFAOitems(c("sugr_cane", "ethanol")), "X002|Distillers_grain"))
@@ -976,9 +994,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec", fermentationSUA)]
       fermentationFB <- unique(c(.getFAOitems(c("tece", "rice_pro", "trce", "maiz"))))
 
-      refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro")), molasses, cassava, starches,
-                            "164|Refined sugar", otherSugars)
-          refiningSUA<- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec", refiningSUA)]
+      refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar")), molasses, cassava)
+      refiningSUA<- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec", refiningSUA)]
 
       refiningFB <- unique(c(.getFAOitems(c("sugr_cane", "sugr_beet", "tece", "maiz", "potato", "rice_pro", "cassav_sp"))))
       refiningFB <- refiningFB[grep("Yams|Sweet|Oats|Plantain|Banana|Rye|Barley", refiningFB)]
@@ -995,7 +1012,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
   flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
-    flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
+  flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
         .beerProcessing(flowsCBC[, , list(fermentationSUA, fermentationDimensions)])
   flowsCBC[, , list(refiningSUA, refiningDimensions)] <-
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
@@ -1153,7 +1170,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
   #get processed values 
    proc <- c(   "food", "feed", "production_estimated", "process_estimated",
                    "milling", "brans1", "branoil1", "flour1",
-                         "refining", "sugar1", "sugar2", "molasses1", "refiningloss",
+                         "refining", "sugar1", "sugar2", "sugar3", "molasses1", "refiningloss",
                          "extracting", "oil1", "oil2", "oilcakes1", "extractionloss",
                          "fermentation", "alcohol1", "alcohol2", "alcohol3", "alcohol4", "brewers_grain1", "alcoholloss",
                          "distilling", "ethanol1", "distillers_grain1", "distillingloss")
