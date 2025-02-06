@@ -598,7 +598,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
   
       prodIn <- "56|Maize (corn)"
       # liter yield multiplied by product attributes 
-      ethanolYieldLiterPerTonMaize <- 408 * 1.136
+      ethanolYieldLiterPerTonMaize <- 408 / attributesWM[, , prodIn][, , "dm"]
       
       # liter yield converted to dm (-> extraction factor)
       extractionQuantityMaize <- 0.789 * ethanolYieldLiterPerTonMaize / 1000
@@ -628,16 +628,20 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           extractionAttribute = "nr",
           prodAttributes = prodAttributes)
 
-      # liter yield for different sources per dry matter
-      ethanolYieldLiterPerTonSugarcane <- 0.235
+    
+    prodIn <- "156|Sugar cane"
+      # liter yield for sucrose to ethanol: 0.55
+      # sugar cane to sucrose 0.125 
+      # conversion efficiency 0.925 
+      ethanolYieldLiterPerTonSugarcane <- 0.55 * 0.125 * 0.925 / attributesWM[, , prodIn][, , "dm"]
       
       # liter yield converted to dm (-> extraction factor)
       extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000
       
       # ethanol processing from sugarcane (only ethanol1 and distillingloss)
-      object[, , c("156|Sugar cane", "X001|Ethanol")] <- .extractGoodFromFlow(
-        object = object[, , c("156|Sugar cane", "X001|Ethanol")], # nolint
-        goodIn = "156|Sugar cane",
+      object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow(
+        object = object[, , c(prodIn, "X001|Ethanol")], # nolint
+        goodIn = prodIn,
         from = "other_util",
         process = "distilling",
         goodOut = "X001|Ethanol",
