@@ -107,7 +107,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
    FB <- readSource("FAO_online", subtype = "FB2010")
    CB <- readSource("FAO_online", subtype = "CB2010")
 
-   mapping <- toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
+   mapping <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
   
  #rename and create columns so identical between FB and SUA
   FB <- add_columns(FB, addnm = "Processed_(t)" , dim = 3.2 )
@@ -130,7 +130,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   SUA[ , ,  "Fat_supply_quantity_(t)_(t)"] <- SUA[, ,  "Fats_Year_(t)" ]
 
   SUA <- add_columns(SUA, addnm =  "Losses_(t)" , dim = 3.2 )
-  SUA[ , , "Loss_(t)"] <- SUA[, , "Losses_(t)" ]
+  SUA[ , , "Losses_(t)"] <- SUA[, , "Loss_(t)" ]
   
   SUA <- add_columns(SUA, addnm = "Food_(t)" , dim = 3.2 )
   SUA[ , , "Food_(t)"] <- SUA[, , "Food_supply_quantity_(tonnes)_(t)" ]
@@ -138,10 +138,11 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   SUA <- SUA[ , , c("Food_supply_quantity_(tonnes)_(t)", "Fats_Year_(t)",
                     "Loss_(t)", "Proteins_Year_(t)", "Calories_Year_(Kcal)" ),
                   invert = TRUE]
+
  #create domestic supply quantity
-  SUAd <- SUA[, , "Production_(t)"]
-  SUAd <-  collapseNames(SUAd + SUA[, ,"Import_quantity_(t)"] - 
-                        SUA[, ,"Export_quantity_(t)"] - SUA[, ,"Stock_Variation_(t)"])
+  SUAd <- dimSums(SUA[, , c("Food_(t)" , "Feed_(t)", "Other_uses_(non_food)_(t)",
+                          "Processed_(t)", "Seed_(t)", "Tourist_consumption_(t)", "Losses_(t)")], dim = 3.2, na.rm=T)
+
   SUAd <- add_dimension(SUAd, dim = 3.2, add = "ElementShort", nm = "Domestic_supply_quantity_(t)")
   out <- mbind(SUAd, SUA)
   }
@@ -152,18 +153,18 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   prod <- readSource("FAO_online", "CropLive2010", convert = TRUE)
     
   ## aggregate Prod to CB units
-  aggregation <- toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
+  aggregation <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
 
   # remove  aggregate categories
-  remove <- setdiff(getNames(prod, dim = 1), aggregation$ProductionItem)
+  remove <- setdiff(getNames(prod, dim = 1), aggregation$post2010_ProductionItem)
   prod <- prod[, , remove, invert = TRUE]
   
   if (return == "FB") {
-    toCol <- "FoodBalanceItem"
+    toCol <- "post2010_FoodBalanceItem"
   } else if (return == "SUA") {
-    toCol <- "SupplyUtilizationItem"
+    toCol <- "post_2010SupplyUtilizationItem"
   }
-  areaHarvested <- toolAggregate(prod, rel = aggregation, from = "ProductionItem", to = toCol,
+  areaHarvested <- toolAggregate(prod, rel = aggregation, from = "post2010_ProductionItem", to = toCol,
                                  dim = 3.1, partrel = TRUE)[, , "area_harvested"]
                     
   commonyears <- intersect(getYears(areaHarvested), getYears(out))

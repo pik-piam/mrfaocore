@@ -39,9 +39,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
    fb <-  calcOutput("FAOharmonized", source = "post2010", return = "FB", aggregate = F)
    sua <-  calcOutput("FAOharmonized", source = "post2010", return = "SUA", aggregate = F) 
-   mapping <- toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
+   relationmatrix <-  toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
     # give opening stocks to FB from SUA , not in data
-    openingStocks <- toolAggregate(sua[,,"opening_stocks"], rel = mapping,
+    openingStocks <- toolAggregate(sua[,,"opening_stocks"], rel = relationmatrix,
                                    from = "SupplyUtilizationItem", to = "FoodBalanceItem",
                                    partrel = TRUE, dim = 3.1)
    fb <- mbind(fb, openingStocks)
@@ -116,7 +116,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     fb <- complete_magpie(fb, fill = 0)
     
     #As current mass balance stands we ned flours, brans, oilcakes, Oilcrops Other, molasses from the more disaggregated SUA categories
-    relationmatrix <-  toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
     
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {
@@ -582,23 +581,19 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       
       # subtract the starch and keep it in the other_util, afterwards add IEA residual to other_util (stays as is)
       "
-    ethanol:
-    DDGS Handbook
-    U.S. Grains Council. 2013. A Guide to Distillers Dried Grains with Solubles (DDGS).
-    http://www.grains.org/buyingselling/ddgs/handbook/20140422/comparison-different-grain-ddgs-sources-nutrient-composition. # nolint
-    corn: 408 l/t
-    sugarcane: 654 l/t
+    ethanol and maize:  https://doi.org/10.3390/fermentation7040268 #nolint
+    Production of Bioethanol—A Review of Factors Affecting Ethanol Yield
+    corn: 400 l/t
+    sugarcane: 72.5 l/t
     ethanol weight per l:  789g
-    similar numbers:
-    Balat M and Balat H 2009 Recent trends in global production and utilization of bio-ethanol fuel Applied Energy
-    86 2273-82
     "
 
       # subtract the starch and keep it in the other_util, afterwards add IEA residual to other_util (stays as is)
   
       prodIn <- "56|Maize (corn)"
       # liter yield multiplied by product attributes 
-      ethanolYieldLiterPerTonMaize <- 408 / attributesWM[, , prodIn][, , "dm"]
+      ethanolYieldLiterPerTonMaize <- 400 / attributesWM[, , prodIn][, , "dm"]
+  
       
       # liter yield converted to dm (-> extraction factor)
       extractionQuantityMaize <- 0.789 * ethanolYieldLiterPerTonMaize / 1000
@@ -630,10 +625,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     
     prodIn <- "156|Sugar cane"
-      # liter yield for sucrose to ethanol: 0.55
-      # sugar cane to sucrose 0.125 
-      # conversion efficiency 0.925 
-      ethanolYieldLiterPerTonSugarcane <- 0.55 * 0.125 * 0.925 / attributesWM[, , prodIn][, , "dm"]
+     
+      ethanolYieldLiterPerTonSugarcane <- 72.5 / attributesWM[, , prodIn][, , "dm"]
       
       # liter yield converted to dm (-> extraction factor)
       extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000
