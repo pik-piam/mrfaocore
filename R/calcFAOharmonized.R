@@ -141,7 +141,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
 
  #create domestic supply quantity
   SUAd <- dimSums(SUA[, , c("Food_(t)" , "Feed_(t)", "Other_uses_(non_food)_(t)",
-                          "Processed_(t)", "Seed_(t)", "Tourist_consumption_(t)", "Losses_(t)")], dim = 3.2, na.rm=T)
+                          "Processed_(t)", "Seed_(t)", "Tourist_consumption_(t)", "Losses_(t)")], dim = 3.2)
 
   SUAd <- add_dimension(SUAd, dim = 3.2, add = "ElementShort", nm = "Domestic_supply_quantity_(t)")
   out <- mbind(SUAd, SUA)
@@ -162,7 +162,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   if (return == "FB") {
     toCol <- "post2010_FoodBalanceItem"
   } else if (return == "SUA") {
-    toCol <- "post_2010SupplyUtilizationItem"
+    toCol <- "post2010_SupplyUtilizationItem"
   }
   areaHarvested <- toolAggregate(prod, rel = aggregation, from = "post2010_ProductionItem", to = toCol,
                                  dim = 3.1, partrel = TRUE)[, , "area_harvested"]
