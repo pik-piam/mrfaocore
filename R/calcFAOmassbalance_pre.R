@@ -998,10 +998,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       
       fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")), beers,  "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec", fermentationSUA)]
+      fermentationSUA <- fermentationSUA[fermentationSUA != ""]
       fermentationFB <- unique(c(.getFAOitems(c("tece", "rice_pro", "trce", "maiz"))))
 
       refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar")), molasses, cassava)
       refiningSUA<- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec", refiningSUA)]
+      refiningSUA <- refiningSUA[refiningSUA != ""]
+
 
       refiningFB <- unique(c(.getFAOitems(c("sugr_cane", "sugr_beet", "tece", "maiz", "potato", "rice_pro", "cassav_sp"))))
       refiningFB <- refiningFB[grep("Yams|Sweet|Oats|Plantain|Banana|Rye|Barley", refiningFB)]
@@ -1020,6 +1023,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
   flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
         .beerProcessing(flowsCBC[, , list(fermentationSUA, fermentationDimensions)])
+  
+     flowsO <- flowsCBC
+  object <- flowsCBC[, , list(refiningSUA, refiningDimensions)]
   flowsCBC[, , list(refiningSUA, refiningDimensions)] <-
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
   #remove starches as we assume all strrches are used for glucose and fructose
