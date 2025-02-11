@@ -219,8 +219,8 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
   fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
   fodder[, , "domestic_supply"] <- fodder[, , "feed"]
-  fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "ProductionItem",
-                                    to = "FoodBalanceItem", dim = 3.1, partrel = TRUE)
+  fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "post2010_ProductionItem",
+                                    to = "post2010_FoodBalanceItem", dim = 3.1, partrel = TRUE)
   cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
   fodderAggregated <- fodderAggregated / 1e6
 
