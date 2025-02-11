@@ -42,7 +42,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
    relationmatrix <-  toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
     # give opening stocks to FB from SUA , not in data
     openingStocks <- toolAggregate(sua[,,"opening_stocks"], rel = relationmatrix,
-                                   from = "SupplyUtilizationItem", to = "FoodBalanceItem",
+                                   from = "post2010_SupplyUtilizationItem", to = "post2010_FoodBalanceItem",
                                    partrel = TRUE, dim = 3.1)
    fb <- mbind(fb, openingStocks)
     
@@ -119,12 +119,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {
-      return(relationmatrix[relationmatrix$k %in% magpieItems, "SupplyUtilizationItem"])
+      return(relationmatrix[relationmatrix$k %in% magpieItems, "post2010_SupplyUtilizationItem"])
     }
     
     # helper function for FB
     .getFAOitems <- function(magpieItems) {
-      return(relationmatrix[relationmatrix$k %in% magpieItems, "FoodBalanceItem"])
+      return(relationmatrix[relationmatrix$k %in% magpieItems, "post2010_FoodBalanceItem"])
     }
     
 
@@ -139,38 +139,37 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     #other oil crops more complicated, restrict to those which have cakes, others accounted for via "others"
     oils <- .getFAOitemsSUA("oils")
     oils <- oils[grep("Soy|maize|Rapeseed|Mustard|sesame|Coconut|palm kernel|Palm|Sunflower|Groundnut|inseed|Cottonseed|hemp|kapok|poppy|Safflower|rice bran|Other oil|Olive", oils)]
-    otherOilCrops <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                                  relationmatrix[grep("2570", relationmatrix$FoodBalanceItem), "SupplyUtilizationItem"])]
+    otherOilCrops <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                                  relationmatrix[grep("2570", relationmatrix$post2010_FoodBalanceItem), "post2010_SupplyUtilizationItem"])]
     otherOilCrops <- otherOilCrops[grep("copra|Other|Hemp|Safflower|Kapok|Poppy", otherOilCrops)]
-    otherOils <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("2586", relationmatrix$FoodBalanceItem), "SupplyUtilizationItem"])]
-    otherOils <- otherOils[which(otherOils %in% relationmatrix[grep("oils", relationmatrix$k), "SupplyUtilizationItem"])]
+    otherOils <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                              relationmatrix[grep("2586", relationmatrix$post2010_FoodBalanceItem), "post2010_SupplyUtilizationItem"])]
+    otherOils <- otherOils[which(otherOils %in% relationmatrix[grep("oils", relationmatrix$k), "post2010_SupplyUtilizationItem"])]
     otherOils <- otherOils[otherOils != ""]
     oilpalm <-  .getFAOitemsSUA("oilpalm")
     #need particular maize products
-    maizeGluten <-  relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                                 relationmatrix[grep("Maize gluten", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
-    maizeGerm <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("Germ of maize", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
+    maizeGluten <-  relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                                 relationmatrix[grep("Maize gluten", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
+    maizeGerm <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                              relationmatrix[grep("Germ of maize", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
     
     sugarCane <- .getFAOitemsSUA("sugr_cane")
     sugarBeet <- .getFAOitemsSUA("sugr_beet")
     potato <- .getFAOitemsSUA("potato")
-
     
-    starches <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("Starch of ", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
+    starches <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                              relationmatrix[grep("Starch of ", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
     sugar <- .getFAOitemsSUA("sugar")
     molasses <- .getFAOitemsSUA("molasses")
     cereals <- .getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce")) 
     
     brans <- .getFAOitemsSUA("brans")
-    beers <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("Beer|-ferm", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
+    beers <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                              relationmatrix[grep("Beer|-ferm", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
     distillersBrewersG <- .getFAOitemsSUA(c("distillers_grain", "brewers_grain"))
     
-   cassava <- relationmatrix$SupplyUtilizationItem[which(relationmatrix$SupplyUtilizationItem %in%
-                                                              relationmatrix[grep("Cassava, fresh", relationmatrix$SupplyUtilizationItem), "SupplyUtilizationItem"])]
+   cassava <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                              relationmatrix[grep("Cassava, fresh", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
    others <- .getFAOitemsSUA("others")
    alcohol <- .getFAOitemsSUA("alcohol")
 
@@ -200,16 +199,16 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     prodAttributes <- prodAttributes[, , removeProd, invert = TRUE]
     
     # Map production attributes to FAO items
-    relationmatrixF <-  relationmatrix[which(relationmatrix$FoodBalanceItem %in% getItems(fb, dim = 3.1)),]
-    relationmatrixF <- relationmatrixF[-which(relationmatrixF$FoodBalanceItem == ""), ]
+    relationmatrixF <-  relationmatrix[which(relationmatrix$post2010_FoodBalanceItem %in% getItems(fb, dim = 3.1)),]
+    relationmatrixF <- relationmatrixF[-which(relationmatrixF$post2010_FoodBalanceItem == ""), ]
     prodAttributesFB      <- toolAggregate(x = prodAttributes, rel = relationmatrixF,
                                            dim = 3.2, from = "k",
-                                           to = "FoodBalanceItem", partrel = TRUE)
+                                           to = "post2010_FoodBalanceItem", partrel = TRUE)
     
     # reduce the mapping to those in SUA, as there are too many SUA items
-    relationmatrixS <- relationmatrix[which(relationmatrix$SupplyUtilizationItem %in% getItems(sua, dim = 3.1)),]                                           
+    relationmatrixS <- relationmatrix[which(relationmatrix$post2010_SupplyUtilizationItem %in% getItems(sua, dim = 3.1)),]                                           
     prodAttributesSUA      <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
-                                            to = "SupplyUtilizationItem", partrel = TRUE)
+                                            to = "post2010_SupplyUtilizationItem", partrel = TRUE)
 
     prodAttributes<- mbind(prodAttributesFB, prodAttributesSUA[, , setdiff(getItems(prodAttributesSUA, dim = 3.2),
                                                                            getItems(prodAttributesFB, dim = 3.2))])
@@ -1160,8 +1159,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       processedFB <- toolAggregate(x = flowsCBC,
                                              rel = relationmatrix,
                                              dim = 3.1,
-                                             from = "SupplyUtilizationItem",
-                                             to = "FoodBalanceItem",
+                                             from = "post2010_SupplyUtilizationItem",
+                                             to = "post2010_FoodBalanceItem",
                                              partrel = TRUE)
 
   #get processed values 
@@ -1186,7 +1185,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       massbalanceProcessing <- toolAggregate(x = fbFlows,
                                              rel = relationmatrix,
                                              dim = 3.1,
-                                             from = "FoodBalanceItem",
+                                             from = "post2010_FoodBalanceItem",
                                              to = "k",
                                              partrel = TRUE)
       gc()
@@ -1250,7 +1249,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # put results together
     massbalance <- mbind(massbalanceProcessing, massbalanceNoProcessing)
     
-  } else if (version == "pre2010") {
+
+
+
+
+} else if (version == "pre2010") {
     #### Data input ####
     
     ### FAO Commodity Balance
