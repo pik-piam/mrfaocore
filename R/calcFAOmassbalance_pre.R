@@ -147,6 +147,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     otherOils <- otherOils[which(otherOils %in% relationmatrix[grep("oils", relationmatrix$k), "post2010_SupplyUtilizationItem"])]
     otherOils <- otherOils[otherOils != ""]
     oilpalm <-  .getFAOitemsSUA("oilpalm")
+    oilpalm <- oilpalm[oilpalm != ""]
+
     #need particular maize products
     maizeGluten <-  relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                                  relationmatrix[grep("Maize gluten", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
@@ -160,10 +162,16 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     starches <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                               relationmatrix[grep("Starch of ", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
     sugar <- .getFAOitemsSUA("sugar")
+   sugar <- sugar[sugar != ""]
+
     molasses <- .getFAOitemsSUA("molasses")
     cereals <- .getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce")) 
+    cereals <- cereals[cereals != ""]
+
     
     brans <- .getFAOitemsSUA("brans")
+    brans <- brans[brans != ""]
+
     beers <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                               relationmatrix[grep("Beer|-ferm", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
     distillersBrewersG <- .getFAOitemsSUA(c("distillers_grain", "brewers_grain"))
@@ -171,14 +179,16 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
    cassava <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                               relationmatrix[grep("Cassava, fresh", relationmatrix$post2010_SupplyUtilizationItem), "post2010_SupplyUtilizationItem"])]
    others <- .getFAOitemsSUA("others")
+   others <- others[others != ""]
+
    alcohol <- .getFAOitemsSUA("alcohol")
 
-
+  
    # keep the specific ones and all that are mapped
     keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
               cereals, brans, beers, distillersBrewersG, maizeGluten,
               sugar, molasses, potato, cassava,  starches, maizeGerm, others, alcohol))
-     
+
    
    sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
