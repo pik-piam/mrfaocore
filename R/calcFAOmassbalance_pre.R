@@ -1227,7 +1227,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       massbalanceNoProcessing <- toolAggregate(x = noProcessingFB,
                                                rel = relationmatrix,
                                                dim = 3.1,
-                                               from = "FoodBalanceItem",
+                                               from = "post2010_FoodBalanceItem",
                                                to = "k",
                                                partrel = TRUE)
       gc()
