@@ -989,6 +989,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # relevant processing products
       millingSUA <- c(.getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce", "brans")), "61|Cake of maize", "37|Cake of rice bran",
                       "60|Oil of maize", "36|Oil of rice bran") 
+      millingSUA <- millingSUA[millingSUA != ""]
+
       millingFB <- unique(c(.getFAOitems(c("tece", "rice_pro", "trce"))))
 
       distillingSUA <- c(.getFAOitemsSUA(c( "maiz")), .getFAOitemsSUA(c("sugr_cane", "ethanol")), "163|Cane sugar, non-centrifugal", "X002|Distillers_grain")
@@ -1023,9 +1025,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
   flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
         .beerProcessing(flowsCBC[, , list(fermentationSUA, fermentationDimensions)])
-  
-     flowsO <- flowsCBC
-  object <- flowsCBC[, , list(refiningSUA, refiningDimensions)]
   flowsCBC[, , list(refiningSUA, refiningDimensions)] <-
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
   #remove starches as we assume all strrches are used for glucose and fructose
@@ -1089,7 +1088,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
   flowsCBC[, , list(extracting1SUA, extractingDimensions)] <-
         .oilpalmProcessing(flowsCBC[, , list(extracting1SUA, extractingDimensions)])
-    flowsCBC[, , list(extracting2SUA, extractingDimensions)] <- 
+  flowsCBC[, , list(extracting2SUA, extractingDimensions)] <- 
         .oilProcessing(flowsCBC[, , list(extracting2SUA, extractingDimensions)])
    # remove olives as we added them to raps 
     flowsCBC <- flowsCBC[ , , c("260|Olives", "261|Olive oil"), invert = TRUE]
