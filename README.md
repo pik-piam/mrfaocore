@@ -1,9 +1,9 @@
 # madrat-based package providing core FAO-related preprocessing
     functions
 
-R package **mrfaocore**, version **1.1.1**
+R package **mrfaocore**, version **1.2.0**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/mrfaocore)](https://cran.r-project.org/package=mrfaocore)  [![R build status](https://github.com/pik-piam/mrfaocore/workflows/check/badge.svg)](https://github.com/pik-piam/mrfaocore/actions) [![codecov](https://codecov.io/gh/pik-piam/mrfaocore/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrfaocore) [![r-universe](https://pik-piam.r-universe.dev/badges/mrfaocore)](https://pik-piam.r-universe.dev/builds)
+[![CRAN status](https://www.r-pkg.org/badges/version/mrfaocore)](https://cran.r-project.org/package=mrfaocore) [![R build status](https://github.com/pik-piam/mrfaocore/workflows/check/badge.svg)](https://github.com/pik-piam/mrfaocore/actions) [![codecov](https://codecov.io/gh/pik-piam/mrfaocore/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrfaocore) [![r-universe](https://pik-piam.r-universe.dev/badges/mrfaocore)](https://pik-piam.r-universe.dev/builds)
 
 ## Purpose and Functionality
 
@@ -40,17 +40,18 @@ In case of questions / problems please contact David Chen <david.chen@pik-potsda
 
 To cite package **mrfaocore** in publications use:
 
-Chen D, Kreidenweis U, Mishra A, Karstens K, Leon Bodirsky B, Leip D, Stevanovic M, Leon Bodrisky B, Klein D, Molina Bacca E (2024). _mrfaocore: madrat-based package providing core FAO-related preprocessing functions_. R package version 1.1.1, <URL: https://github.com/pik-piam/mrfaocore>.
+Chen D, Kreidenweis U, Mishra A, Karstens K, Leon Bodirsky B, Leip D, Stevanovic M, Leon Bodrisky B, Klein D, Molina Bacca E (2025). "mrfaocore: madrat-based package providing core FAO-related preprocessing functions." Version: 1.2.0, <https://github.com/pik-piam/mrfaocore>.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
-@Manual{,
+@Misc{,
   title = {mrfaocore: madrat-based package providing core FAO-related preprocessing
-functions},
+    functions},
   author = {David Chen and Ulrich Kreidenweis and Abhijeet Mishra and Kristine Karstens and Benjamin {Leon Bodirsky} and Debbora Leip and Mishko Stevanovic and Benjamin {Leon Bodrisky} and David Klein and Edna {Molina Bacca}},
-  year = {2024},
-  note = {R package version 1.1.1},
+  date = {2025-02-13},
+  year = {2025},
   url = {https://github.com/pik-piam/mrfaocore},
+  note = {Version: 1.2.0},
 }
 ```
