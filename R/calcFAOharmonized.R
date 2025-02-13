@@ -18,10 +18,40 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   
   if (source == "join2010") {
    # take new values from 2010 onwards  
-   pre <- calcOutput("FAOharmonized", source = "pre2010")
-   post <- calcOutput("FAOharmonized", source = "post2010", return = "FB")  
+   pre <- calcOutput("FAOharmonized", source = "pre2010", aggregate = FALSE)
+   post <- calcOutput("FAOharmonized", source = "post2010", return = "FB", aggregate = FALSE)  
+
+   mapping <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
+   pre <- toolAggregate(pre, rel = mapping, from = "pre2010_FoodBalanceItem", to = "post2010_FoodBalanceItem",
+                             partrel = TRUE, dim = 3.1)
    pre <- pre[, c(2010:2013), invert = TRUE]
+
+
+   sua <- calcOutput("FAOharmonized", source = "post2010", return = "SUA", aggregate = FALSE)
+    #get the brans post 2010 from SUA 
+    brans <- c("59|Bran of maize", 
+                "17|Bran of wheat",
+               "47|Bran of barley",
+               "73|Bran of rye",
+               "77|Bran of oats",
+               "105|Bran of mixed grain",
+               "91|Bran of buckwheat",
+               "96|Bran of fonio",
+               "99|Bran of triticale",
+               "81|Bran of millet",
+               "85|Bran of sorghum",
+               "112|Bran of cereals nec") 
+
+  suab <- sua[, , brans]
+  suab <- dimSums(suab[, , getNames(post, dim = 2)], dim = 3.1)
+  suab <- add_dimension(suab,  dim = 3.1, add = "ItemCodeItem",  nm = "2600|Brans")
+
+  post <- mbind(post, suab)
   
+  out <- mbind(pre, post)
+  return(out)
+
+
   }
 
   if (source == "pre2010") {

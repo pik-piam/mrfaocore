@@ -991,33 +991,20 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                       "60|Oil of maize", "36|Oil of rice bran") 
       millingSUA <- millingSUA[millingSUA != ""]
 
-      millingFB <- unique(c(.getFAOitems(c("tece", "rice_pro", "trce"))))
-
       distillingSUA <- c(.getFAOitemsSUA(c( "maiz")), .getFAOitemsSUA(c("sugr_cane", "ethanol")), "163|Cane sugar, non-centrifugal", "X002|Distillers_grain")
       distillingSUA <- distillingSUA[-grep("gluten|lour|Germ", distillingSUA)]
-
-      distillingFB <- unique(c(.getFAOitems(c("maiz")), .getFAOitems(c("sugr_cane", "ethanol")), "X002|Distillers_grain"))
       
       fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")), beers,  "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec", fermentationSUA)]
       fermentationSUA <- fermentationSUA[fermentationSUA != ""]
-      fermentationFB <- unique(c(.getFAOitems(c("tece", "rice_pro", "trce", "maiz"))))
 
       refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar")), molasses, cassava)
       refiningSUA<- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec", refiningSUA)]
       refiningSUA <- refiningSUA[refiningSUA != ""]
 
 
-      refiningFB <- unique(c(.getFAOitems(c("sugr_cane", "sugr_beet", "tece", "maiz", "potato", "rice_pro", "cassav_sp"))))
-      refiningFB <- refiningFB[grep("Yams|Sweet|Oats|Plantain|Banana|Rye|Barley", refiningFB)]
-
-      extracting1FB <- c("2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake",
-                               "X003|Palmoil_Kerneloil_Kernelcake")
       extracting1SUA <- c("257|Palm oil", "258|Oil of palm kernel", "259|Cake of palm kernel", "X003|Palmoil_Kerneloil_Kernelcake")
-      extracting2FB <- setdiff(.getFAOitems(c("soybean", "groundnut", "sunflower", "cottn_pro",
-                                                    "rapeseed", "oils", "oilcakes")),
-                                     c(extracting1FB, "2580|Olive Oil", "2581|Ricebran Oil"))
-      extracting2SUA <- c(oils, oilCrops, oilcakes)
+          extracting2SUA <- c(oils, oilCrops, oilcakes)
 
       flowsCBC <- suaFlows  
 
