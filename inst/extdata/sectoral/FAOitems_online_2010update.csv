@@ -1128,9 +1128,9 @@ X003|Palmoil_Kerneloil_Kernelcake,,,X003|Palmoil_Kerneloil_Kernelcake,oilpalm,,,
 ,,,,maiz,,,,2514|Maize and products,63|Maize gluten,
 ,,,,sugar,,,,64|Starch of maize,64|Starch of maize,
 ,,,,,,,,"2520|Cereals, Other",95|Flour of fonio,
-,,,2600|Brans,brans,,,,96|Bran of fonio,96|Bran of fonio,
+,,,2600|Brans,brans,,,,2600|Brans,96|Bran of fonio,
 ,,,,,,,,"2520|Cereals, Other",98|Flour of triticale,
-,,,2600|Brans,brans,,,,99|Bran of triticale,99|Bran of triticale,
+,,,2600|Brans,brans,,,,2600|Brans,99|Bran of triticale,
 ,,,,,,,,2907|Starchy Roots,,aggregate
 ,,,,sugar,,,,119|Starch of potatoes,119|Starch of potatoes,
 ,,,,,,,,2908|Sugar Crops,,aggregate

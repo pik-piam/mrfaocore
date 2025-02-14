@@ -37,7 +37,6 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
                "105|Bran of mixed grain",
                "91|Bran of buckwheat",
                "96|Bran of fonio",
-               "99|Bran of triticale",
                "81|Bran of millet",
                "85|Bran of sorghum",
                "112|Bran of cereals nec") 
@@ -48,6 +47,9 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
 
   post <- mbind(post, suab)
   
+  setdiff(getNames(pre, dim = 1), getNames(post, dim = 1))
+  setdiff(getNames(post, dim = 1), getNames(pre, dim = 1))
+
   out <- mbind(pre, post)
   return(out)
 

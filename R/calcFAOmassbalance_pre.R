@@ -1179,8 +1179,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
   fbFlows[, , proc][, , cprods] <- processedFB[, , proc][, , cprods]
 
-# oilpalm and oilcakes are not part of FB so add all categories here
-  replace <-  processedFB[, , c(oilcakes, missingproducts)][, , proc, invert = TRUE]
+# oilpalm,  oilcakes, brans, and molasses are not part of FB so add all categories here
+  replace <-  processedFB[, , c(oilcakes, missingproducts, molasses, "2600|Brans" )][, , proc, invert = TRUE]
   fbFlows[, , c(oilcakes, missingproducts)][, , getItems(replace, dim = 3)] <- replace
 
 # map to magpie categories
