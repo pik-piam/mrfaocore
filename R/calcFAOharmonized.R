@@ -26,9 +26,8 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
                              partrel = TRUE, dim = 3.1)
    pre <- pre[, c(2010:2013), invert = TRUE]
 
-
-   sua <- calcOutput("FAOharmonized", source = "post2010", return = "SUA", aggregate = FALSE)
-    #get the brans post 2010 from SUA 
+    #get the brans, oilcakes, molasses  post 2010 from SUA 
+   sua <- calcOutput("FAOharmonized", source = "post2010", return = "SUA", aggregate = FALSE)[, , "opening_stocks", invert = TRUE]
     brans <- c("59|Bran of maize", 
                 "17|Bran of wheat",
                "47|Bran of barley",
@@ -40,19 +39,39 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
                "81|Bran of millet",
                "85|Bran of sorghum",
                "112|Bran of cereals nec") 
-
+      
+      cakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
+                   "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
+                   "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                   "335|Cake of  linseed",  "338|Cake of hempseed",
+                   "341|Cake, oilseeds nes", "61|Cake of maize", "259|Cake of palm kernel", "37|Cake of rice bran")
+      
   suab <- sua[, , brans]
   suab <- dimSums(suab[, , getNames(post, dim = 2)], dim = 3.1)
   suab <- add_dimension(suab,  dim = 3.1, add = "ItemCodeItem",  nm = "2600|Brans")
-
-  post <- mbind(post, suab)
   
-  setdiff(getNames(pre, dim = 1), getNames(post, dim = 1))
-  setdiff(getNames(post, dim = 1), getNames(pre, dim = 1))
+  post <- mbind(post, suab)
+  post <- mbind(post, sua[, ,  cakes])
+  post[, , "165|Molasses"] <- sua[, , "165|Molasses"]
+  names <- intersect(getNames(pre, dim = 1), getNames(post, dim = 1)) 
+  
+  #create residuals with 0 in the old harmonized
+  res <- pre[, , "production"]
+  res[] <- 0
+  getNames(res, dim = 2) <- "residuals"
+  pre <- mbind(pre, res)
+ 
+  #create food_supply same as food in the new
+  fs <- post[, , "food"]  
+  getNames(fs, dim = 2) <- "food_supply" 
+  post <- mbind(post, fs)
+  
 
-  out <- mbind(pre, post)
+  pre <- complete_magpie(pre)
+  post <- complete_magpie(post)
+  
+  out <- mbind(pre[, , names], post[, , names])
   return(out)
-
 
   }
 
