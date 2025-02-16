@@ -70,12 +70,9 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   pre <- complete_magpie(pre)
   post <- complete_magpie(post)
   
-  out <- mbind(pre[, , names], post[, , names])
-  return(out)
-
-  }
-
-  if (source == "pre2010") {
+  faoData <- mbind(pre[, , names], post[, , names])
+ 
+  } else if (source == "pre2010") {
   # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
   cbCrop <- readSource("FAO_online", "CBCrop")
   cbLive <- readSource("FAO_online", "CBLive")
