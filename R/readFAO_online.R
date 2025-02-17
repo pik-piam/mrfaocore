@@ -95,7 +95,7 @@ readFAO_online <- function(subtype) { # nolint
     LivePrim                = c("Production_LivestockPrimary_E_All_Data.zip"),
     LiveProc                = c("Production_LivestockProcessed_E_All_Data.zip"),
     Pop                     = c("Population_E_All_Data.zip"),
-    PricesProducerAnnual    = c("Prices_E_All_Data.zip"),
+    PricesProducerAnnual    = c("Prices_E_All_Data_(Normalized)_130225.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
     Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
     ValueOfProd             = c("Value_of_Production_E_All_Data.zip"),
@@ -137,6 +137,10 @@ readFAO_online <- function(subtype) { # nolint
     }
   }
 
+if (grepl("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", file, perl = TRUE)) {
+    # Remove the underscore and 6-digit number before the extension
+    file <- sub("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", "", file, perl = TRUE)
+  }
   # ---- Select columns to be read from file and read file ----
 
   ## efficient reading of csv file: read only needed columns in the needed type (codes as factor)
