@@ -71,6 +71,9 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   post <- complete_magpie(post)
   
   faoData <- mbind(pre[, , names], post[, , names])
+
+   faoData[is.na(faoData)] <- 0
+
  
   } else if (source == "pre2010") {
   # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
@@ -275,9 +278,11 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
   rm(fodder, fodderAggregated)
   gc()
-  }
 
  faoData[is.na(faoData)] <- 0
+
+  }
+
 
   ## check if there is data without an element name
  faoData <- faoData[, , "", invert = TRUE] 
