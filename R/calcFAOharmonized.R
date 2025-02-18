@@ -279,10 +279,9 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
   rm(fodder, fodderAggregated)
   gc()
 
- faoData[is.na(faoData)] <- 0
-
   }
 
+ faoData[is.na(faoData)] <- 0
 
   ## check if there is data without an element name
  faoData <- faoData[, , "", invert = TRUE] 
