@@ -123,7 +123,7 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
     # aggregate to get a preliminary cif/fob ratio
     out[is.na(out)] <- 0
     mapping <- toolGetMapping("FAO_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
-    mapping <- mapping[which(mapping$FAOoriginalItem_fromWebsite %in% getNames(out)),c("post2010_FAOoriginalItem_fromWebsite", "k")]
+    mapping <- mapping[which(mapping$post2010_FAOoriginalItem_fromWebsite %in% getNames(out)),c("post2010_FAOoriginalItem_fromWebsite", "k")]
     mapping <- mapping[which(mapping$k != ""), ]
     out <- toolAggregate(out, rel = mapping, from = "post2010_FAOoriginalItem_fromWebsite",
                          to = "k", partrel = TRUE, dim = 3.1)
