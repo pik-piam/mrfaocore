@@ -115,7 +115,7 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
 
   # subset by both trade column and product column
-  mapping <- toolGetMapping("FAOitems_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
+  mapping <- toolGetMapping("FAO_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
   mapping <- mapping[, c("post2010_FAOoriginalItem_fromWebsite", "k")]
   colnames(mapping)[1] <- "ItemCodeItem"
   mapping <- distinct(mapping)
