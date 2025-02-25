@@ -376,7 +376,6 @@ X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
 ,"1018|Edible offal of goat, fresh, chilled or frozen",
 ,"1036|Edible offal of pigs, fresh, chilled or frozen",livst_pig
 ,"1036|Edible offal of pigs, fresh, chilled or frozen",
-,1037|Fat of pigs,livst_pig
 ,1037|Fat of pigs,livst_rum
 ,"1038|Meat of pig boneless, fresh or chilled",livst_pig
 ,"1039|Pig meat, cuts, salted, dried or smoked (bacon and ham)",livst_pig
@@ -409,7 +408,6 @@ X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
 ,1232|Food preparations n.e.c.,
 ,"1169|Other live animals non food, n.e.c.",
 ,677|Hop cones,
-,"767|Cotton lint, ginned",
 ,826|Unmanufactured tobacco,
 ,652|Vegetable products for feed n.e.c.,
 ,1057|Chickens,
