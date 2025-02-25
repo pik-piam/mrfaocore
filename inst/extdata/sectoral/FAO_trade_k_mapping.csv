@@ -228,7 +228,6 @@ X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
 ,982|Raw milk of sheep,
 ,"984|Cheese from milk of sheep, fresh or processed",
 ,"1166|Other meat n.e.c. (excluding mammals), fresh, chilled or frozen",
-,"1043|Pig fat, rendered",livst_pig
 ,238|Cake of soya beans,
 ,61|Cake of maize,oilcakes
 ,"341|Cake, oilseeds nes",oilcakes
@@ -591,7 +590,6 @@ X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
 ,584|Mango pulp,
 ,19|Germ of wheat,tece
 ,1065|Fat of poultry,livst_rum
-,1065|Fat of poultry,livst_chick
 ,"1103|Hides, horse, wet salted",
 ,161|Other sugar crops nec,
 ,1295|Spermaceti,
@@ -605,7 +603,6 @@ X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
 ,"1215|Hides nes, dry salted",
 ,"930|Skins, calve nes",
 ,"1066|Poultry fat, rendered",livst_rum
-,"1066|Poultry fat, rendered",livst_chick
 ,170|Bagasse,
 ,47|Bran of barley,brans
 ,"929|Skins, calve, dry salted",
@@ -626,7 +623,6 @@ X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
 ,"1046|Skins, pig, dry salted",
 ,854|Feed additives,
 ,"1040|Pig, butcher fat",livst_rum
-,"1040|Pig, butcher fat",livst_pig
 ,649|Swedes for fodder,
 ,77|Bran of oats,brans
 "26|Beverages, fermented wheat",,alcohol
