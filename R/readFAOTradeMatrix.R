@@ -120,10 +120,9 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   if (length(grep("kforestry", subtype)) != 1) {
     # subset by both trade column and product column
     mapping <- toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
-    mapping <- mapping[, c("new_FAOoriginalItem_fromWebsite", "k")]
+    mapping <- mapping[, c("FAOoriginalItem_fromWebsite", "k")]
     colnames(mapping)[1] <- "ItemCodeItem"
     mapping <- distinct(mapping)
-
 
     fao <- inner_join(fao, mapping)
 
