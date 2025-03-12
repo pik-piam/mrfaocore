@@ -1,0 +1,973 @@
+pre2010_FAOoriginalItem_fromWebsite,post2010_FAOoriginalItem_fromWebsite,k
+564|Wine,564|Wine,alcohol
+51|Beer of barley,"51|Beer of barley, malted",alcohol
+"39|Beverages, fermented rice",39|Rice-fermented beverages,alcohol
+517|Cider etc,517|Cider and other fermented beverages,alcohol
+"634|Beverages, distilled alcoholic","634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages",alcohol
+125|Cassava,"125|Cassava, fresh",cassav_sp
+122|Sweet potatoes,122|Sweet potatoes,cassav_sp
+135|Yautia (cocoyam),135|Yautia,cassav_sp
+136|Taro (cocoyam),136|Taro,cassav_sp
+"149|Roots and tubers, nes","149|Edible roots and tubers with high starch or inulin content, nec, fresh",cassav_sp
+137|Yams,137|Yams,cassav_sp
+329|Cottonseed,329|Cotton seed,cottn_pro
+,"767|Cotton lint, ginned",fibres
+X005|Fodder_and_forage,X005|Fodder_and_forage,foddr
+,"242|Groundnuts, excluding shelled",groundnut
+"1058|Meat, chicken","1058|Meat of chickens, fresh or chilled",livst_chick
+"1069|Meat, duck","1069|Meat of ducks, fresh or chilled",livst_chick
+"1073|Meat, goose and guinea fowl","1073|Meat of geese, fresh or chilled",livst_chick
+"1080|Meat, turkey","1080|Meat of turkeys, fresh or chilled",livst_chick
+"1062|Eggs, hen, in shell","1062|Hen eggs in shell, fresh",livst_egg
+"1091|Eggs, other bird, in shell","1091|Eggs from other birds in shell, fresh, nec",livst_egg
+"886|Butter, cow milk",886|Butter of cow milk,livst_milk
+"887|Ghee, butteroil of cow milk",887|Ghee from cow milk,livst_milk
+"953|Ghee, of buffalo milk",953|Ghee from buffalo milk,livst_milk
+"983|Butter and ghee, sheep milk",983|Butter and ghee of sheep milk,livst_milk
+885|Cream fresh,"885|Cream, fresh",livst_milk
+1021|Cheese of goat mlk,"1021|Cheese from milk of goats, fresh or processed",livst_milk
+"882|Milk, whole fresh cow",882|Raw milk of cattle,livst_milk
+"888|Milk, skimmed cow",888|Skim milk of cows,livst_milk
+"889|Milk, whole condensed","889|Whole milk, condensed",livst_milk
+"890|Whey, condensed","890|Whey, condensed",livst_milk
+891|Yoghurt,891|Yoghurt,livst_milk
+"894|Milk, whole evaporated","894|Whole milk, evaporated",livst_milk
+"895|Milk, skimmed evaporated","895|Skim milk, evaporated",livst_milk
+"896|Milk, skimmed condensed","896|Skim milk, condensed",livst_milk
+"897|Milk, whole dried",897|Whole milk powder,livst_milk
+"898|Milk, skimmed dried",898|Skim milk and whey powder,livst_milk
+"899|Milk, dry buttermilk","899|Buttermilk, dry",livst_milk
+"900|Whey, dry","900|Whey, dry",livst_milk
+"901|Cheese, whole cow milk",901|Cheese from whole cow milk,livst_milk
+"904|Cheese, skimmed cow milk",904|Cheese from skimmed cow milk,livst_milk
+"982|Milk, whole fresh sheep",982|Raw milk of sheep,livst_milk
+"984|Cheese, sheep milk","984|Cheese from milk of sheep, fresh or processed",livst_milk
+"1035|Meat, pig","1035|Meat of pig with the bone, fresh or chilled",livst_pig
+"1097|Meat, horse","1097|Horse meat, fresh or chilled",livst_rum
+"1108|Meat, ass","1108|Meat of asses, fresh or chilled",livst_rum
+"1127|Meat, camel","1127|Meat of camels, fresh or chilled",livst_rum
+"1141|Meat, rabbit","1141|Meat of rabbits and hares, fresh or chilled",livst_rum
+"1163|Meat, game","1163|Game meat, fresh, chilled or frozen",livst_rum
+"1166|Meat, nes","1166|Other meat nec (excluding mammals), fresh, chilled or frozen",livst_rum
+1043|Lard,"1043|Pig fat, rendered",livst_rum
+1225|Tallow,1225|Tallow,livst_rum
+"867|Meat, cattle","867|Meat of cattle with the bone, fresh or chilled",livst_rum
+"947|Meat, buffalo","947|Meat of buffalo, fresh or chilled",livst_rum
+"1017|Meat, goat","1017|Meat of goat, fresh or chilled",livst_rum
+"977|Meat, sheep","977|Meat of sheep, fresh or chilled",livst_rum
+56|Maize,56|Maize (corn),maiz
+,165|Molasses,molasses
+256|Palm kernels,256|Palm kernels,not_clear
+,238|Cake of  soya beans,oilcakes
+,245|Cake of groundnuts,oilcakes
+,269|Cake of sunflower seed,oilcakes
+,272|Cake of rapeseed,oilcakes
+,294|Cake of mustard seed,oilcakes
+,332|Cake of cottonseed,oilcakes
+,259|Cake of palm kernel,oilcakes
+,253|Cake of copra,oilcakes
+,291|Cake of sesame seed,oilcakes
+"237|Oil, soybean",237|Soya bean oil,oils
+"244|Oil, groundnut",244|Groundnut oil,oils
+"268|Oil, sunflower","268|Sunflower-seed oil, crude",oils
+"271|Oil, rapeseed","271|Rapeseed or canola oil, crude",oils
+"331|Oil, cottonseed",331|Cottonseed oil,oils
+"258|Oil, palm kernel",258|Oil of palm kernel,oils
+"257|Oil, palm",257|Palm oil,oils
+"252|Oil, coconut (copra)",252|Coconut oil,oils
+"290|Oil, sesame",290|Oil of sesame seed,oils
+"261|Oil, olive, virgin",261|Olive oil,oils
+"36|Oil, rice bran",36|Oil of rice bran,oils
+"60|Oil, maize",60|Oil of maize,oils
+"1242|Margarine, short",1242|Margarine and shortening,oils
+"281|Oil, safflower","281|Safflower-seed oil, crude",oils
+"334|Oil, linseed",334|Oil of linseed,oils
+"216|Brazil nuts, with shell","216|Brazil nuts, in shell",others
+"217|Cashew nuts, with shell","217|Cashew nuts, in shell",others
+220|Chestnut,"220|Chestnuts, in shell",others
+"221|Almonds, with shell","221|Almonds, in shell",others
+"222|Walnuts, with shell","222|Walnuts, in shell",others
+223|Pistachios,"223|Pistachios, in shell",others
+224|Kola nuts,224|Kola nuts,others
+"225|Hazelnuts, with shell","225|Hazelnuts, in shell",others
+226|Areca nuts,226|Areca nuts,others
+"234|Nuts, nes","234|Other nuts (excluding wild edible nuts and groundnuts), in shell, nec",others
+388|Tomatoes,388|Tomatoes,others
+"403|Onions, dry","403|Onions and shallots, dry (excluding dehydrated)",others
+358|Cabbages and other brassicas,358|Cabbages,others
+366|Artichokes,366|Artichokes,others
+367|Asparagus,367|Asparagus,others
+372|Lettuce and chicory,372|Lettuce and chicory,others
+373|Spinach,373|Spinach,others
+393|Cauliflowers and broccoli,393|Cauliflowers and broccoli,others
+"394|Pumpkins, squash and gourds","394|Pumpkins, squash and gourds",others
+397|Cucumbers and gherkins,397|Cucumbers and gherkins,others
+399|Eggplants (aubergines),399|Eggplants (aubergines),others
+"401|Chillies and peppers, green","401|Chillies and peppers, green (Capsicum spp and Pimenta spp)",others
+"402|Onions, shallots, green","402|Onions and shallots, green",others
+406|Garlic,406|Green garlic,others
+"407|Leeks, other alliaceous vegetables",407|Leeks and other alliaceous vegetables,others
+"414|Beans, green","414|Other beans, green",others
+"417|Peas, green","417|Peas, green",others
+"420|Vegetables, leguminous nes","420|Broad beans and horse beans, green",others
+423|String beans,423|String beans,others
+426|Carrots and turnips,426|Carrots and turnips,others
+430|Okra,430|Okra,others
+"446|Maize, green",446|Green corn (maize),others
+449|Mushrooms and truffles,449|Mushrooms and truffles,others
+459|Chicory roots,459|Chicory roots,others
+461|Carobs,461|Locust beans (carobs),others
+"463|Vegetables, fresh nes","463|Other vegetables, fresh nec",others
+567|Watermelons,567|Watermelons,others
+"568|Melons, other (inccantaloupes)",568|Cantaloupes and other melons,others
+490|Oranges,490|Oranges,others
+"495|Tangerines, mandarins, clementines, satsumas","495|Tangerines, mandarins, clementines",others
+497|Lemons and limes,497|Lemons and limes,others
+507|Grapefruit (inc pomelos),507|Pomelos and grapefruits,others
+"512|Fruit, citrus nes","512|Other citrus fruit, nec",others
+486|Bananas,486|Bananas,cassav_sp
+489|Plantains,489|Plantains and cooking bananas,cassav_sp
+515|Apples,515|Apples,others
+574|Pineapples,574|Pineapples,others
+577|Dates,577|Dates,others
+560|Grapes,560|Grapes,others
+521|Pears,521|Pears,others
+523|Quinces,523|Quinces,others
+526|Apricots,526|Apricots,others
+"530|Cherries, sour",530|Sour cherries,others
+531|Cherries,531|Cherries,others
+534|Peaches and nectarines,534|Peaches and nectarines,others
+536|Plums and sloes,536|Plums and sloes,others
+"541|Fruit, stone nes",541|Other stone fruits,others
+544|Strawberries,544|Strawberries,others
+547|Raspberries,547|Raspberries,others
+549|Gooseberries,549|Gooseberries,others
+550|Currants,550|Currants,others
+552|Blueberries,552|Blueberries,others
+554|Cranberries,554|Cranberries,others
+558|Berries nes,558|Other berries and fruits of the genus vaccinium nec,others
+569|Figs,569|Figs,others
+"571|Mangoes, mangosteens, guavas","571|Mangoes, guavas and mangosteens",others
+572|Avocados,572|Avocados,others
+587|Persimmons,587|Persimmons,others
+591|Cashewapple,591|Cashewapple,others
+592|Kiwi fruit,592|Kiwi fruit,others
+600|Papayas,600|Papayas,others
+"603|Fruit, tropical fresh nes","603|Other tropical fruits, nec",others
+"619|Fruit, fresh nes","619|Other fruits, nec",others
+"656|Coffee, green","656|Coffee, green",others
+"661|Cocoa, beans",661|Cocoa beans,others
+667|Tea,667|Tea leaves,others
+687|Pepper (piper spp),"687|Pepper (Piper spp), raw",others
+"689|Chillies and peppers, dry","689|Chillies and peppers, dry (Capsicum spp, Pimenta spp), raw",others
+698|Cloves,"698|Cloves (whole stems), raw",others
+692|Vanilla,"692|Vanilla, raw",others
+693|Cinnamon (canella),"693|Cinnamon and cinnamon-tree flowers, raw",others
+693|Cinnamon (cannella),"693|Cinnamon and cinnamon-tree flowers, raw",others
+"702|Nutmeg, mace and cardamoms","702|Nutmeg, mace, cardamoms, raw",others
+"711|Anise, badian, fennel, coriander","711|Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw",others
+720|Ginger,"720|Ginger, raw",others
+"723|Spices, nes","723|Other stimulant, spice and aromatic crops, nec",others
+116|Potatoes,116|Potatoes,potato
+"176|Beans, dry","176|Beans, dry",puls_pro
+"187|Peas, dry","187|Peas, dry",puls_pro
+"181|Broad beans, horse beans, dry","181|Broad beans and horse beans, dry",puls_pro
+191|Chick peas,"191|Chick peas, dry",puls_pro
+"195|Cow peas, dry","195|Cow peas, dry",puls_pro
+197|Pigeon peas,"197|Pigeon peas, dry",puls_pro
+201|Lentils,"201|Lentils, dry",puls_pro
+203|Bambara beans,"203|Bambara beans, dry",puls_pro
+205|Vetches,205|Vetches,puls_pro
+210|Lupins,210|Lupins,puls_pro
+"211|Pulses, nes",211|Other pulses nec,puls_pro
+270|Rapeseed,270|Rape or colza seed,rapeseed
+292|Mustard seed,292|Mustard seed,rapeseed
+249|Coconuts,"249|Coconuts, in shell",rapeseed
+289|Sesame seed,289|Sesame seed,rapeseed
+260|Olives,260|Olives,rapeseed
+263|Karite nuts (sheanuts),263|Karite nuts (sheanuts),rapeseed
+265|Castor oil seed,265|Castor oil seeds,rapeseed
+275|Tung nuts,275|Tung nuts,rapeseed
+280|Safflower seed,280|Safflower seed,rapeseed
+296|Poppy seed,296|Poppy seed,rapeseed
+299|Melonseed,299|Melonseed,rapeseed
+311|Kapokseed in shell,311|Kapokseed in shell,rapeseed
+333|Linseed,333|Linseed,rapeseed
+336|Hempseed,336|Hempseed,rapeseed
+339|Oilseeds nes,"339|Other oil seeds, nec",rapeseed
+,"328|Seed cotton, unginned",cottn_pro
+,27|Rice,rice_pro
+236|Soybeans,236|Soya beans,soybean
+163|Sugar non-centrifugal,"163|Cane sugar, non-centrifugal",sugar
+157|Sugar beet,157|Sugar beet,sugr_beet
+156|Sugar cane,156|Sugar cane,sugr_cane
+267|Sunflower seed,267|Sunflower seed,sunflower
+15|Wheat,15|Wheat,tece
+44|Barley,44|Barley,tece
+71|Rye,71|Rye,tece
+75|Oats,75|Oats,tece
+"103|Grain, mixed",103|Mixed grain,tece
+"108|Cereals, nes",108|Cereals nec,tece
+89|Buckwheat,89|Buckwheat,tece
+94|Fonio,94|Fonio,tece
+97|Triticale,97|Triticale,tece
+79|Millet,79|Millet,trce
+83|Sorghum,83|Sorghum,trce
+,"1062|Hen eggs in shell, fresh",
+,"1091|Eggs from other birds in shell, fresh, n.e.c.",
+,882|Raw milk of cattle,
+,888|Skim milk of cows,
+,"889|Whole milk, condensed",
+,"890|Whey, condensed",
+,891|Yoghurt,
+,"894|Whole milk, evaporated",
+,897|Whole milk powder,
+,898|Skim milk and whey powder,
+,"900|Whey, dry",
+,901|Cheese from whole cow milk,
+,982|Raw milk of sheep,
+,"984|Cheese from milk of sheep, fresh or processed",
+,"1166|Other meat n.e.c. (excluding mammals), fresh, chilled or frozen",
+,"1043|Pig fat, rendered",livst_pig
+,238|Cake of soya beans,
+,61|Cake of maize,oilcakes
+,"341|Cake, oilseeds nes",oilcakes
+,335|Cake of  linseed,oilcakes
+,338|Cake of hempseed,oilcakes
+,37|Cake of rice bran,oilcakes
+,282|Cake of safflowerseed,oilcakes
+,314|Cake of kapok,oilcakes
+,"234|Other nuts (excluding wild edible nuts and groundnuts), in shell, n.e.c.",
+,"401|Chillies and peppers, green (Capsicum spp. and Pimenta spp.)",
+,"463|Other vegetables, fresh n.e.c.",
+,"603|Other tropical fruits, n.e.c.",
+,"619|Other fruits, n.e.c.",
+,671|Mate leaves,
+,"687|Pepper (Piper spp.), raw",
+,"689|Chillies and peppers, dry (Capsicum spp., Pimenta spp.), raw",
+,"723|Other stimulant, spice and aromatic crops, n.e.c.",
+,109|Infant food,
+,"339|Other oil seeds, n.e.c.",
+,162|Raw cane or beet sugar (centrifugal only),
+,161|Other sugar crops n.e.c.,
+,1182|Natural honey,
+,101|Canary seed,
+,92|Quinoa,
+,28|Husked rice,
+,"29|Rice, milled (husked)",
+,"31|Rice, milled",
+,"32|Rice, broken",
+,38|Flour of rice,
+,"110|Communion wafers, empty cachets of a kind suitable for pharmaceutical use, sealing wafers, rice paper and similar products.",
+,114|Mixes and doughs for the preparation of bakers' wares,
+,"115|Food preparations of flour, meal or malt extract",
+,16|Wheat and meslin flour,
+,17|Bran of wheat,brans
+,"18|Uncooked pasta, not stuffed or otherwise prepared",
+,20|Bread,
+,21|Bulgur,
+,22|Pastry,
+,41|Breakfast cereals,
+,"46|Barley, pearled",
+,"49|Malt, whether or not roasted",
+,57|Germ of maize,maiz
+,58|Flour of maize,
+,59|Bran of maize,brans
+,846|Gluten feed and meal,
+,"76|Oats, rolled",
+,81|Bran of millet,brans
+,85|Bran of sorghum,brans
+,104|Flour of mixed grain,
+,111|Flour of cereals n.e.c.,
+,113|Cereal preparations,
+,91|Bran of buckwheat,brans
+,"117|Flour, meal, powder, flakes, granules and pellets of potatoes",
+,"118|Potatoes, frozen",
+,126|Flour of cassava,
+,"128|Cassava, dry",
+,129|Starch of cassava,sugar
+,150|Flour of roots and tubers n.e.c.,
+,164|Refined sugar,sugar
+,168|Sugar confectionery,
+,"160|Refined cane or beet sugar, in solid form, containing added flavouring or colouring matter; maple sugar and maple syrup",
+,167|Sugar and syrups n.e.c.,
+,173|Lactose,
+,633|Other non-alcoholic caloric beverages,
+,212|Flour of pulses,
+,"229|Brazil nuts, shelled",
+,"230|Cashew nuts, shelled",
+,"231|Almonds, shelled",
+,"232|Walnuts, shelled",
+,"233|Hazelnuts, shelled",
+,235|Prepared nuts,
+,239|Soya sauce,
+,240|Soya paste,
+,"243|Groundnuts, shelled",
+,246|Prepared groundnuts,
+,247|Peanut butter,
+,295|Flour of mustard seed,
+,"250|Coconuts, desiccated",
+,251|Copra,
+,262|Olives preserved,
+,1276|Industrial monocarboxylic fatty acids,
+,274|Oil of olive residues,oils
+,1241|Liquid margarine,oils
+,"1274|Animal or vegetable fats and oils and their fractions, chemically modified, except those hydrogenated, inter-esterified, re-esterified or elaidinized; inedible mixtures or preparations of animal or vegetable fats or oils",
+,264|Butter of karite nuts,oils
+,266|Oil of castor beans,oils
+,297|Oil of poppy seed,oils
+,306|Vegetable tallow,oils
+,313|Oil of kapok,oils
+,"340|Other oil of vegetable origin, crude n.e.c.",
+,"664|Cocoa butter, fat and oil",oils
+,390|Tomato juice,
+,391|Paste of tomatoes,
+,"392|Tomatoes, peeled (o/t vinegar)",
+,"447|Sweet corn, frozen",
+,"448|Sweet corn, prepared or preserved",
+,451|Canned mushrooms,
+,"465|Other vegetables and pulses, preserved other than by vinegar, acetic acid or sugar, n.e.c.",
+,"469|Vegetables, dehydrated",
+,"471|Vegetables, pulses and potatoes, preserved by vinegar or acetic acid",
+,472|Vegetables preserved nes (o/t vinegar),
+,473|Vegetables frozen,
+,474|Other vegetables provisionally preserved,
+,475|Vegetables preserved (frozen),
+,476|Homogenized vegetable preparations,
+,658|Coffee substitutes,
+,491|Orange juice,
+,"492|Orange juice, concentrated",
+,498|Juice of lemon,
+,"499|Lemon juice, concentrated",
+,509|Grapefruit juice,
+,"510|Grapefruit juice, concentrated",
+,513|Juice of citrus fruit n.e.c.,
+,"514|Citrus juice, concentrated n.e.c.",
+,518|Apple juice,
+,"519|Apple juice, concentrated",
+,"575|Pineapples, otherwise prepared or preserved",
+,576|Pineapple juice,
+,"580|Juice of pineapples, concentrated",
+,561|Raisins,
+,562|Grape juice,
+,"527|Apricots, dried",
+,"537|Plums, dried",
+,"539|Juice of plum, concentrated",
+,"570|Figs, dried",
+,"620|Other fruit n.e.c., dried",
+,622|Juice of fruits n.e.c.,
+,623|Fruit prepared n.e.c.,
+,"626|Homogenized cooked fruit, prepared",
+,"657|Coffee, decaffeinated or roasted",
+,659|Coffee extracts,
+,662|Cocoa paste not defatted,
+,665|Cocoa powder and cake,
+,666|Chocolate products nes,
+,"672|Extracts, essences and concentrates of tea or mate, and preparations with a basis thereof or with a basis of tea or mate",
+,565|Vermouth and other wine of fresh grapes flavoured with plats or aromatic substances,alcohol
+,"1063|Eggs, liquid",
+,"1064|Eggs, dried",
+,"892|Yoghurt, with additives",
+,"893|Buttermilk, curdled and acidified milk",
+,907|Processed cheese,
+,909|Dairy products n.e.c.,
+,910|Ice cream and other edible ice,
+,"1018|Edible offal of goat, fresh, chilled or frozen",livst_rum
+,"1018|Edible offal of goat, fresh, chilled or frozen",
+,"1036|Edible offal of pigs, fresh, chilled or frozen",livst_pig
+,"1036|Edible offal of pigs, fresh, chilled or frozen",
+,1037|Fat of pigs,livst_pig
+,1037|Fat of pigs,livst_rum
+,"1038|Meat of pig boneless, fresh or chilled",livst_pig
+,"1039|Pig meat, cuts, salted, dried or smoked (bacon and ham)",livst_pig
+,"1041|Sausages and similar products of meat, offal or blood of pig",livst_pig
+,1042|Pig meat preparations,livst_pig
+,"1059|Edible offals and liver of chickens and guinea fowl, fresh, chilled or frozen",livst_chick
+,"1059|Edible offals and liver of chickens and guinea fowl, fresh, chilled or frozen",
+,1060|Fatty liver preparations,
+,1061|Poultry meat preparations,livst_chick
+,"1074|Edible offals and liver of geese, fresh, chilled or frozen",livst_chick
+,"1075|Edible offals and liver of ducks, fresh, chilled or frozen",livst_chick
+,"1074|Edible offals and liver of geese, fresh, chilled or frozen",
+,"1075|Edible offals and liver of ducks, fresh, chilled or frozen",
+,1129|Fat of camels,livst_rum
+,"1164|Other meat and edible meat offal, salted, in brine, dried or smoked; edible flours and meals of meat or meat offal",
+,1168|Animal oils and fats n.e.c.,
+,1243|Fat preparations n.e.c.,
+,"868|Edible offal of cattle, fresh, chilled or frozen",
+,"868|Edible offal of cattle, fresh, chilled or frozen",livst_rum
+,"869|Cattle fat, unrendered",livst_rum
+,"870|Meat of cattle boneless, fresh or chilled",livst_rum
+,"874|Sausages and similar products of meat, offal or blood of beef and veal",livst_rum
+,875|beef and veal preparations nes,livst_rum
+,"978|Edible offal of sheep, fresh, chilled or frozen",
+,"978|Edible offal of sheep, fresh, chilled or frozen",livst_rum
+,994|Wool grease and lanolin,livst_rum
+,828|Cigarettes,
+,1293|Crude organic material n.e.c.,
+,"831|Other manufactured tobacco and manufactured tobacco substitutes; ""homogenized"" or ""reconstituted"" tobacco; tobacco extracts and essences",
+,1232|Food preparations n.e.c.,
+,"1169|Other live animals non food, n.e.c.",
+,677|Hop cones,
+,"767|Cotton lint, ginned",
+,826|Unmanufactured tobacco,
+,652|Vegetable products for feed n.e.c.,
+,1057|Chickens,
+,"30|Rice, paddy (rice milled equivalent)",
+,"843|Dog or cat food, put up for retail sale",
+,"1171|Other live animals, n.e.c.",
+,"988|Wool, degreased or carbonized, not carded or combed",
+,829|Cigars and cheroots,
+,"768|Cotton, carded or combed",
+,753|Essential oils n.e.c.,
+,866|Cattle,
+,1150|Other rodents,
+,653|Food wastes,
+,"999|Raw hides and skins of sheep or lambs, with wool",
+,"460|Vegetable products, fresh or dry n.e.c.",
+,"920|Hides, wet-salted of cattle",
+,1107|Asses,
+,"1218|Fine animal hair, n.e.c.",
+,836|Natural rubber in primary forms,
+,631|Ice and snow,
+,1183|Beeswax,
+,1181|Bees,
+,837|Natural rubber in other forms,
+,660|Coffee husks and skins,
+,1016|Goats,
+,1187|Silk waste,
+,769|Cotton waste,
+,"651|Other forage products, n.e.c.",
+,"628|Pulp, waste of fruit for feed",
+,"987|Shorn wool, greasy, including fleece-washed shorn wool",
+,"754|Pyrethrum, dried flowers",
+,"780|Jute, raw or retted",
+,845|Compound feed n.e.c.,
+,862|Lucerne (alfalfa) meal and pellets,
+,1096|Horses,
+,"1216|Other raw skins of other animals, preserved",
+,169|Beet pulp,
+,"1009|Wool, hair waste",
+,1034|Swine / pigs,
+,"928|Skins, wet-salted of calves",
+,"821|Other fibre crops, raw, n.e.c.",
+,946|Buffalo,
+,"809|Abaca, manila hemp, raw",
+,1126|Camels,
+,"748|Peppermint, spearmint",
+,"813|Coir, raw",
+,"1026|Skins, wet-salted of goats",
+,"773|Flax, processed but not spun",
+,"771|Flax, raw or retted",
+,1173|Meat meal,
+,1068|Ducks,
+,770|Cotton linters,
+,"997|Skins, dry-salted of sheep",
+,654|Brewing or distilling dregs and waste,
+,"1296|Vegetable waxes (other than triglycerides), whether or not refined or coloured",
+,976|Sheep,
+,"635|Cereal straw, husks, unprepared, ground, pressed, or in the form of pellets",
+,850|Feed supplements,
+,1186|Raw silk (not thrown),
+,737|Oil of citronella,
+,1140|Rabbits and hares,
+,755|Pyrethrum extract,
+,"774|Flax, tow and waste",
+,1110|Mules and hinnies,
+,1079|Turkeys,
+,1083|Other birds,
+,"996|Skins, wet-salted of sheep",
+,1185|Silk-worm cocoons suitable for reeling,
+,1031|Coarse goat hair,
+,"1104|Hides, dry-salted of horses",
+,1157|Other camelids,
+,"859|Hay for forage, from other crops n.e.c.",
+,855|Feed minerals,
+,120|Potato offals,
+,"858|Hay for forage, from legumes",
+,"958|Hides, wet-salted of buffalo",
+,919|Raw hides and skins of cattle,
+,"959|Hides, dry-salted of buffalo",
+,"1213|Other raw skins of other animals, fresh",
+,"778|Kapok fibre, raw",
+,853|Vitamins,
+,"646|Turnips, for forage",
+,"1134|Hides, wet-salted of camels",
+,630|Cane tops,
+,1293|Crude organic material nec,
+,623|Fruit prepared nec,
+,1232|Food preparations nec,
+,622|Juice of fruits nec,
+,"620|Other fruit nec, dried",
+,"110|Communion wafers, empty cachets of a kind suitable for pharmaceutical use, sealing wafers, rice paper and similar products",
+,1243|Fat preparations nec,livst_rum
+,"460|Vegetable products, fresh or dry nec",
+,909|Dairy products nec,
+,1275|hydrogenated oils and fats,oils
+,111|Flour of cereals nec,
+,"340|Other oil of vegetable origin, crude nec",oils
+,"514|Citrus juice, concentrated nec",
+,450|Dried mushrooms,
+,50|Malt extract,
+,1172|Meat prepared nec,
+,"1169|Other live animals non food, nec",
+,112|Bran of cereals nec,brans
+,513|Juice of citrus fruit nec,
+,"1259|Feed, food waste preparations",
+,"1218|Fine animal hair, nec",
+,"1091|Eggs from other birds in shell, fresh, nec",
+,"625|Fruit, nuts, peel, sugar preserved",
+,167|Sugar and syrups nec,
+,624|Flour of fruits,
+,"641|Forage and silage, alfalfa",
+,845|Compound feed nec,
+,"841|Feed, compound, poultry",
+,"1195|Skins, furs",
+,"1002|Skins, karakul",
+,"1008|Hair, carded/combed",
+,753|Essential oils nec,
+,"839|Balata, gutta-percha, guayule, chicle and similar natural gums in primary forms or in plates, sheets or strip",
+,"343|Flours and meals of oil seeds or oleaginous fruits, except those of mustard",
+,1217|Leather used & waste,
+,"873|Extracts and juices of meat, fish, crustaceans, molluscs or other aquatic invertebrates",
+,877|Homogenized meat preparations,
+,127|Tapioca of cassava,
+,563|Must of grape,
+,1168|Animal oils and fats nec,livst_rum
+,"1030|Hair, goat, fine",
+,"872|Bovine meat, salted, dried or smoked",
+,35|Bran of rice,brans
+,"1167|Offals nec (excluding mammals), fresh, chilled or frozen",
+,"871|Cattle, butcher fat",livst_rum
+,652|Vegetable products for feed nec,
+,213|Bran of pulses,
+,72|Flour of rye,
+,1022|Butter of goat milk,
+,"896|Skim milk, condensed",
+,278|Jojoba oil,oils
+,1072|Geese,
+,"998|Skins, sheep nes",
+,"1100|Hair, horse",
+,"842|Feed, compound, pigs",
+,150|Flour of roots and tubers nec,
+,"1021|Cheese from milk of goats, fresh or processed",
+,"604|Other tropical fruit, dried",
+,"1214|Hides, wet salted nes",
+,"782|Kenaf, and other textile bast fibres, raw or retted",
+,1221|Lard stearine and lard oil,
+,1221|Lard stearine and lard oil,livst_rum
+,466|Other vegetable juices,
+,905|Whey cheese,
+,"1089|Meat of pigeons and other birds nec, fresh, chilled or frozen",livst_chick
+,45|Pot barley,
+,"840|Feed, compound, cattle",
+,"636|Forage and silage, maize",
+,"1081|Edible offals and liver of turkey, fresh, chilled or frozen",livst_chick
+,"1081|Edible offals and liver of turkey, fresh, chilled or frozen",
+,"651|Other forage products, nec",
+,"1171|Other live animals, nec",
+,663|Cocoa husks and shells,
+,"1098|Edible offals of horses and other equines,  fresh, chilled or frozen",
+,878|Liver preparations,
+,"1219|Hair, coarse nes",
+,"859|Hay for forage, from other crops nec",
+,"821|Other fibre crops, raw, nec",
+,"789|Sisal, raw",
+,"1028|Skins, goat nes",
+,"1027|Skins, goat, dry salted",
+,"857|Hay, non-leguminous",
+,"777|True hemp, raw or retted",
+,"895|Skim milk, evaporated",
+,"1047|Skins, pig nes",
+,"1146|Skins, rabbit",
+,"903|Whey, fresh",
+,"922|Hides, cattle nes",
+,"921|Hides, cattle, dry salted",
+,"1105|Hides, horse nes",
+,48|Barley flour and grits,
+,496|Juice of tangerine,
+,647|Beets for fodder,
+,105|Bran of mixed grain,brans
+,175|Isoglucose,
+,276|Oil of tung nuts,oils
+,584|Mango pulp,
+,19|Germ of wheat,tece
+,1065|Fat of poultry,livst_rum
+,1065|Fat of poultry,livst_chick
+,"1103|Hides, horse, wet salted",
+,161|Other sugar crops nec,
+,1295|Spermaceti,
+,"1007|Wool, shoddy",
+,"899|Buttermilk, dry",
+,904|Cheese from skimmed cow milk,
+,121|Tapioca of potatoes,
+"271|Oil, rapeseed","293|Mustard seed oil, crude",oils
+,73|Bran of rye,brans
+,1222|Degras,livst_rum
+,"1215|Hides nes, dry salted",
+,"930|Skins, calve nes",
+,"1066|Poultry fat, rendered",livst_rum
+,"1066|Poultry fat, rendered",livst_chick
+,170|Bagasse,
+,47|Bran of barley,brans
+,"929|Skins, calve, dry salted",
+,"465|Other vegetables and pulses, preserved other than by vinegar, acetic acid or sugar, nec",
+,"1045|Skins, pig, wet salted",
+,583|Juice of mango,
+,"788|Ramie, raw or retted",
+,"948|Edible offal of buffalo, fresh, chilled or frozen",
+,273|Olive residues,
+,"566|Grapes, marc",
+,80|Flour of millet,
+,"852|Feed, other concentrates nes",
+,"979|Sheep fat, unrendered",livst_rum
+,84|Flour of sorghum,
+,90|Flour of buckwheat,
+,"151|Edible roots and tubers with high starch or inulin content, nec, dry",
+,655|Vegetables and roots fodder,
+,"1046|Skins, pig, dry salted",
+,854|Feed additives,
+,"1040|Pig, butcher fat",livst_rum
+,"1040|Pig, butcher fat",livst_pig
+,649|Swedes for fodder,
+,77|Bran of oats,brans
+"26|Beverages, fermented wheat",,alcohol
+66|Beer of maize,,alcohol
+82|Beer of millet,,alcohol
+86|Beer of sorghum,,alcohol
+632|Alcohol non food,,alcohol
+X002|Distillers_grain,,distillers_grain
+X004|Brewers_grain,,distillers_grain
+X001|Ethanol,,ethanol
+,,fibres
+1501|Frwtr Diad F,,fish
+1502|Frwtr Fz Whl,,fish
+1503|Frwtr Fillet,,fish
+1504|Frwtr Fz Flt,,fish
+1505|Frwtr Cured,,fish
+1506|Frwtr Canned,,fish
+1507|Frwtr Pr nes,,fish
+1508|Frwtr Meals,,fish
+1514|Dmrsl Fresh,,fish
+1515|Dmrsl Fz Whl,,fish
+1516|Dmrsl Fillet,,fish
+1517|Dmrsl Fz Flt,,fish
+1518|Dmrsl Cured,,fish
+1519|Dmrsl Canned,,fish
+1520|Dmrsl Pr nes,,fish
+1521|Dmrsl Meals,,fish
+1527|Pelagic Frsh,,fish
+1528|Pelgc Fz Whl,,fish
+1529|Pelgc Fillet,,fish
+1530|Pelgc Fz Flt,,fish
+1531|Pelgc Cured,,fish
+1532|Pelgc Canned,,fish
+1533|Pelgc Pr nes,,fish
+1534|Pelgc Meals,,fish
+1540|Marine nes F,,fish
+1541|Marin Fz Whl,,fish
+1542|Marin Fillet,,fish
+1543|Marin Fz Flt,,fish
+1544|Marin Cured,,fish
+1545|Marin Canned,,fish
+1546|Marin Pr nes,,fish
+1547|Marin Meals,,fish
+1553|Crstaceans F,,fish
+1554|Crstc Frozen,,fish
+1555|Crstc Cured,,fish
+1556|Crstc Canned,,fish
+1557|Crstc Pr nes,,fish
+1558|Crstc Meals,,fish
+1570|Cephlp Fresh,,fish
+1571|Cphlp Frozen,,fish
+1572|Cphlp Cured,,fish
+1573|Cphlp Canned,,fish
+1574|Cphlp Pr nes,,fish
+1575|Cphlp Meals,,fish
+1562|Mlluscs Frsh,,fish
+1563|Molsc Frozen,,fish
+1564|Molsc Cured,,fish
+1565|Molsc Canned,,fish
+1566|Molsc Meals,,fish
+1580|Aq M Meat,,fish
+1583|Aq M Prep Ns,,fish
+1587|Aqutc Anim F,,fish
+1588|Aq A Cured,,fish
+1589|Aquatic Animals Meals,,fish
+1590|Aq A Prep Ns,,fish
+1509|Frwt Bdy Oil,,fish
+1522|Dmrs Bdy Oil,,fish
+1535|Pelg Bdy Oil,,fish
+1548|Marn Bdy Oil,,fish
+1582|Aq M Oils,,fish
+1510|Frwt Lvr Oil,,fish
+1523|Demersal Liver Oils,,fish
+1536|Pelg Lvr Oil,,fish
+1549|Marine nes Liver Oils,,fish
+,,groundnut
+"952|Butter, buffalo milk",,livst_milk
+"1020|Milk, whole fresh goat",,livst_milk
+"1130|Milk, whole fresh camel",,livst_milk
+"951|Milk, whole fresh buffalo",,livst_milk
+"955|Cheese, buffalo milk",,livst_milk
+"1089|Meat, bird nes",,livst_rum
+"1111|Meat, mule",,livst_rum
+"1151|Meat, other rodents",,livst_rum
+"1158|Meat, other camelids",,livst_rum
+"1176|Snails, not sea",,livst_rum
+"1167|Offals, nes",,livst_rum
+,,molasses
+X003|Palmoil_Kerneloil_Kernelcake,,oilpalm
+378|Cassava leaves,,others
+"542|Fruit, pome nes",,others
+671|Mate,,others
+109|Infant food,,others
+"1594|Aquatic plants, fresh",,others
+"1595|Aquatic plants, dried",,others
+"1596|Aquatic plants, other preparations",,others
+277|Jojoba seed,,rapeseed
+305|Tallowtree seed,,rapeseed
+310|Kapok fruit,,rapeseed
+162|Sugar Raw Centrifugal,,remaining
+,,cottn_pro
+,,rice_pro
+"161|Sugar crops, nes",,remaining
+"1182|Honey, natural",,remaining
+101|Canary seed,,tece
+68|Popcorn,,tece
+92|Quinoa,,tece
+"27|Rice, paddy",,
+"28|Rice, husked",,
+"29|Rice, milled/husked",,
+"31|Rice, milled",,
+"32|Rice, broken",,
+"33|Gluten, rice",,
+"34|Starch, rice",,
+"35|Bran, rice",,
+"38|Flour, rice",,
+110|Wafers,,
+114|Mixes and doughs,,
+"115|Food preparations, flour, malt extract",,
+"16|Flour, wheat",,
+"17|Bran, wheat",,
+18|Macaroni,,
+"19|Germ, wheat",,
+20|Bread,,
+21|Bulgur,,
+22|Pastry,,
+"23|Starch, wheat",,
+"24|Gluten, wheat",,
+"41|Cereals, breakfast",,
+"45|Barley, pot",,
+"46|Barley, pearled",,
+"47|Bran, barley",,
+"48|Flour, barley and grits",,
+49|Malt,,
+50|Malt extract,,
+"57|Germ, maize",,
+"58|Flour, maize",,
+"59|Bran, maize",,
+"63|Gluten, maize",,
+"64|Starch, maize",,
+"846|Feed and meal, gluten",,
+"72|Flour, rye",,
+"73|Bran, rye",,
+76|Oats rolled,,
+"77|Bran, oats",,
+"80|Flour, millet",,
+"81|Bran, millet",,
+"84|Flour, sorghum",,
+"85|Bran, sorghum",,
+"104|Flour, mixed grain",,
+"105|Bran, mixed grains",,
+"111|Flour, cereals",,
+"112|Bran, cereals nes",,
+"113|Cereal preparations, nes",,
+"90|Flour, buckwheat",,
+"91|Bran, buckwheat",,
+"95|Flour, fonio",,
+"96|Bran, fonio",,
+"98|Flour, triticale",,
+"99|Bran, triticale",,
+"117|Flour, potatoes",,
+"118|Potatoes, frozen",,
+"119|Starch, potatoes",,
+"121|Tapioca, potatoes",,
+"126|Flour, cassava",,
+"127|Tapioca, cassava",,
+128|Cassava dried,,
+"129|Starch, cassava",,
+"150|Flour, roots and tubers nes",,
+151|Roots and tubers dried,,
+"158|Sugar, cane, raw, centrifugal",,
+"159|Sugar, beet, raw, centrifugal",,
+164|Sugar refined,,
+168|Sugar confectionery,,
+171|Sugar flavoured,,
+154|Fructose chemically pure,,
+155|Maltose chemically pure,,
+160|Maple sugar and syrups,,
+165|Molasses,,
+"166|Fructose and syrup, other",,
+"167|Sugar, nes",,
+173|Lactose,,
+175|Isoglucose,,
+"633|Beverages, non alcoholic",,
+"212|Flour, pulses",,
+"213|Bran, pulses",,
+"229|Brazil nuts, shelled",,
+"230|Cashew nuts, shelled",,
+231|Almonds shelled,,
+"232|Walnuts, shelled",,
+"233|Hazelnuts, shelled",,
+"235|Nuts, prepared (exc groundnuts)",,
+239|Soya sauce,,
+240|Soya paste,,
+241|Soya curd,,
+"242|Groundnuts, with shell",,
+"243|Groundnuts, shelled",,
+"246|Groundnuts, prepared",,
+247|Peanut butter,,
+"295|Flour, mustard",,
+"250|Coconuts, desiccated",,
+251|Copra,,
+"254|Oil, palm fruit",,oilpalm
+262|Olives preserved,,
+312|Kapokseed shelled,,
+"343|Flour, oilseeds",,
+"293|Oil, mustard",,
+1276|Fatty acids,,
+1277|Fatty substance residues,,
+"274|Oil, olive residues",,
+"1241|Margarine, liquid",,
+"1273|Castor oil, hydrogenated (opal wax)",,
+"1274|Oil, boiled etc",,
+"1275|Oil, hydrogenated",,
+264|Butter of karite nuts,,
+"266|Oil, castor beans",,
+"276|Oil, tung nuts",,
+"278|Oil, jojoba",,
+"297|Oil, poppy",,
+306|Vegetable tallow,,
+"307|Oil, stillingia",,
+"313|Oil, kapok",,
+"337|Oil, hempseed",,
+"340|Oil, vegetable origin nes",,
+"664|Cocoa, butter",,
+"389|Juice, tomato, concentrated",,
+"390|Juice, tomato",,
+"391|Tomatoes, paste",,
+"392|Tomatoes, peeled",,
+447|Sweet corn frozen,,
+448|Sweet corn prep or preserved,,
+"450|Mushrooms, dried",,
+"451|Mushrooms, canned",,
+"464|Vegetables, dried nes",,
+"465|Vegetables, canned nes",,
+"466|Juice, vegetables nes",,
+"469|Vegetables, dehydrated",,
+471|Vegetables in vinegar,,
+"472|Vegetables, preserved nes",,
+"473|Vegetables, frozen",,
+"474|Vegetables, temporarily preserved",,
+"475|Vegetables, preserved, frozen",,
+"476|Vegetables, homogenized preparations",,
+"658|Coffee, substitutes containing coffee",,
+"491|Juice, orange, single strength",,
+"492|Juice, orange, concentrated",,
+"496|Juice, tangerine",,
+"498|Juice, lemon, single strength",,
+"499|Juice, lemon, concentrated",,
+"509|Juice, grapefruit",,
+"510|Juice, grapefruit, concentrated",,
+"513|Juice, citrus, single strength",,
+"514|Juice, citrus, concentrated",,
+"518|Juice, apple, single strength",,
+"519|Juice, apple, concentrated",,
+575|Pineapples canned,,
+"576|Juice, pineapple",,
+"580|Juice, pineapple, concentrated",,
+561|Raisins,,
+"562|Juice, grape",,
+"563|Grapes, must",,
+"527|Apricots, dry",,
+537|Plums dried (prunes),,
+"538|Juice, plum, single strength",,
+"539|Juice, plum, concentrated",,
+570|Figs dried,,
+"583|Juice, mango",,
+"604|Fruit, tropical dried nes",,
+"620|Fruit, dried nes",,
+"622|Juice, fruit nes",,
+"623|Fruit, prepared nes",,
+"624|Flour, fruit",,
+"625|Fruits, nuts, peel, sugar preserved",,
+"626|Fruit, cooked, homogenized preparations",,
+"657|Coffee, roasted",,
+"659|Coffee, extracts",,
+"662|Cocoa, paste",,
+"665|Cocoa, powder and cake",,
+666|Chocolate products nes,,
+"672|Tea, mate extracts",,
+565|Vermouths and similar,,
+"1063|Eggs, liquid",,
+"1064|Eggs, dried",,
+916|Egg albumine,,
+"1023|Milk, skimmed goat",,
+"892|Yoghurt, concentrated or not",,
+"893|Buttermilk, curdled, acidified milk",,
+"903|Whey, fresh",,
+"905|Whey, cheese",,
+"907|Cheese, processed",,
+"908|Milk, reconstituted",,
+"909|Milk, products of natural constituents nes",,
+910|Ice cream and edible ice,,
+917|Casein,,
+"954|Milk, skimmed buffalo",,
+"985|Milk, skimmed sheep",,
+"1018|Offals, edible, goats",,
+"1019|Fat, goats",,
+1022|Butter of goat mlk,,
+"1036|Offals, pigs, edible",,
+"1037|Fat, pigs",,
+"1038|Meat, pork",,
+1039|Bacon and ham,,
+"1040|Fat, pig butcher",,
+"1041|Meat, pig sausages",,
+"1042|Meat, pig, preparations",,
+"1059|Offals, liver chicken",,
+"1060|Fat, liver prepared (foie gras)",,
+"1061|Meat, chicken, canned",,
+"1065|Fat, poultry",,
+"1066|Fat, poultry, rendered",,
+"1074|Offals, liver geese",,
+"1075|Offals, liver duck",,
+"1081|Offals, liver turkeys",,
+"1098|Offals, horses",,
+"1128|Offals, edible, camels",,
+"1129|Fat, camels",,
+"1159|Offals, other camelids",,
+"1160|Fat, other camelids",,
+"1164|Meat, dried nes",,
+"1168|Oils, fats of animal nes",,
+"1172|Meat, nes, preparations",,
+1221|Lard stearine oil,,
+1222|Degras,,
+"1243|Fat, nes, prepared",,
+"868|Offals, edible, cattle",,
+"869|Fat, cattle",,
+"870|Meat, cattle, boneless (beef and veal)",,
+"871|Fat, cattle butcher",,
+"872|Meat, beef, dried, salted, smoked",,
+"873|Meat, extracts",,
+"874|Meat, beef and veal sausages",,
+"875|Meat, beef, preparations",,
+"876|Meat, beef, canned",,
+"877|Meat, homogenized preparations",,
+878|Liver prep,,
+"948|Offals, edible, buffaloes",,
+"949|Fat, buffaloes",,
+"978|Offals, sheep,edible",,
+"979|Fat, sheep",,
+994|Grease incl lanolin wool,,
+"271|Oil, rapeseed",,oils

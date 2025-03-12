@@ -122,10 +122,10 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
   if (prodAgg) {
     # aggregate to get a preliminary cif/fob ratio
     out[is.na(out)] <- 0
-    mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mrfaocore")
-    out <- toolAggregate(out, rel = mapping, from = "new_FAOoriginalItem_fromWebsite",
+    mapping <- toolGetMapping("FAO_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
+    out <- toolAggregate(out, rel = mapping, from = "post2010_FAOoriginalItem_fromWebsite",
                          to = "k", partrel = TRUE, dim = 3.1)
-
+    out <- out[, , "", invert = TRUE]
     if (output == "qty") {
       attr <- calcOutput("Attributes", aggregate = FALSE)
       out <- out / collapseNames(attr[, , "wm"][, , getNames(out)])
