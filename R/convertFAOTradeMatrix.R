@@ -21,7 +21,6 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
 
   gc()
   # ---- Section for country specific treatment ----
-
   # make a set name for dim 1.2
   getSets(x)[1] <- "ISO.Partner"
 
@@ -97,9 +96,11 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
         (all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.2)))) {
     additionalMapping <- append(additionalMapping,
                                 list(c("XSD", "SSD", "y2011"), c("XSD", "SDN", "y2011")))
-  } else if ("XSD" %in% getItems(x, dim = 1.1) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
+  }
+  if ("XSD" %in% getItems(x, dim = 1.1) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
     getItems(x, dim = 1.1)[getItems(x, dim = 1.1) == "XSD"] <- "SDN"
-  } else if ("XSD" %in% getItems(x, dim = 1.2) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.2))) {
+  }
+  if ("XSD" %in% getItems(x, dim = 1.2) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.2))) {
     getItems(x, dim = 1.2)[getItems(x, dim = 1.2) == "XSD"] <- "SDN"
   }
 
