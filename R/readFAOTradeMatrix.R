@@ -8,7 +8,7 @@
 #' @param subtype subsets of the detailed trade matrix to read in. Very large csv needs to be read in chunks
 #' separated by export/import quantities and values, as well as kcr, kli and kothers (not in kcr nor kli)
 #' Options are all combinations of c("import_value", "import_qty", "export_value",
-#' "export_quantity" X c("kcr", "kli", "kothers"))
+#' "export_quantity" X c("kcr", "kli", "kothers", "kforestry"))
 #' import is import side reporting while export is export-sde reporting
 #' @return FAO data as MAgPIE object
 #' @author David C
@@ -23,8 +23,12 @@
 #' @importFrom magpiesets findset
 
 readFAOTradeMatrix <- function(subtype) { # nolint
-  file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
 
+  if (length(grep("kforestry", subtype)) == 1) {
+    file <- "Forestry_Trade_Flows_E_All_Data_(Normalized).csv"
+  } else {
+    file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
+  }
   # ---- Select columns to be read from file and read file ----
 
   ## efficient reading of csv file: read only needed columns in the needed type (codes as factor)
@@ -75,7 +79,6 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   fao <- fao[!is.na(fao$ReporterISO), ]
   fao <- fao[!is.na(fao$PartnerISO), ]
 
-
   # ---- Reformat elements ----
 
   elementShort <- toolGetMapping("FAOelementShort.csv", where = "mrfaocore")
@@ -88,7 +91,7 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   tmpElementShort <- paste0(tmpElement, "_(", tmpUnit, ")")
   fao$ElementShort <- gsub("_{1,}", "_", tmpElementShort, perl = TRUE) # nolint
 
-  #replace Units if tonnes exist with "t" in updated mapping
+  # replace Units if tonnes exist with "t" in updated mapping
   if ("tonnes" %in% elementShort$Unit) {
     elementShort$Unit[(elementShort$Unit == "tonnes")] <- "t"
   }
@@ -114,49 +117,64 @@ readFAOTradeMatrix <- function(subtype) { # nolint
 
   fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
 
-  # subset by both trade column and product column
-  mapping <- toolGetMapping("FAO_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
-  mapping <- mapping[, c("post2010_FAOoriginalItem_fromWebsite", "k")]
-  colnames(mapping)[1] <- "ItemCodeItem"
-  mapping <- distinct(mapping)
+  if (length(grep("kforestry", subtype)) != 1) {
+    # subset by both trade column and product column
+    mapping <- toolGetMapping("FAO_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
+    mapping <- mapping[, c("post2010_FAOoriginalItem_fromWebsite", "k")]
+    colnames(mapping)[1] <- "ItemCodeItem"
+    mapping <- distinct(mapping)
 
+    fao <- inner_join(fao, mapping)
 
-  fao <- inner_join(fao, mapping)
+    kcr <- findset("kcr")
+    kli <- findset("kli")
+    kothers <- setdiff(findset("kall"), c(kcr, kli))
 
-  kcr <- findset("kcr")
-  kli <- findset("kli")
-  kothers <- setdiff(findset("kall"), c(kcr, kli))
+    elements <- list(
+      import_value_kcr = list(trade = "import_kUS$", product = kcr),
+      import_value_kli = list(trade = "import_kUS$", product = kli),
+      import_value_kothers = list(trade = "import_kUS$", product = kothers),
+      import_qty_kcr = list(trade = c("import", "Import_Quantity_(1000_Head)",
+                                      "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+                            product = kcr),
+      import_qty_kli = list(trade = c("import", "Import_Quantity_(1000_Head)",
+                                      "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+                            product = kli),
+      import_qty_kothers = list(trade = c("import", "Import_Quantity_(1000_Head)",
+                                          "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+                                product = kothers),
+      export_value_kcr = list(trade = "export_kUS$", product = kcr),
+      export_value_kli = list(trade = "export_kUS$", product = kli),
+      export_value_kothers = list(trade = "export_kUS$", product = kothers),
+      export_qty_kcr = list(trade = c("export", "Export_Quantity_(1000_Head)",
+                                      "Export_Quantity_(Head)", "Export_Quantity_(no)"),
+                            product = kcr),
+      export_qty_kli = list(trade = c("export", "Export_Quantity_(1000_Head)",
+                                      "Export_Quantity_(Head)", "Export_Quantity_(no)"),
+                            product = kli),
+      export_qty_kothers = list(trade = c("export", "Export_Quantity_(1000_Head)",
+                                          "Export_Quantity_(Head)", "Export_Quantity_(no)"),
+                                product = kothers)
+    )
 
-  elements <- list(
-    import_value_kcr = list(trade = "import_kUS$", product = kcr),
-    import_value_kli = list(trade = "import_kUS$", product = kli),
-    import_value_kothers = list(trade = "import_kUS$", product = kothers),
-    import_qty_kcr = list(trade = c("import", "Import_Quantity_(1000_Head)",
-                                    "Import_Quantity_(Head)", "Import_Quantity_(no)"),
-                          product = kcr),
-    import_qty_kli = list(trade = c("import", "Import_Quantity_(1000_Head)",
-                                    "Import_Quantity_(Head)", "Import_Quantity_(no)"),
-                          product = kli),
-    import_qty_kothers = list(trade = c("import", "Import_Quantity_(1000_Head)",
-                                        "Import_Quantity_(Head)", "Import_Quantity_(no)"),
-                              product = kothers),
-    export_value_kcr = list(trade = "export_kUS$", product = kcr),
-    export_value_kli = list(trade = "export_kUS$", product = kli),
-    export_value_kothers = list(trade = "export_kUS$", product = kothers),
-    export_qty_kcr = list(trade = c("export", "Export_Quantity_(1000_Head)",
-                                    "Export_Quantity_(Head)", "Export_Quantity_(no)"),
-                          product = kcr),
-    export_qty_kli = list(trade = c("export", "Export_Quantity_(1000_Head)",
-                                    "Export_Quantity_(Head)", "Export_Quantity_(no)"),
-                          product = kli),
-    export_qty_kothers = list(trade = c("export", "Export_Quantity_(1000_Head)",
-                                        "Export_Quantity_(Head)", "Export_Quantity_(no)"),
-                              product = kothers)
-  )
+    element <- toolSubtypeSelect(subtype, elements)
 
-  element <- toolSubtypeSelect(subtype, elements)
+    out <- filter(fao, .data$ElementShort %in% element$trade, .data$k %in% element$product)
 
-  out <- filter(fao, .data$ElementShort %in% element$trade, .data$k %in% element$product)
+  } else {
+
+    elements <- list(
+      import_value_kforestry = list(trade = "Import_Value_(1000_USD)"),
+      import_qty_kforestry = list(trade = c("import", "import_m3")),
+      export_value_kforestry = list(trade = "Export_Value_(1000_USD)"),
+      export_qty_kforestry = list(trade = c("export", "export_m3"))
+    )
+
+    element <- toolSubtypeSelect(subtype, elements)
+
+    out <- filter(fao, .data$ElementShort %in% element$trade)
+    out <- unite(out, col = "ItemCodeItem", c(.data$ItemCode, .data$Item), sep = "|", remove = FALSE)
+  }
 
   out <- as.magpie(out[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
                    temporal = 1, spatial = 2, datacol = 5)   # import/export unit is in tonnes

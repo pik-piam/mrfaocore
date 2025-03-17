@@ -20,9 +20,7 @@
 convertFAOTradeMatrix <- function(x, subtype) { # nolint
 
   gc()
-
   # ---- Section for country specific treatment ----
-
   # make a set name for dim 1.2
   getSets(x)[1] <- "ISO.Partner"
 
@@ -93,16 +91,17 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
   } else if (("XBL" %in% getItems(x, dim = 1.2)) && !("BEL" %in% getItems(x, dim = 1.2))) {
     getCells(x)[getItems(x, dim = 1.2) == "XBL"] <- "BEL"
   }
-
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
   if ((all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.1))) ||
         (all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.2)))) {
     additionalMapping <- append(additionalMapping,
                                 list(c("XSD", "SSD", "y2011"), c("XSD", "SDN", "y2011")))
-  } else if ("XSD" %in% getItems(x, dim = 1.1) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
-    getCells(x)[getItems(x, dim = 1.1) == "XSD"] <- "SDN"
-  } else if ("XSD" %in% getItems(x, dim = 1.2) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.2))) {
-    getCells(x)[getItems(x, dim = 1.2) == "XSD"] <- "SDN"
+  }
+  if ("XSD" %in% getItems(x, dim = 1.1) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
+    getItems(x, dim = 1.1)[getItems(x, dim = 1.1) == "XSD"] <- "SDN"
+  }
+  if ("XSD" %in% getItems(x, dim = 1.2) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.2))) {
+    getItems(x, dim = 1.2)[getItems(x, dim = 1.2) == "XSD"] <- "SDN"
   }
 
   ## if XCN exists, replace CHN with XCN.
@@ -158,7 +157,7 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
   missing2 <- former[!former %in% getItems(x, dim = 1.2)]
   if (length(missing2 > 0)) {
     x2 <- new.magpie(cells_and_regions = missing2, years = getYears(x), names = getNames(x))
-    x2 <- add_dimension(x2, dim = 1.2, add = "ISO", nm = getItems(x, dim = 1.1))
+    x2 <- add_dimension(x2, dim = 1.1, add = "ISO", nm = getItems(x, dim = 1.1))
     x2[, getYears(x2)[getYears(x2, as.integer = TRUE) >= 1992], ] <- 0
     x <- mbind(x, x2)
   }
@@ -172,8 +171,8 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
   rm(x)
   gc()
   # currency convert values
-  if (subtype %in% c("import_value_kcr", "import_value_kli", "import_value_kothers",
-                     "export_value_kcr", "export_value_kli", "export_value_kothers")) {
+  if (subtype %in% c("import_value_kcr", "import_value_kli", "import_value_kothers", "import_value_kforestry",
+                     "export_value_kcr", "export_value_kli", "export_value_kothers", "export_value_kforestry")) {
     out <- toolConvertGDP(out, unit_in = "current US$MER",
                           unit_out = "constant 2017 US$MER",
                           replace_NAs = "no_conversion")
