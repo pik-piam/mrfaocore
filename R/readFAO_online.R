@@ -98,7 +98,7 @@ readFAO_online <- function(subtype) { # nolint
     PricesProducerAnnual    = c("Prices_E_All_Data_(Normalized)_130225.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
     Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
-    ValueOfProd             = c("Value_of_Production_E_All_Data.zip"),
+    ValueOfProd             = c("Value_of_Production_E_All_Data_(Normalized)_250203.zip"),
     ValueShares             = c("Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip")
   )
 

@@ -81,9 +81,13 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
   # extract the data set for the selected subtype by searching for the file name
   faoMeta <- faoMeta[grepl(pattern = file, faoMeta$FileLocation, fixed = TRUE), ]
 
-  # download the data
-  download.file(faoMeta$FileLocation, destfile = file, mode = "wb")
+  # download the data with a data update stamp
+  updateDate <- paste0(substring(faoMeta$DateUpdate, 3, 4), substring(faoMeta$DateUpdate, 6, 7),
+                       substring(faoMeta$DateUpdate, 9, 10))
+  destfile <- sub("\\.zip$", paste0("_", updateDate, ".zip"), file)
 
+  download.file(faoMeta$FileLocation, destfile = destfile, mode = "wb")
+ 
   # Compose meta data
   return(list(url           = faoMeta$FileLocation,
               doi           = "not available",
