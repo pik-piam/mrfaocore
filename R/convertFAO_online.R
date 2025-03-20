@@ -362,7 +362,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   }
 
     if (subtype == "ValueOfProd") {
-    x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"]
+    x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_USD)"]
     x2 <- toolConvertGDP(x2, unit_in = "current US$MER",
                          unit_out = "constant 2017 US$MER",
                          replace_NAs = "no_conversion")
