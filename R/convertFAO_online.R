@@ -368,6 +368,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                          replace_NAs = "no_conversion")
     getNames(x2, dim = 2) <- "Gross_Production_Value_(USDMER17)_(1000_US$)"
     x <- mbind(x, x2)
+    getNames(x, dim = 2) <- gsub("USD", "US$", getNames(x, dim = 2))
   }
 
 
