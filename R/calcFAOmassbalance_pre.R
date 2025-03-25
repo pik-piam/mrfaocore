@@ -115,7 +115,27 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     
     fb <- complete_magpie(fb, fill = 0)
     
-    #As current mass balance stands we ned flours, brans, oilcakes, Oilcrops Other, molasses from the more disaggregated SUA categories
+    # there are some products and processes in teh SUA we don't cover. 
+    # here we first add them to the original product, in terms of demand categories, 
+    # while subtracting them from the processing accounting 
+    otherSecMapping <- toolGetMapping("FBSSUA_otherSecondary.csv", type = "sectoral",
+                                      where = "mrfaocore")
+    #otherSecMapping <- read.csv("/p/projects/magpie/users/davidch/NEWFAO/preprocessing-magpie/mrfaocore_FAO_update/inst/extdata/sectoral/FBSSUA_otherSecondary.csv")  
+    secMissing <- intersect(getItems(sua, dim = 3.1), otherSecMapping$Sec)
+    suaSec <- toolAggregate(sua[, , secMissing], dim = 3.1, rel = otherSecMapping,
+                            from = "Sec", to = "Prim", partrel = TRUE)
+
+    # add food, feed, other_util, waste of the secondary ones we don't cover
+    sua[, ,  getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] <- 
+      sua[, , getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] + 
+                                                       suaSec[, , c("food", "feed", "other_util", "waste")]
+     # remove same amount  from processing, assuming 1:1 conversion
+    sua[, , getNames(suaSec, dim = 1)][, , "processed"] <-   sua[, , getNames(suaSec, dim = 1)][, , "processed"] - 
+                                                       dimSums(suaSec[, , c("food", "feed", "other_util", "waste")],
+                                                               dim = 3.2)
+      
+      
+        #As current mass balance stands we ned flours, brans, oilcakes, Oilcrops Other, molasses from the more disaggregated SUA categories
     
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {
@@ -504,11 +524,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           object[, , list(goodsIn, "process_estimated")] <- dimSums(object[, , list(goodsIn, from)], dim = "ElementShort") +
                                                                      object[, , list(goodsIn, "process_estimated")]
           }
-
+ 
      if (residual == "food") {    #special case for milling which takes all the residual as food
      # calculate refining losses as mass balance difference
+     # set food to 0 for no double counting in later scripts
         object[, , list(goodsIn, "flour1")] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
                                                 - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
+        object[, , list(goodsIn, "food")] <- 0 
         }       
         # calculate refining losses as mass balance difference
         object[, , list(goodsIn, residual)] <-  object[, , list(goodsIn, residual)] + 
@@ -1664,34 +1686,25 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # processing of tece and maiz (other_util) to ethanol, distillers grain and distilling loss
     .ethanolProcessing <- function(object) {
       "
-    ethanol:
-    DDGS Handbook
-    U.S. Grains Council. 2013. A Guide to Distillers Dried Grains with Solubles (DDGS).
-    http://www.grains.org/buyingselling/ddgs/handbook/20140422/comparison-different-grain-ddgs-sources-nutrient-composition. # nolint
-    sugarcane: 654 l/t
-    barley: 399 l/t
-    corn: 408 l/t
-    oats: 262 l/t
-    wheat: 375 l/t
+    ethanol and maize:  https://doi.org/10.3390/fermentation7040268 #nolint
+    Production of Bioethanol—A Review of Factors Affecting Ethanol Yield
+    corn: 400 l/t
+    sugarcane: 72.5 l/t
     ethanol weight per l:  789g
-    similar numbers:
-    Balat M and Balat H 2009 Recent trends in global production and utilization of bio-ethanol fuel Applied Energy
-    86 2273-82
     "
-      
       # Wheat instead of tece would be more correct, but we need to have homogeneous products
       tece <- .getFAOitems("tece")
       teceMaize <- c(tece,  "2514|Maize and products")
       
       # liter yield for different sources
-      ethanolYieldLiterPerTonTece <- 375
-      ethanolYieldLiterPerTonMaize <- 408
-      ethanolYieldLiterPerTonSugarcane <- 654
+      ethanolYieldLiterPerTonTece <- 340
+      ethanolYieldLiterPerTonMaize <- 400
+      ethanolYieldLiterPerTonSugarcane <- 72.5
       
       # liter yield converted to dm (-> extraction factor)
       ethanolYieldLiterPerTonTeceMaize <- c(rep(ethanolYieldLiterPerTonTece, length(tece)), ethanolYieldLiterPerTonMaize)
-      extractionQuantityTeceMaize <- 0.789 * ethanolYieldLiterPerTonTeceMaize / 1000
-      extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000
+      extractionQuantityTeceMaize <- 0.789 * ethanolYieldLiterPerTonTeceMaize / 1000 / attributesWM[, , "2514|Maize and products"][, , "dm"]
+      extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000 / attributesWM[, , "2536|Sugar cane"][, , "dm"]
       
       # ethanol processing from tece and maize (ethanol1, distillers_grain, and distillingloss)
       for (j in seq_along(teceMaize)) {
