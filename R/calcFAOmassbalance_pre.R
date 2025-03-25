@@ -133,9 +133,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     sua[, , getNames(suaSec, dim = 1)][, , "processed"] <-   sua[, , getNames(suaSec, dim = 1)][, , "processed"] - 
                                                        dimSums(suaSec[, , c("food", "feed", "other_util", "waste")],
                                                                dim = 3.2)
-      
-      
-        #As current mass balance stands we ned flours, brans, oilcakes, Oilcrops Other, molasses from the more disaggregated SUA categories
+     sua[sua<0] <- 0
+     # tehre are negatives due to trade
+  
+     #As current mass balance stands we ned flours, brans, oilcakes, Oilcrops Other, molasses from the more disaggregated SUA categories
     
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {

@@ -21,12 +21,13 @@ Prim,Sec
 "222|Walnuts, in shell","232|Walnuts, shelled"
 "225|Hazelnuts, in shell","233|Hazelnuts, shelled"
 236|Soya beans,239|Soya sauce
-239|Soya sauce,240|Soya paste
-240|Soya paste,241|Soya curd
+236|Soya beans,240|Soya paste
+236|Soya beans,241|Soya curd
 "242|Groundnuts, excluding shelled","243|Groundnuts, shelled"
 "242|Groundnuts, excluding shelled",246|Prepared groundnuts
 "242|Groundnuts, excluding shelled",247|Peanut butter
-388|Tomatoes,389/390|Tomato juice
+388|Tomatoes,389|Tomato juice
+388|Tomatoes,390|Tomato juice
 388|Tomatoes,391|Paste of tomatoes
 388|Tomatoes,"392|Tomatoes, peeled (o/t vinegar)"
 490|Oranges,491|Orange juice
