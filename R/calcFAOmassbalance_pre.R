@@ -124,12 +124,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     secMissing <- intersect(getItems(sua, dim = 3.1), otherSecMapping$Sec)
     suaSec <- toolAggregate(sua[, , secMissing], dim = 3.1, rel = otherSecMapping,
                             from = "Sec", to = "Prim", partrel = TRUE)
-
-    # add food, feed, other_util, waste of the secondary ones we don't cover
-    sua[, ,  getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] <- 
-      sua[, , getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] + 
-                                                       suaSec[, , c("food", "feed", "other_util", "waste")]
-     # remove same amount  from processing, assuming 1:1 conversion
+     # remove same amount  from processing, assuming 1:1 conversion, we will add these on at the end!
     sua[, , getNames(suaSec, dim = 1)][, , "processed"] <-   sua[, , getNames(suaSec, dim = 1)][, , "processed"] - 
                                                        dimSums(suaSec[, , c("food", "feed", "other_util", "waste")],
                                                                dim = 3.2)
@@ -528,10 +523,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
  
      if (residual == "food") {    #special case for milling which takes all the residual as food
      # calculate refining losses as mass balance difference
-     # set food to 0 for no double counting in later scripts
         object[, , list(goodsIn, "flour1")] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
                                                 - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
-        object[, , list(goodsIn, "food")] <- 0 
         }       
         # calculate refining losses as mass balance difference
         object[, , list(goodsIn, residual)] <-  object[, , list(goodsIn, residual)] + 
@@ -816,7 +809,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       
       # add wheat germ to brans
       object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] + object[, , whtGerm, drop = TRUE]
+       
 
+       object1 <- object
       # main crops
       for (j in seq_along(cropsIn)) {
 
@@ -1039,6 +1034,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
   #remove starches as we assume all strrches are used for glucose and fructose
   flowsCBC <- flowsCBC[, , starches, invert = TRUE]
+  
+  flowsO <- flowsCBC
+  objectO <- object <- flowsCBC[, , list(millingSUA, millingDimensions)]
   flowsCBC[, , list(millingSUA, millingDimensions)] <- 
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
   # add germ of wheat to the wheat bran for all those not added in the processing
@@ -1175,6 +1173,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , list("X001|Ethanol", "production_estimated"), drop = TRUE]
       gc()
       
+    # add food, feed, other_util, waste of the secondary ones we don't cover
+    flowsCBC[, ,  getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] <- 
+      flowsCBC[, , getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] + 
+                                                       suaSec[, , c("food", "feed", "other_util", "waste")]
       # add remaining 'processed' to 'other_util' and remove obsolete dimensions
       flowsCBC[, , "other_util"] <- dimSums(flowsCBC[, , c("other_util", "processed")], dim = 3.2)
       flowsCBC <- flowsCBC[, , c("processed", "intermediate"), invert = TRUE]
