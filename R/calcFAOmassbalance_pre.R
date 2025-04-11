@@ -1042,8 +1042,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
   flowsCBC <- flowsCBC[, , "19|Germ of wheat", invert = TRUE]
   # FAO accoutns for brans as brans --> processing -- > gluten feed an meal --> feed
   # so we assign brans --> processing directly to feed
-  flowsCBC[, , brans][, , "feed"] <- flowsCBC[, , brans][, , "feed"] + flowsCBC[, , brans][, , "processed", drop = TRUE]
-  flowsCBC[, , brans][, , "processed"]  <- 0
+  bransNoGerm <- brans[-which(brans == "19|Germ of wheat")]
+  flowsCBC[, , bransNoGerm][, , "feed"] <- flowsCBC[, , bransNoGerm][, , "feed"] + flowsCBC[, , bransNoGerm][, , "processed", drop = TRUE]
+  flowsCBC[, , bransNoGerm][, , "processed"]  <- 0
 
   # we need to do some harmonizing of the tece conversion factors
     teceIn <- c("15|Wheat", "44|Barley", "71|Rye",
