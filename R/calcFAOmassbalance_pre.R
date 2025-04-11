@@ -810,8 +810,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # add wheat germ to brans
       object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] + object[, , whtGerm, drop = TRUE]
        
-
-       object1 <- object
       # main crops
       for (j in seq_along(cropsIn)) {
 
@@ -1034,9 +1032,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
   #remove starches as we assume all strrches are used for glucose and fructose
   flowsCBC <- flowsCBC[, , starches, invert = TRUE]
-  
-  flowsO <- flowsCBC
-  objectO <- object <- flowsCBC[, , list(millingSUA, millingDimensions)]
   flowsCBC[, , list(millingSUA, millingDimensions)] <- 
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
   # add germ of wheat to the wheat bran for all those not added in the processing
