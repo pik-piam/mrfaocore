@@ -721,7 +721,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # we use the starches as these alllow us to know how much is going into processed, remove these from the amount of processed in the main crop, 
       # as well as assign the amount refining (along with demand etc to the main crop)
   
-      names(starches) <- c("125|Cassava, fresh", "15|Wheat",    "27|Rice" ,  "56|Maize (corn)" , "116|Potatoes" )
+      names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes" )
       for (i in seq_along(starches)) {
         # take away this amount of processing from the total, as starches have assumed same attributes as sugars the residual remains for food use
         object[, , list(names(starches)[[i]], "processed")] =  object[, , list(names(starches)[[i]], "processed")] - 
@@ -1032,6 +1032,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
   #remove starches as we assume all strrches are used for glucose and fructose
   flowsCBC <- flowsCBC[, , starches, invert = TRUE]
+  flowsO <- flowsCBC
   flowsCBC[, , list(millingSUA, millingDimensions)] <- 
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
   # add germ of wheat to the wheat bran for all those not added in the processing
@@ -1128,7 +1129,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                              dim = c(3.1, 3.2))
       }
         gc()
-      
+      flowsO <- flowsCBC
      # Alcohol production
       fruitsAlcohol <- c("560|Grapes", "515|Apples", "521|Pears", "526|Apricots",
                                            "530|Sour cherries", "531|Cherries", "534|Peaches and nectarines",
@@ -1170,6 +1171,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       gc()
       
     # add food, feed, other_util, waste of the secondary ones we don't cover
+       # multiply by attributes
+      suaSec <- .prepareDataset(suaSec) 
+    
     flowsCBC[, ,  getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] <- 
       flowsCBC[, , getNames(suaSec, dim = 1)][, , c("food", "feed", "other_util", "waste")] + 
                                                        suaSec[, , c("food", "feed", "other_util", "waste")]
