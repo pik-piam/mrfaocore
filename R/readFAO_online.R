@@ -256,6 +256,7 @@ if (grepl("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", file, perl = TRUE)) {
   fao <- .convertUnit(x = fao, oldUnit = "1000",        newUnit = "number", factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000 Ha",     newUnit = "ha",     factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000 persons", newUnit = "persons", factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 An", newUnit = "An", factor = 1000)
 
 
   # ---- Reformat elements ----

@@ -12,7 +12,9 @@ ElementCode;Element;ElementShort;Unit;Unit_original
 5072;Stock Variation;stock_variation;tonnes;1000 tonnes
 5110;Area;area;ha;1000 Ha
 5111;Stocks;stock;Head;Head
+5111;Stocks;stock;An;An
 5112;Stocks;stock;Head;1000 Head
+5112;Stocks;stock;An;1000 An
 5120;Waste;waste;tonnes;tonnes
 5123;Waste;waste;tonnes;1000 tonnes
 5130;Processed;processed;tonnes;tonnes
