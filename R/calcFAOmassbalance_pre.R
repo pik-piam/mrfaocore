@@ -1032,7 +1032,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
   #remove starches as we assume all strrches are used for glucose and fructose
   flowsCBC <- flowsCBC[, , starches, invert = TRUE]
-  flowsO <- flowsCBC
   flowsCBC[, , list(millingSUA, millingDimensions)] <- 
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
   # add germ of wheat to the wheat bran for all those not added in the processing
@@ -1129,7 +1128,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                              dim = c(3.1, 3.2))
       }
         gc()
-      flowsO <- flowsCBC
      # Alcohol production
       fruitsAlcohol <- c("560|Grapes", "515|Apples", "521|Pears", "526|Apricots",
                                            "530|Sour cherries", "531|Cherries", "534|Peaches and nectarines",
