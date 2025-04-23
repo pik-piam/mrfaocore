@@ -377,13 +377,13 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     xCurrentUSD <- x   # nolint
     x[, , currencyDims] <- convertGDP(x[, , currencyDims],
                                       unit_in = "current US$MER",
-                                      unit_out = "constant 2005 US$MER",
+                                      unit_out = "constant 2017 US$MER",
                                       replace_NAs = "no_conversion") * 1000
     # for countries with missing conversion factors we assume no inflation:
     x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
-    getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-    getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER17"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER17"
 
   }
 
@@ -392,13 +392,13 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     xCurrentUSD <- x   # nolint
     x[, , currencyDims] <- convertGDP(x[, , currencyDims],
                                       unit_in = "current US$MER",
-                                      unit_out = "constant 2005 US$MER",
+                                      unit_out = "constant 2017 US$MER",
                                       replace_NAs = "no_conversion") * 1000
     # for countries with missing conversion factors we assume no inflation:
     x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
-    getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-    getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER17"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER17"
 
   }
   # ---- Set negative values to 0 (except stock variation and residuals) ----
