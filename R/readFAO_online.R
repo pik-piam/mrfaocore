@@ -131,7 +131,9 @@ readFAO_online <- function(subtype) { # nolint
       break
     } else if (extension == "zip" && file.exists(file)) {
       tempfolder <- local_tempdir()
-      unzip(file, exdir = tempfolder)
+      tryCatch({
+        unzip(file, exdir = tempfolder)
+      }, warning = stop)
       file <- file.path(tempfolder, csvName)
       break
     }

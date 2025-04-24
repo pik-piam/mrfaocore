@@ -56,6 +56,7 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
     FertilizerProducts      = "Inputs_FertilizersProduct_E_All_Data_(Normalized).zip",
     FoodSecurity            = "Food_Security_Data_E_All_Data_(Normalized).zip",
     ForestProdTrade         = "Forestry_E_All_Data_(Normalized).zip",
+    ForestProdTradeBilat    = "Forestry_Trade_Flows_E_All_Data_(Normalized).zip",
     Land                    = "Inputs_LandUse_E_All_Data_(Normalized).zip",
     LiveHead                = "Production_Livestock_E_All_Data_(Normalized).zip",
     LivePrim                = "Production_LivestockPrimary_E_All_Data_(Normalized).zip",
