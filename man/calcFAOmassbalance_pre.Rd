@@ -4,9 +4,12 @@
 \alias{calcFAOmassbalance_pre}
 \title{calcFAOmassbalance_pre}
 \usage{
-calcFAOmassbalance_pre(years = NULL)
+calcFAOmassbalance_pre(version = "join2010", years = NULL)
 }
 \arguments{
+\item{version}{whether to return the new post-2010 massbalance "post2010", the "pre2010" older sheets, or
+or join them at 2010 (replace old with new at 2010) "join2010"}
+
 \item{years}{years to be estimated, if null, then all years in FAOharmonized are returned}
 }
 \value{
@@ -28,5 +31,5 @@ calcOutput("FAOmassbalance_pre")
 [calcFAOmassbalance()]
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, David M Chen
 }
