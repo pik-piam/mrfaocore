@@ -146,12 +146,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     oilcakes <-  .getFAOitemsSUA("oilcakes")
     oilCrops <- .getFAOitemsSUA(c("soybean", "maiz", "groundnut", "rapeseed", "sunflower", "cottn_pro"))
-    oilCrops <- oilCrops[grep("Maize (corn)|Cotton|Rape|Mustard|Coco|Sesame|Soya|
-                               Groundnut|Kapok|inseed|Sunflower|Hemp|Other oil seeds|Oliv", oilCrops)]
+    oilCrops <- oilCrops[grep("Maize (corn)|Cotton|Rape|Mustard|Coco|Sesame|Soya|Groundnut|Kapok|inseed|Sunflower|Hemp|Other oil seeds|Oliv", oilCrops)] #nolint
     # other oil crops more complicated, restrict to those which have cakes, others accounted for via "others"
     oils <- .getFAOitemsSUA("oils")
-    oils <- oils[grep("Soy|maize|Rapeseed|Mustard|sesame|Coconut|palm kernel|Palm|Sunflower|
-                      Groundnut|inseed|Cottonseed|hemp|kapok|poppy|Safflower|rice bran|Other oil|Olive", oils)]
+    oils <- oils[grep("Soy|maize|Rapeseed|Mustard|sesame|Coconut|palm kernel|Palm|Sunflower|Groundnut|inseed|Cottonseed|hemp|kapok|poppy|Safflower|rice bran|Other oil|Olive", oils)] #nolint
     otherOilCrops <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in% # nolint
                                                                            relationmatrix[grep("2570", relationmatrix$post2010_FoodBalanceItem), # nolint
                                                                                           "post2010_SupplyUtilizationItem"])] #nolint
