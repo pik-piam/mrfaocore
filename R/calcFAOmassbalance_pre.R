@@ -17,7 +17,6 @@
 #' \dontrun{
 #' calcOutput("FAOmassbalance_pre")
 #' }
-#' @importFrom graphics plot
 #' @importFrom magclass getSets as.magpie complete_magpie
 #' @importFrom utils read.csv
 #' @importFrom withr local_options
@@ -531,12 +530,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
             object[, , list(goodsIn, "process_estimated")]
         }
 
-        if (residual == "food") {    # special case for milling which takes all the residual as food
-          # calculate refining losses as mass balance difference
-          object[, , list(goodsIn, "flour1")] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
-                                                  - dimSums(object[, , list(goodsIn, reportAs)],
-                                                            dim = c("ElementShort")))
-        }
         # calculate refining losses as mass balance difference
         object[, , list(goodsIn, residual)] <-  object[, , list(goodsIn, residual)] +
           (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
@@ -845,7 +838,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                        process = "milling",
                                                                        goodsOut = bransOut[j],
                                                                        reportAs = c("brans1"),
-                                                                       residual = "food",
+                                                                       residual = "flour1",
                                                                        extractionBasis = "input")
       }
       # milling of maize makes brans germoil and germcakes
@@ -864,7 +857,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                  process = "milling",
                                                                  goodsOut = c(rcOut, roOut),
                                                                  reportAs = c("oilcakes1", "branoil1"),
-                                                                 residual = "food",
+                                                                 residual = "flour1",
                                                                  extractionBasis = "input")
       maizIn <-  c("56|Maize (corn)")
       brOut <- c("59|Bran of maize")
@@ -882,7 +875,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                         process = "milling",
                                                                         goodsOut = c(brOut, moOut, mcOut),
                                                                         reportAs = c("brans1", "branoil1", "oilcakes1"),
-                                                                        residual = "food",
+                                                                        residual = "flour1",
                                                                         extractionBasis = "input")
 
 
@@ -1100,7 +1093,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         dimSums(flowsCBC[, , list(teceIn, "milling")], dim = c(1, 3.1, 3.2))
       flowsCBC[, , list(teceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(teceIn, "milling")],
                                                                dim = 3.2)
-      flowsCBC[, , list(teceIn, "food")] <- dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2) -
+      flowsCBC[, , list(teceIn, "flour1")] <- dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2) -
         dimSums(flowsCBC[, , list(teceIn, "brans1")], dim = 3.2)
       gc()
 
@@ -1119,7 +1112,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         dimSums(flowsCBC[, , list(trceIn, "milling")], dim = c(1, 3.1, 3.2))
       flowsCBC[, , list(trceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(trceIn, "milling")],
                                                                dim = 3.2)
-      flowsCBC[, , list(trceIn, "food")] <- dimSums(flowsCBC[, , list(trceIn, "milling")], dim = 3.2) -
+      flowsCBC[, , list(trceIn, "flour1")] <- dimSums(flowsCBC[, , list(trceIn, "milling")], dim = 3.2) -
         dimSums(flowsCBC[, , list(trceIn, "brans1")], dim = 3.2)
       gc()
 
@@ -1127,6 +1120,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , list(bransOut[j], "production_estimated")] <- dimSums(flowsCBC[, , list(trceIn[j], "brans1")],
                                                                            dim = c(3.1, 3.2))
       }
+
 
       gc()
 
