@@ -4,6 +4,10 @@
 #' @param products "kcr", "kli", or "kothers"
 #' @param prodAgg binary to keep FAO product level or magpie
 #' @param fiveYear only 5 year steps due to memory load
+#' @param harmonize combine input and export sheets with harmonization algorithm
+#'  based on reliability index(Gelhar 1996)
+#' default off as there are some big differences 
+#' and perhaps using the import sheet is better overall i.e. more matching with massbal
 #' @return List of magpie objects with results on bilateral country level,
 #' weight on bilateral country level, unit and description.
 #' @author David M Chen
@@ -12,25 +16,30 @@
 #' calcOutput("FAOBilateralTrade", output = "qty", products = "kcr")
 #' }
 #'
-calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = TRUE, fiveYear = TRUE) {
-  #### harmonize export and import-based reporting based on reliability index (Gelhar 1996)
-  # importer and exporter datasets
+calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = TRUE,
+                                  harmonize = FALSE, fiveYear = TRUE) {
+
 
   if (output %in% c("qty", "value")) {
 
     im <- collapseNames(readSource("FAOTradeMatrix",
                                    subtype = paste("import", output, products, sep = "_"), convert = TRUE))
     im <- im[, c(min(getYears(im, as.integer = TRUE)):1994), invert = TRUE] # subset years for lighter load on mem
-    ex <- collapseNames(readSource("FAOTradeMatrix",
-                                   subtype = paste("export", output, products, sep = "_"), convert = TRUE))
-    ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), invert = TRUE]
-
+  
     if (fiveYear) {
       im <- im[, seq(1995, 2020, 5), ]
       ex <- ex[, seq(1995, 2020, 5), ]
     }
 
+      #### harmonize export and import-based reporting based on reliability index (Gelhar 1996)
+  # importer and exporter datasets
+  if (harmonize) {
     .harmBilat <- function(im, ex, value) {
+
+        ex <- collapseNames(readSource("FAOTradeMatrix",
+                                   subtype = paste("export", output, products, sep = "_"), convert = TRUE))
+      ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), invert = TRUE]
+
 
       if (value) {
         # imports generally reported on cif basis, use generic 12% (FAOSTAT) for now.
@@ -94,13 +103,17 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
       out <- imROnly + exROnly
       return(out)
     }
-
+  
     if (output == "qty") {
       value <- FALSE
     } else if (output == "value") {
       value <- TRUE
     }
     out <- .harmBilat(ex = ex, im = im, value = value)
+  } else {
+    out <- im
+  }
+
     weight <- NULL
 
     if (output == "qty") {
