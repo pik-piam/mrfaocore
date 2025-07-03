@@ -163,10 +163,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     oilpalm <- oilpalm[oilpalm != ""]
 
     # need particular maize products
-    maizeGluten <-  relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in% #nolint
-                                                                          relationmatrix[grep("Maize gluten",
-                                                                                              relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                         "post2010_SupplyUtilizationItem"])] #nolint
+  
     maizeGerm <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                                        relationmatrix[grep("Germ of maize",
                                                                                            relationmatrix$post2010_SupplyUtilizationItem), # nolint
@@ -180,6 +177,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                       relationmatrix[grep("Starch of ",
                                                                                           relationmatrix$post2010_SupplyUtilizationItem), # nolint
                                                                                      "post2010_SupplyUtilizationItem"])]
+   glutens <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                                      relationmatrix[grep("luten",
+                                                                                          relationmatrix$post2010_SupplyUtilizationItem), # nolint
+                                                                                     "post2010_SupplyUtilizationItem"])]
+   glutens <- glutens[-which(glutens == "846|Gluten feed and meal")]
+   
     sugar <- .getFAOitemsSUA("sugar")
     sugar <- sugar[sugar != ""]
 
@@ -210,7 +213,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # keep the specific ones and all that are mapped
     keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
                      cereals, brans, beers, distillersBrewersG, maizeGluten,
-                     sugar, molasses, potato, cassava,  starches, maizeGerm, others, alcohol))
+                     sugar, molasses, potato, cassava,  starches, glutens, maizeGerm, others, alcohol))
 
 
     sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
@@ -733,7 +736,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
-        # take away this amount of processing from the total, as starches have assumed same attributes as sugars,
+        # take away this amount of processing from the total starches processed,
+        # as starches have assumed same attributes as sugars,
         # the residual remains for food use
         object[, , list(names(starches)[[i]], "processed")] <-  object[, , list(names(starches)[[i]], "processed")] -
           dimSums(object[, , list(starches[[i]], c("sugar1", "sugar2"))], dim = 3.2)
@@ -742,7 +746,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                         dim = 3.2)
         object[, , list(names(starches)[[i]], c("sugar1", "sugar2"))] <- object[, , list(starches[[i]],
                                                                                          c("sugar1", "sugar2"))]
-
+        # also take away the starch production from 
         # if process_estimated already exists (i.e. maize from the fermenting step before, add it on)
         object[, , list(names(starches)[[i]], "process_estimated")] <-  object[, , list(names(starches)[[i]],
                                                                                         "process_estimated")] +
@@ -863,7 +867,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       brOut <- c("59|Bran of maize")
       moOut <- c("60|Oil of maize")
       mcOut <- c("61|Cake of maize")
-
 
 
       object[, , c(maizIn, brOut, moOut, mcOut)] <-  .processingGlobal2(object = object[, , c(maizIn, brOut,
@@ -1056,14 +1059,57 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       flowsCBC <- suaFlows
 
+      #deal with starches and gluten here as the process is not included explicitly
+      #subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
+      # attribute end use (feed, other_util, food, to main crop)
+      # subtract starch production from main crop processed
+      names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
+      for (i in seq_along(starches)) {
+      
+        flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
+          flowsCBC[, , list(starches[[i]], "feed")]
+         
+        flowsCBC[, , list(names(starches)[[i]], "other_util")] <-  flowsCBC[, , list(names(starches)[[i]], "other_util")] +
+          flowsCBC[, , list(starches[[i]], "other_util")]
+         
+        flowsCBC[, , list(names(starches)[[i]], "food")] <-  flowsCBC[, , list(names(starches)[[i]], "food")] +
+          flowsCBC[, , list(starches[[i]], "food")]
+      
+         
+        flowsCBC[, , list(names(starches)[[i]], "processed")] <-  flowsCBC[, , list(names(starches)[[i]], "processed")] - 
+          flowsCBC[, , list(starches[[i]], "production")]
+      }
+
+      # do the same for the glutens, in this case the processed glutens also go into feed
+      names(glutens)<- c("15|Wheat", "27|Rice", "56|Maize (corn)")
+
+        for (i in seq_along(glutens)) {
+     
+     flowsCBC[, , list(glutens[[i]], "feed")] <-  flowsCBC[, , list(glutens[[i]], "feed")] +
+          flowsCBC[, , list(glutens[[i]], "processed")]
+         
+     flowsCBC[, , list(names(glutens)[[i]], "feed")] <-  flowsCBC[, , list(names(glutens)[[i]], "feed")] +
+          flowsCBC[, , list(glutens[[i]], "feed")]
+         
+        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <-  flowsCBC[, , list(names(glutens)[[i]], "other_util")] +
+          flowsCBC[, , list(glutens[[i]], "other_util")]
+         
+        flowsCBC[, , list(names(glutens)[[i]], "food")] <-  flowsCBC[, , list(names(glutens)[[i]], "food")] +
+          flowsCBC[, , list(glutens[[i]], "food")]
+      
+        flowsCBC[, , list(names(glutens)[[i]], "processed")] <-  flowsCBC[, , list(names(glutens)[[i]], "processed")] - 
+          flowsCBC[, , list(glutens[[i]], "production")]
+        }      
+    flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
       flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
       flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
         .beerProcessing(flowsCBC[, , list(fermentationSUA, fermentationDimensions)])
       flowsCBC[, , list(refiningSUA, refiningDimensions)] <-
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
-      # remove starches as we assume all strrches are used for glucose and fructose
+      # remove starches now as we assume starches processed are used for glucose and fructose, or feed
       flowsCBC <- flowsCBC[, , starches, invert = TRUE]
+  
       flowsCBC[, , list(millingSUA, millingDimensions)] <-
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
       # add germ of wheat to the wheat bran for all those not added in the processing
@@ -1224,7 +1270,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # get processed values
       proc <- c("food", "feed", "production_estimated", "process_estimated",
-                "milling", "brans1", "branoil1", "flour1",
+                "milling", "brans1", "branoil1", "flour1", "other_util",
                 "refining", "sugar1", "sugar2", "sugar3", "molasses1", "refiningloss",
                 "extracting", "oil1", "oil2", "oilcakes1", "extractionloss",
                 "fermentation", "alcohol1", "alcohol2", "alcohol3", "alcohol4", "brewers_grain1", "alcoholloss",

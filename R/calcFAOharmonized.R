@@ -39,7 +39,20 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
                "96|Bran of fonio",
                "81|Bran of millet",
                "85|Bran of sorghum",
-               "112|Bran of cereals nec")
+               "112|Bran of cereals nec",
+               "35|Bran of rice")
+
+    #subtract the bran  kcal and protein from the respective products, a few countries report
+    brancrop <- c("2514|Maize and products", "2511|Wheat and products" ,"2513|Barley and products",
+                   "2515|Rye and products","2516|Oats", "2520|Cereals, Other", "2520|Cereals, Other", "2520|Cereals, Other", "2517|Millet and products",
+                  "2518|Sorghum and products", "2520|Cereals, Other", "2807|Rice and products" )
+    branmap <- data.frame("bran" = brans, "crop" = brancrop)
+    #rename via toolAggregate to sum the "cereals, other"
+    foodbrans <- toolAggregate(sua[, , brans][, , c("protein_supply", "food_supply_kcal")], 
+                               rel = branmap, from = "bran", to = "crop", dim = 3.1)
+    post[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] = 
+          post[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] - 
+          foodbrans
 
     cakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
                "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
