@@ -1046,9 +1046,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                fermentationSUA)]
       fermentationSUA <- fermentationSUA[fermentationSUA != ""]
 
-      refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar")),
-                       molasses, cassava)
-      refiningSUA <- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec",
+      refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar", "cassav_sp")),
+                       molasses)
+      refiningSUA <- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec|Sweet pot|Yautia|Taro|Yams|ananas",
                                        refiningSUA)]
       refiningSUA <- refiningSUA[refiningSUA != ""]
 
