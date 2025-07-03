@@ -1100,15 +1100,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , list(names(glutens)[[i]], "processed")] <-  flowsCBC[, , list(names(glutens)[[i]], "processed")] - 
           flowsCBC[, , list(glutens[[i]], "production")]
         }      
-    flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
       flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
       flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
         .beerProcessing(flowsCBC[, , list(fermentationSUA, fermentationDimensions)])
       flowsCBC[, , list(refiningSUA, refiningDimensions)] <-
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
-      # remove starches now as we assume starches processed are used for glucose and fructose, or feed
-      flowsCBC <- flowsCBC[, , starches, invert = TRUE]
   
       flowsCBC[, , list(millingSUA, millingDimensions)] <-
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
@@ -1239,6 +1236,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                      "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher"),
         reportAs = c("alcohol2", "alcohol3", "alcohol4"), # nolint
         residual  = "alcoholloss")
+
+
+    # remove starches now as we assume starches processed are used for glucose and fructose, or feed
+      flowsCBC <- flowsCBC[, , starches, invert = TRUE]
+     # remove glutens
+       flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
 
       # Define use of products that are not existing in FAOSTAT
       goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
