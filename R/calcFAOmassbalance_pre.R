@@ -212,7 +212,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     # keep the specific ones and all that are mapped
     keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
-                     cereals, brans, beers, distillersBrewersG, maizeGluten,
+                     cereals, brans, beers, distillersBrewersG,
                      sugar, molasses, potato, cassava,  starches, glutens, maizeGerm, others, alcohol))
 
 
