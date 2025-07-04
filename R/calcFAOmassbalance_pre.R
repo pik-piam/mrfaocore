@@ -1122,6 +1122,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , bransNoGerm][, , "processed", drop = TRUE]
       flowsCBC[, , bransNoGerm][, , "processed"]  <- 0
 
+      
+    # remove starches now as based on FAO flowcharts starches processed
+    # are used only to produce glucose and fructose
+      flowsCBC <- flowsCBC[, , starches, invert = TRUE]
+     # remove glutens
+       flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
+
       # we need to do some harmonizing of the tece conversion factors
       teceIn <- c("15|Wheat", "44|Barley", "71|Rye",
                   "75|Oats", "103|Mixed grain", "89|Buckwheat",
@@ -1216,6 +1223,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "603|Other tropical fruits, nec", "619|Other fruits, nec")
 
       grainsAlcohol <-  .getFAOitemsSUA(c("tece", "trce", "rice_pro", "potato", "cassav_sp", "sugar", "molasses"))
+      grainsAlcohol <- grainsAlcohol[-grep("Starch", grainsAlcohol)]
       cropsAlcohol <- c(fruitsAlcohol, grainsAlcohol)
       cropsAlcohol <- intersect(getItems(flowsCBC, dim = 3.1), cropsAlcohol)
       fermentationDimensions <- c("production", "production_estimated", "processed", "process_estimated",
@@ -1223,6 +1231,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                   "alcohol3", "alcohol4", "intermediate", "brewers_grain1", "alcoholloss")
       fermentationProducts <- .getFAOitemsSUA(c("tece", "others", "trce", "rice_pro", "potato", "cassav_sp", "sugar",
                                                 "molasses", "alcohol", "distillers_grain"))
+      fermentationProducts <- fermentationProducts[-grep("Starch", fermentationProducts)]
+      fermentationProducts <- fermentationProducts[-grep("gluten", fermentationProducts)]
+
       fermentationProducts <- intersect(getItems(flowsCBC, dim = 3.1), fermentationProducts)
 
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
@@ -1236,12 +1247,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                      "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher"),
         reportAs = c("alcohol2", "alcohol3", "alcohol4"), # nolint
         residual  = "alcoholloss")
-
-
-    # remove starches now as we assume starches processed are used for glucose and fructose, or feed
-      flowsCBC <- flowsCBC[, , starches, invert = TRUE]
-     # remove glutens
-       flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
 
       # Define use of products that are not existing in FAOSTAT
       goods <- c("X002|Distillers_grain", "X004|Brewers_grain")

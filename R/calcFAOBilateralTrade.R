@@ -103,16 +103,17 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
       out <- imROnly + exROnly
       return(out)
     }
-  
+      out <- .harmBilat(ex = ex, im = im, value = value)
+  } else {
+    out <- im
+  }
+
     if (output == "qty") {
       value <- FALSE
     } else if (output == "value") {
       value <- TRUE
     }
-    out <- .harmBilat(ex = ex, im = im, value = value)
-  } else {
-    out <- im
-  }
+  
 
     weight <- NULL
 
