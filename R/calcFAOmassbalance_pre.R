@@ -288,6 +288,85 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "intermediate",
                          "households")
 
+
+    # we want to use the amount processed from the food balances and not the supply utilization
+    # in order to account for how much actually leaves the sector
+
+
+primFB <- c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
+             "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
+             "2807|Rice and products", "2520|Cereals, Other", "2531|Potatoes and products",
+             "2532|Cassava and products",
+             "2536|Sugar cane","2537|Sugar beet",
+             "2552|Groundnuts", "2555|Soyabeans", "2557|Sunflower seed",
+             "2558|Rape and Mustardseed", "2559|Cottonseed",
+             "2560|Coconuts - Incl Copra", "2561|Sesame seed",
+             "2563|Olives (including preserved)",
+             "2570|Oilcrops, Other", "2617|Apples and products", 
+             "2619|Dates", "2620|Grapes and products (excl wine)", "2625|Fruits, other")
+
+primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, fresh",
+                "15|Wheat","156|Sugar cane", "157|Sugar beet", "236|Soya beans", 
+                "242|Groundnuts, excluding shelled", "249|Coconuts, in shell",
+                "260|Olives","267|Sunflower seed", "27|Rice", "270|Rape or colza seed",
+                "280|Safflower seed", "289|Sesame seed", "292|Mustard seed","296|Poppy seed",
+                "310|Kapok fruit", "311|Kapokseed in shell", "329|Cotton seed", "333|Linseed",
+                "336|Hempseed","339|Other oil seeds, nec", "44|Barley","515|Apples",
+                "521|Pears","526|Apricots", "530|Sour cherries","531|Cherries",
+                "534|Peaches and nectarines", "536|Plums and sloes",
+                "541|Other stone fruits", "542|Other pome fruits",
+                "544|Strawberries", "547|Raspberries",
+                "549|Gooseberries","550|Currants",
+                "552|Blueberries", "554|Cranberries",
+                "558|Other berries and fruits of the genus vaccinium nec",
+                "56|Maize (corn)", "560|Grapes", "569|Figs", "577|Dates",
+                "603|Other tropical fruits, nec", "619|Other fruits, nec",
+                "71|Rye", "75|Oats", "79|Millet", "83|Sorghum", "89|Buckwheat", "94|Fonio",
+                 "97|Triticale")
+
+
+ mapPrimSUA <- relationmatrixS[which(relationmatrixS$post2010_SupplyUtilizationItem %in% primSUA), 
+                                c("post2010_FoodBalanceItem", "post2010_SupplyUtilizationItem") ]
+
+
+    for (i in c(primFB)){
+    suaprods <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
+    #for products that map to multiple food balance items, get their ratio of processing
+    suaRatio <- sua[, , "processed"][, , suaprods] /
+                dimSums(sua[, , "processed"][, , suaprods], dim = 3)
+    suaRatio[is.na(suaRatio)] <- 1
+    sua[, , "processed"][, , suaprods] <- suaRatio * fb[, , i][, , "processed"]
+  }
+
+
+   # the brans also need a special treatment as we need to take the amount of brans produced in the SUA from the food category
+      # as brans don't leave the cereal sector, i.e. remain in "Wheat and products"
+      #  i.e . flour = fooddemandFB - bransProductionSUA
+   #cereals primary 
+   cerealFB <-  c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
+             "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
+             "2807|Rice and products", "2520|Cereals, Other", "2520|Cereals, Other","2520|Cereals, Other",
+             "2520|Cereals, Other","2520|Cereals, Other" )
+
+   cerealSUA <- c("15|Wheat", "44|Barley", "56|Maize (corn)",
+                  "71|Rye", "75|Oats", "79|Millet", "83|Sorghum",
+                  "27|Rice", "89|Buckwheat", "94|Fonio", "97|Triticale",
+                  "103|Mixed grain", "108|Cereals nec")
+ 
+   cerealmap <- data.frame("FB" = cerealFB, "SUA" = cerealSUA)
+
+   sua <- add_columns(sua, addnm = "foodFB", dim = 3.2, fill = 0)
+  
+         for (i in unique(cerealFB)){
+    suacereal <- cerealmap[which(cerealmap$FB == i), "SUA"]
+   # in the cereals case use total deomstic supply as the diasggregator of fb food of the cereal 
+     cerRatio <- sua[, , "domestic_supply"][, , suacereal] /
+                dimSums(sua[, , "domestic_supply"][, , suacereal], dim = 3)
+    cerRatio[is.na(cerRatio)] <- 1
+    sua[, , "foodFB"][, , suacereal] <- cerRatio * fb[, , i][, , "food"]
+  }
+
+
     #### Definition of subfunctions #####
 
     # run massbalance checks and clear processed positions after calculating process
@@ -806,7 +885,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                    "44|Barley",
                    "71|Rye",
                    "75|Oats",
-                   "103|Mixed grain",
                    "89|Buckwheat",
                    "94|Fonio",
                    "97|Triticale",
@@ -819,7 +897,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                     "47|Bran of barley",
                     "73|Bran of rye",
                     "77|Bran of oats",
-                    "105|Bran of mixed grain",
                     "91|Bran of buckwheat",
                     "96|Bran of fonio",
                     "99|Bran of triticale",
@@ -830,15 +907,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       whtGerm <- "19|Germ of wheat"
 
       # add wheat germ to brans
-      object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] + object[, , whtGerm, drop = TRUE]
-
+      object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] + 
+                                        dimSums(object[, , whtGerm], dim = 3.1)
+       # brans are part of food demand and not processing in the food balances, here we 
+       # take the brans from FB food demand and add it to the food 
       # main crops
       for (j in seq_along(cropsIn)) {
 
         object[, , c(cropsIn[j],  bransOut[j])] <-  .processingGlobal2(object = object[, , c(cropsIn[j], bransOut[j])],
                                                                        objectO = object[, , c(cropsIn[j], bransOut[j])],
                                                                        goodsIn = cropsIn[j],
-                                                                       from = "processed",
+                                                                       from = "foodFB",
                                                                        process = "milling",
                                                                        goodsOut = bransOut[j],
                                                                        reportAs = c("brans1"),
@@ -857,7 +936,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                  objectO = object[, , c(riceIn,
                                                                                         roOut, rcOut)],
                                                                  goodsIn = riceIn,
-                                                                 from = "processed",
+                                                                 from = "foodFB",
                                                                  process = "milling",
                                                                  goodsOut = c(rcOut, roOut),
                                                                  reportAs = c("oilcakes1", "branoil1"),
@@ -874,7 +953,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                         objectO = object[, , c(maizIn, brOut,
                                                                                                moOut, mcOut)],
                                                                         goodsIn = maizIn,
-                                                                        from = "processed",
+                                                                        from = "foodFB",
                                                                         process = "milling",
                                                                         goodsOut = c(brOut, moOut, mcOut),
                                                                         reportAs = c("brans1", "branoil1", "oilcakes1"),
@@ -1017,7 +1096,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       fbFlows <- .prepareDataset(fb)
       suaFlows <- .prepareDataset(sua)
       # relevant processing dimensions
-      millingDimensions <- c("production", "production_estimated", "process_estimated", "intermediate",
+      millingDimensions <- c("production", "foodFB", "production_estimated", "process_estimated", "intermediate",
                              "extractionloss", "milling", "processed", "brans1",
                              "branoil1", "oilcakes1", "flour1", "food", "households")
       distillingDimensions <- c("production", "production_estimated", "process_estimated", "other_util", "distilling",
@@ -1065,48 +1144,38 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # subtract starch production from main crop processed
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
-      
-        flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
+      flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
           flowsCBC[, , list(starches[[i]], "feed")]
-         
-        flowsCBC[, , list(names(starches)[[i]], "other_util")] <-  flowsCBC[, , list(names(starches)[[i]], "other_util")] +
+      flowsCBC[, , list(names(starches)[[i]], "other_util")] <-  flowsCBC[, , list(names(starches)[[i]], "other_util")] +
           flowsCBC[, , list(starches[[i]], "other_util")]
-         
-        flowsCBC[, , list(names(starches)[[i]], "food")] <-  flowsCBC[, , list(names(starches)[[i]], "food")] +
+      flowsCBC[, , list(names(starches)[[i]], "food")] <-  flowsCBC[, , list(names(starches)[[i]], "food")] +
           flowsCBC[, , list(starches[[i]], "food")]
-      
-         
-        flowsCBC[, , list(names(starches)[[i]], "processed")] <-  flowsCBC[, , list(names(starches)[[i]], "processed")] - 
+      flowsCBC[, , list(names(starches)[[i]], "processed")] <-  flowsCBC[, , list(names(starches)[[i]], "processed")] - 
           flowsCBC[, , list(starches[[i]], "production")]
       }
 
       # do the same for the glutens, in this case the processed glutens also go into feed
-      names(glutens)<- c("15|Wheat", "27|Rice", "56|Maize (corn)")
-
+    names(glutens)<- c("15|Wheat", "27|Rice", "56|Maize (corn)")
         for (i in seq_along(glutens)) {
-     
-     flowsCBC[, , list(glutens[[i]], "feed")] <-  flowsCBC[, , list(glutens[[i]], "feed")] +
+      flowsCBC[, , list(glutens[[i]], "feed")] <-  flowsCBC[, , list(glutens[[i]], "feed")] +
           flowsCBC[, , list(glutens[[i]], "processed")]
-         
-     flowsCBC[, , list(names(glutens)[[i]], "feed")] <-  flowsCBC[, , list(names(glutens)[[i]], "feed")] +
+      flowsCBC[, , list(names(glutens)[[i]], "feed")] <-  flowsCBC[, , list(names(glutens)[[i]], "feed")] +
           flowsCBC[, , list(glutens[[i]], "feed")]
-         
-        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <-  flowsCBC[, , list(names(glutens)[[i]], "other_util")] +
+      flowsCBC[, , list(names(glutens)[[i]], "other_util")] <-  flowsCBC[, , list(names(glutens)[[i]], "other_util")] +
           flowsCBC[, , list(glutens[[i]], "other_util")]
-         
-        flowsCBC[, , list(names(glutens)[[i]], "food")] <-  flowsCBC[, , list(names(glutens)[[i]], "food")] +
+       flowsCBC[, , list(names(glutens)[[i]], "food")] <-  flowsCBC[, , list(names(glutens)[[i]], "food")] +
           flowsCBC[, , list(glutens[[i]], "food")]
-      
         flowsCBC[, , list(names(glutens)[[i]], "processed")] <-  flowsCBC[, , list(names(glutens)[[i]], "processed")] - 
           flowsCBC[, , list(glutens[[i]], "production")]
         }      
+
       flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
       flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
         .beerProcessing(flowsCBC[, , list(fermentationSUA, fermentationDimensions)])
       flowsCBC[, , list(refiningSUA, refiningDimensions)] <-
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
-  
+
       flowsCBC[, , list(millingSUA, millingDimensions)] <-
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
       # add germ of wheat to the wheat bran for all those not added in the processing
