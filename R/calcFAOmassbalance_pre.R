@@ -1337,6 +1337,9 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       flowsCBC <- flowsCBC[, , c("processed", "intermediate"), invert = TRUE]
       gc()
 
+      #remove the foodFB column from flowsCBC
+      flowsCBC  <- flowsCBC[, , "foodFB", invert = TRUE]
+
       # first map to food balance sheet
       processedFB <- toolAggregate(x = flowsCBC,
                                    rel = relationmatrix,
@@ -1427,9 +1430,6 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
     massbalanceNoProcessing <- .massbalanceNoProcessing(years)
     fb <- fb[, , noProcessingFAO, invert = TRUE]
     massbalanceProcessing <- .massbalanceProcessing(years)
-    #remove the foodFB column
-    massbalanceProcessing <- massbalanceProcessing[, , "foodFB", invert = TRUE]
-
     # put results together
     massbalance <- mbind(massbalanceProcessing, massbalanceNoProcessing)
 
