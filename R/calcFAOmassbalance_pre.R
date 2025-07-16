@@ -666,7 +666,8 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
             object[, , list(goodsIn, reportAs[j])]
 
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsOut[j], "production")],
-                                                                           dim = "ElementShort")
+                                                                           dim = "ElementShort") +
+          object[, , list(goodsOut[j], "production_estimated")]
         }
 
         object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, process)],
