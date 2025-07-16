@@ -633,17 +633,23 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
         # estimate outputs
 
         if (!is.null(extractionFactor)) {
+       
+       #make an extractionFactor mag object for multiple conversions
+        extractionFactorMag <- new.magpie(cells_and_regions = "GLO", years = NULL,
+                                    names = goodsOut, fill = 0)
+         for (n in seq_along(1:length(extractionFactor))){
+         extractionFactorMag[, , n] <-extractionFactor[n]
+         }
 
           attributesTo <- attributesWM[, , goodsIn]
-          extractionConversion <- attributesTo / extractionFactor
-
+          extractionConversion <- attributesTo / extractionFactorMag
 
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
-                                                   dimSums(object[, , list(goodsOut,
-                                                                           "production")][, , extractionAttribute],
-                                                           dim = c("ElementShort", "ItemCodeItem")) *
-                                                   extractionConversion) +
-            object[, , list(goodsIn, process)]
+                                                   dimSums((object[, , list(goodsOut,
+                                                                           "production")][, , extractionAttribute] * 
+                                                             extractionConversion),
+                                                           dim = c("ElementShort", "ItemCodeItem"))) +
+                                                   object[, , list(goodsIn, process)]
         } else {
 
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
@@ -849,20 +855,22 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       beersOut <- c("51|Beer of barley, malted", "39|Rice-fermented beverages", "66|Beer of maize, malted",
                     "26|Wheat-fermented beverages", "82|Beer of millet, malted",
                     "86|Beer of sorghum, malted")
-
+      alcoholsOut <- c(     "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
+                     "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
+   
       for (j in seq_along(beerCereals)) {
-
-        object[, , c(beerCereals[j], beersOut[j])] <- .processingGlobal2(object = object[, ,
+   
+        object[, , c(beerCereals[j], beersOut[j], alcoholsOut)] <- .processingGlobal2(object = object[, ,
                                                                                          c(beerCereals[j],
-                                                                                           beersOut[j])],
+                                                                                           beersOut[j], alcoholsOut)],
                                                                          goodsIn = beerCereals[j],
                                                                          from = "processed",
                                                                          process = "fermentation",
-                                                                         goodsOut = beersOut[j],
-                                                                         reportAs = "alcohol1",
+                                                                         goodsOut = c(beersOut[j], alcoholsOut),
+                                                                         reportAs = c("alcohol1", "alcohol3", "alcohol4"),
                                                                          residual = "intermediate",
                                                                          extractionBasis = "output",
-                                                                         extractionFactor = 5)
+                                                                         extractionFactor = c(5, 0.65, 0.35))
 
         object[, , c(beerCereals[j], "X004|Brewers_grain")] <- .extractGoodFromFlow2(object = object[, , c(beerCereals[j], "X004|Brewers_grain")], # nolint
                                                                                      goodIn = beerCereals[j],
@@ -1102,7 +1110,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       distillingDimensions <- c("production", "production_estimated", "process_estimated", "other_util", "distilling",
                                 "ethanol1", "intermediate", "distillers_grain1", "distillingloss")
       fermentationDimensions <- c("production", "production_estimated", "process_estimated", "processed",
-                                  "fermentation", "alcohol1", "intermediate", "brewers_grain1", "alcoholloss")
+                                  "fermentation", "alcohol1", "alcohol3", "alcohol4", "intermediate", "brewers_grain1", "alcoholloss")
       refiningDimensions <- c("production", "production_estimated", "process_estimated", "processed",
                               "sugar1", "sugar2", "sugar3", "molasses1", "refining", "refiningloss")
       extractingDimensions <- c("production", "production_estimated", "process_estimated", "domestic_supply",
@@ -1123,6 +1131,8 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")), beers,  "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec",
                                                fermentationSUA)]
+      fermentationSUA <- c(fermentationSUA, "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", #nolint
+                                            "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       fermentationSUA <- fermentationSUA[fermentationSUA != ""]
 
       refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar", "cassav_sp")),
@@ -1291,18 +1301,16 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
                          "569|Figs", "577|Dates",
                          "603|Other tropical fruits, nec", "619|Other fruits, nec")
 
-      grainsAlcohol <-  .getFAOitemsSUA(c("tece", "trce", "rice_pro", "potato", "cassav_sp", "sugar", "molasses"))
+      grainsAlcohol <-  .getFAOitemsSUA(c("potato", "cassav_sp", "sugar", "molasses"))
       grainsAlcohol <- grainsAlcohol[-grep("Starch", grainsAlcohol)]
       cropsAlcohol <- c(fruitsAlcohol, grainsAlcohol)
       cropsAlcohol <- intersect(getItems(flowsCBC, dim = 3.1), cropsAlcohol)
       fermentationDimensions <- c("production", "production_estimated", "processed", "process_estimated",
                                   "fermentation", "alcohol2",
-                                  "alcohol3", "alcohol4", "intermediate", "brewers_grain1", "alcoholloss")
-      fermentationProducts <- .getFAOitemsSUA(c("tece", "others", "trce", "rice_pro", "potato", "cassav_sp", "sugar",
+                                  "alcohol3", "alcohol4", "intermediate", "alcoholloss")
+      fermentationProducts <- .getFAOitemsSUA(c( "others", "potato", "cassav_sp", "sugar",
                                                 "molasses", "alcohol", "distillers_grain"))
       fermentationProducts <- fermentationProducts[-grep("Starch", fermentationProducts)]
-      fermentationProducts <- fermentationProducts[-grep("gluten", fermentationProducts)]
-
       fermentationProducts <- intersect(getItems(flowsCBC, dim = 3.1), fermentationProducts)
 
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
