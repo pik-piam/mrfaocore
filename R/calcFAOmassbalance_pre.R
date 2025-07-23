@@ -1427,7 +1427,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
     # give back original production values remove production_tmp and 
     flowsCBC[, , list(strongAlcohols, "production")] <- flowsCBC[, , list(strongAlcohols, "production_tmp")]
-    flowsCBC <- flowsCBC[, , "proudction_tmp", invert = TRUE]
+    flowsCBC <- flowsCBC[, , "production_tmp", invert = TRUE]
 
       # Define use of products that are not existing in FAOSTAT
       goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
