@@ -1411,12 +1411,10 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
     # do this by making a placeholder production column
       strongAlcohols <- c("634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
                      "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
-      flowsCBC <- add_columns(flowsCBC, addnm = "production_tmp", dim = 3.2)
+      flowsCBC <- add_columns(flowsCBC, addnm = "production_tmp", dim = 3.2, fill = 0)
       flowsCBC[, , list(strongAlcohols, "production_tmp")] <- flowsCBC[, , list(strongAlcohols, "production")]
       flowsCBC[, , list(strongAlcohols, "production")] = flowsCBC[, , list(strongAlcohols, "production")] -
                                                          flowsCBC[, , list(strongAlcohols, "production_estimated")]
-
-     objectF <- object <- flowsCBC[, , list(fermentationProducts, fermentationDimensions)]
 
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
         flowsCBC[, , list(fermentationProducts, fermentationDimensions)], # nolint
