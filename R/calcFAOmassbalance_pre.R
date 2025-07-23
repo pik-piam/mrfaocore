@@ -421,8 +421,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
           # ... in production?
           if ("production_tmp" %in% getNames(object, dim =2)) {
           diff <- (sum(object[, , list(goodsOut, "production_estimated")]) -
-                   sum(object[, , list(goodsOut, "production_tmp")]) - 
-                   sum(objectO[, , list(goodsOut, "production")]))
+                   sum(object[, , list(goodsOut, "production_tmp")]))
           } else {
           diff <- (sum(object[, , list(goodsOut, "production_estimated")])
                    - sum(object[, , list(goodsOut, "production")]))
