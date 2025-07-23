@@ -420,8 +420,9 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
           # ... in production?
           if ("production_tmp" %in% getNames(object, dim =2)) {
-          diff <- (sum(object[, , list(goodsOut, "production_estimated")])
-                   - sum(object[, , list(goodsOut, "production_tmp")]))
+          diff <- (sum(object[, , list(goodsOut, "production_estimated")]) -
+                   sum(object[, , list(goodsOut, "production_tmp")]) - 
+                   sum(objectO[, , list(goodsOut, "production")]))
           } else {
           diff <- (sum(object[, , list(goodsOut, "production_estimated")])
                    - sum(object[, , list(goodsOut, "production")]))
@@ -603,7 +604,6 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
           stop("conversion factors exceed 1. not suitable for a global conversion factor.",
                paste(unique(unname(where(factors > 1)[[1]]$individual)), collapse = ", "))
         }
-
 
         # estimate outputs
         for (j in seq_along(goodsOut)) {
@@ -1412,7 +1412,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       strongAlcohols <- c("634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
                      "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       flowsCBC <- add_columns(flowsCBC, addnm = "production_tmp", dim = 3.2, fill = 0)
-      flowsCBC[, , list(strongAlcohols, "production_tmp")] <- flowsCBC[, , list(strongAlcohols, "production")]
+      flowsCBC[, , "production_tmp"] <- flowsCBC[, , "production"]
       flowsCBC[, , list(strongAlcohols, "production")] = flowsCBC[, , list(strongAlcohols, "production")] -
                                                          flowsCBC[, , list(strongAlcohols, "production_estimated")]
 
@@ -1437,8 +1437,6 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       flowsCBC[, , list("X001|Ethanol", c("production", "domestic_supply", "other_util"))] <-
         flowsCBC[, , list("X001|Ethanol", "production_estimated"), drop = TRUE]
       gc()
-
-
 
       # add food, feed, other_util, waste of the secondary ones we don't cover
       # multiply by attributes
