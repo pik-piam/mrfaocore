@@ -28,13 +28,12 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
   
     if (fiveYear) {
       im <- im[, seq(1995, 2020, 5), ]
-      ex <- ex[, seq(1995, 2020, 5), ]
     }
 
       #### harmonize export and import-based reporting based on reliability index (Gelhar 1996)
   # importer and exporter datasets
   if (harmonize) {
-    .harmBilat <- function(im, ex, value) {
+    .harmBilat <- function(im, value) {
 
         ex <- collapseNames(readSource("FAOTradeMatrix",
                                    subtype = paste("export", output, products, sep = "_"), convert = TRUE))
@@ -106,7 +105,7 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
       out <- imROnly + exROnly
       return(out)
     }
-      out <- .harmBilat(ex = ex, im = im, value = value)
+      out <- .harmBilat(im = im, value = value)
   } else {
     out <- im
   }
