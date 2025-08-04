@@ -39,7 +39,10 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
         ex <- collapseNames(readSource("FAOTradeMatrix",
                                    subtype = paste("export", output, products, sep = "_"), convert = TRUE))
       ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), invert = TRUE]
-
+      
+       if (fiveYear) {
+             ex <- ex[, seq(1995, 2020, 5), ]
+       }
 
       if (value) {
         # imports generally reported on cif basis, use generic 12% (FAOSTAT) for now.
