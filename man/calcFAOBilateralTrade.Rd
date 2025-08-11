@@ -8,6 +8,7 @@ calcFAOBilateralTrade(
   output = "value",
   products = "kcr",
   prodAgg = TRUE,
+  harmonize = FALSE,
   fiveYear = TRUE
 )
 }
@@ -17,6 +18,11 @@ calcFAOBilateralTrade(
 \item{products}{"kcr", "kli", or "kothers"}
 
 \item{prodAgg}{binary to keep FAO product level or magpie}
+
+\item{harmonize}{combine input and export sheets with harmonization algorithm
+ based on reliability index(Gelhar 1996)
+default off as there are some big differences
+and perhaps using the import sheet is better overall i.e. more matching with massbal}
 
 \item{fiveYear}{only 5 year steps due to memory load}
 }

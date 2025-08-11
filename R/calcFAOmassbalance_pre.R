@@ -145,17 +145,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     oilcakes <-  .getFAOitemsSUA("oilcakes")
     oilCrops <- .getFAOitemsSUA(c("soybean", "maiz", "groundnut", "rapeseed", "sunflower", "cottn_pro"))
-    oilCrops <- oilCrops[grep("Maize (corn)|Cotton|Rape|Mustard|Coco|Sesame|Soya|Groundnut|Kapok|inseed|Sunflower|Hemp|Other oil seeds|Oliv", oilCrops)] #nolint
+    oilCrops <- oilCrops[grep("Maize (corn)|Cotton|Rape|Mustard|Coco|Sesame|Soya|Groundnut|Kapok|inseed|Sunflower|Hemp|Other oil seeds|Oliv", oilCrops)] # nolint
     # other oil crops more complicated, restrict to those which have cakes, others accounted for via "others"
     oils <- .getFAOitemsSUA("oils")
-    oils <- oils[grep("Soy|maize|Rapeseed|Mustard|sesame|Coconut|palm kernel|Palm|Sunflower|Groundnut|inseed|Cottonseed|hemp|kapok|poppy|Safflower|rice bran|Other oil|Olive", oils)] #nolint
+    oils <- oils[grep("Soy|maize|Rapeseed|Mustard|sesame|Coconut|palm kernel|Palm|Sunflower|Groundnut|inseed|Cottonseed|hemp|kapok|poppy|Safflower|rice bran|Other oil|Olive", oils)] # nolint
     otherOilCrops <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in% # nolint
                                                                            relationmatrix[grep("2570", relationmatrix$post2010_FoodBalanceItem), # nolint
-                                                                                          "post2010_SupplyUtilizationItem"])] #nolint
+                                                                                          "post2010_SupplyUtilizationItem"])] # nolint
     otherOilCrops <- otherOilCrops[grep("copra|Other|Hemp|Safflower|Kapok|Poppy", otherOilCrops)]
     otherOils <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in% # nolint
                                                                        relationmatrix[grep("2586", relationmatrix$post2010_FoodBalanceItem), # nolint
-                                                                                      "post2010_SupplyUtilizationItem"])] #nolint
+                                                                                      "post2010_SupplyUtilizationItem"])] # nolint
     otherOils <- otherOils[which(otherOils %in% relationmatrix[grep("oils", relationmatrix$k),
                                                                "post2010_SupplyUtilizationItem"])]
     otherOils <- otherOils[otherOils != ""]
@@ -163,11 +163,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     oilpalm <- oilpalm[oilpalm != ""]
 
     # need particular maize products
-  
+
     maizeGerm <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                                        relationmatrix[grep("Germ of maize",
                                                                                            relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                      "post2010_SupplyUtilizationItem"])] #nolint
+                                                                                      "post2010_SupplyUtilizationItem"])] # nolint
 
     sugarCane <- .getFAOitemsSUA("sugr_cane")
     sugarBeet <- .getFAOitemsSUA("sugr_beet")
@@ -177,12 +177,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                       relationmatrix[grep("Starch of ",
                                                                                           relationmatrix$post2010_SupplyUtilizationItem), # nolint
                                                                                      "post2010_SupplyUtilizationItem"])]
-   glutens <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                                                      relationmatrix[grep("luten",
+    glutens <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
+                                                                     relationmatrix[grep("luten",
                                                                                           relationmatrix$post2010_SupplyUtilizationItem), # nolint
                                                                                      "post2010_SupplyUtilizationItem"])]
-   glutens <- glutens[-which(glutens == "846|Gluten feed and meal")]
-   
+    glutens <- glutens[-which(glutens == "846|Gluten feed and meal")]
+
     sugar <- .getFAOitemsSUA("sugar")
     sugar <- sugar[sugar != ""]
 
@@ -293,78 +293,79 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # in order to account for how much actually leaves the sector
 
 
-primFB <- c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
-             "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
-             "2807|Rice and products", "2520|Cereals, Other", "2531|Potatoes and products",
-             "2532|Cassava and products",
-             "2536|Sugar cane","2537|Sugar beet",
-             "2552|Groundnuts", "2555|Soyabeans", "2557|Sunflower seed",
-             "2558|Rape and Mustardseed", "2559|Cottonseed",
-             "2560|Coconuts - Incl Copra", "2561|Sesame seed",
-             "2563|Olives (including preserved)",
-             "2570|Oilcrops, Other", "2617|Apples and products", 
-             "2619|Dates", "2620|Grapes and products (excl wine)", "2625|Fruits, other")
+    primFB <- c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
+                "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
+                "2807|Rice and products", "2520|Cereals, Other", "2531|Potatoes and products",
+                "2532|Cassava and products",
+                "2536|Sugar cane", "2537|Sugar beet",
+                "2552|Groundnuts", "2555|Soyabeans", "2557|Sunflower seed",
+                "2558|Rape and Mustardseed", "2559|Cottonseed",
+                "2560|Coconuts - Incl Copra", "2561|Sesame seed",
+                "2563|Olives (including preserved)",
+                "2570|Oilcrops, Other", "2617|Apples and products",
+                "2619|Dates", "2620|Grapes and products (excl wine)", "2625|Fruits, other")
 
-primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, fresh",
-                "15|Wheat","156|Sugar cane", "157|Sugar beet", "236|Soya beans", 
-                "242|Groundnuts, excluding shelled", "249|Coconuts, in shell",
-                "260|Olives","267|Sunflower seed", "27|Rice", "270|Rape or colza seed",
-                "280|Safflower seed", "289|Sesame seed", "292|Mustard seed","296|Poppy seed",
-                "310|Kapok fruit", "311|Kapokseed in shell", "329|Cotton seed", "333|Linseed",
-                "336|Hempseed","339|Other oil seeds, nec", "44|Barley","515|Apples",
-                "521|Pears","526|Apricots", "530|Sour cherries","531|Cherries",
-                "534|Peaches and nectarines", "536|Plums and sloes",
-                "541|Other stone fruits", "542|Other pome fruits",
-                "544|Strawberries", "547|Raspberries",
-                "549|Gooseberries","550|Currants",
-                "552|Blueberries", "554|Cranberries",
-                "558|Other berries and fruits of the genus vaccinium nec",
-                "56|Maize (corn)", "560|Grapes", "569|Figs", "577|Dates",
-                "603|Other tropical fruits, nec", "619|Other fruits, nec",
-                "71|Rye", "75|Oats", "79|Millet", "83|Sorghum", "89|Buckwheat", "94|Fonio",
+    primSUA <- c("103|Mixed grain", "108|Cereals nec", "116|Potatoes", "125|Cassava, fresh",
+                 "15|Wheat", "156|Sugar cane", "157|Sugar beet", "236|Soya beans",
+                 "242|Groundnuts, excluding shelled", "249|Coconuts, in shell",
+                 "260|Olives", "267|Sunflower seed", "27|Rice", "270|Rape or colza seed",
+                 "280|Safflower seed", "289|Sesame seed", "292|Mustard seed", "296|Poppy seed",
+                 "310|Kapok fruit", "311|Kapokseed in shell", "329|Cotton seed", "333|Linseed",
+                 "336|Hempseed", "339|Other oil seeds, nec", "44|Barley", "515|Apples",
+                 "521|Pears", "526|Apricots", "530|Sour cherries", "531|Cherries",
+                 "534|Peaches and nectarines", "536|Plums and sloes",
+                 "541|Other stone fruits", "542|Other pome fruits",
+                 "544|Strawberries", "547|Raspberries",
+                 "549|Gooseberries", "550|Currants",
+                 "552|Blueberries", "554|Cranberries",
+                 "558|Other berries and fruits of the genus vaccinium nec",
+                 "56|Maize (corn)", "560|Grapes", "569|Figs", "577|Dates",
+                 "603|Other tropical fruits, nec", "619|Other fruits, nec",
+                 "71|Rye", "75|Oats", "79|Millet", "83|Sorghum", "89|Buckwheat", "94|Fonio",
                  "97|Triticale")
 
 
- mapPrimSUA <- relationmatrixS[which(relationmatrixS$post2010_SupplyUtilizationItem %in% primSUA), 
-                                c("post2010_FoodBalanceItem", "post2010_SupplyUtilizationItem") ]
+    mapPrimSUA <- relationmatrixS[which(relationmatrixS$post2010_SupplyUtilizationItem %in% primSUA),
+                                  c("post2010_FoodBalanceItem", "post2010_SupplyUtilizationItem")]
 
 
-    for (i in c(primFB)){
-    suaprods <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
-    #for products that map to multiple food balance items, get their ratio of processing
-    suaRatio <- sua[, , "processed"][, , suaprods] /
-                dimSums(sua[, , "processed"][, , suaprods], dim = 3)
-    suaRatio[is.na(suaRatio)] <- 1
-    sua[, , "processed"][, , suaprods] <- suaRatio * fb[, , i][, , "processed"]
-  }
+    for (i in c(primFB)) {
+      suaprods <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
+      # for products that map to multiple food balance items, get their ratio of processing
+      suaRatio <- sua[, , "processed"][, , suaprods] /
+        dimSums(sua[, , "processed"][, , suaprods], dim = 3)
+      suaRatio[is.na(suaRatio)] <- 1
+      sua[, , "processed"][, , suaprods] <- suaRatio * fb[, , i][, , "processed"]
+    }
 
 
-   # the brans also need a special treatment as we need to take the amount of brans produced in the SUA from the food category
-      # as brans don't leave the cereal sector, i.e. remain in "Wheat and products"
-      #  i.e . flour = fooddemandFB - bransProductionSUA
-   #cereals primary 
-   cerealFB <-  c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
-             "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
-             "2807|Rice and products", "2520|Cereals, Other", "2520|Cereals, Other","2520|Cereals, Other",
-             "2520|Cereals, Other","2520|Cereals, Other" )
+    # the brans also need a special treatment as we need to
+    # take the amount of brans produced in the SUA from the food category
+    # as brans don't leave the cereal sector, i.e. remain in "Wheat and products"
+    #  i.e . flour = fooddemandFB - bransProductionSUA
+    # cereals primary
+    cerealFB <-  c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
+                   "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
+                   "2807|Rice and products", "2520|Cereals, Other", "2520|Cereals, Other", "2520|Cereals, Other",
+                   "2520|Cereals, Other", "2520|Cereals, Other")
 
-   cerealSUA <- c("15|Wheat", "44|Barley", "56|Maize (corn)",
-                  "71|Rye", "75|Oats", "79|Millet", "83|Sorghum",
-                  "27|Rice", "89|Buckwheat", "94|Fonio", "97|Triticale",
-                  "103|Mixed grain", "108|Cereals nec")
- 
-   cerealmap <- data.frame("FB" = cerealFB, "SUA" = cerealSUA)
+    cerealSUA <- c("15|Wheat", "44|Barley", "56|Maize (corn)",
+                   "71|Rye", "75|Oats", "79|Millet", "83|Sorghum",
+                   "27|Rice", "89|Buckwheat", "94|Fonio", "97|Triticale",
+                   "103|Mixed grain", "108|Cereals nec")
 
-   sua <- add_columns(sua, addnm = "foodFB", dim = 3.2, fill = 0)
-  
-         for (i in unique(cerealFB)){
-    suacereal <- cerealmap[which(cerealmap$FB == i), "SUA"]
-   # in the cereals case use total deomstic supply as the diasggregator of fb food of the cereal 
-     cerRatio <- sua[, , "domestic_supply"][, , suacereal] /
-                dimSums(sua[, , "domestic_supply"][, , suacereal], dim = 3)
-    cerRatio[is.na(cerRatio)] <- 1
-    sua[, , "foodFB"][, , suacereal] <- cerRatio * fb[, , i][, , "food"]
-  }
+    cerealmap <- data.frame("FB" = cerealFB, "SUA" = cerealSUA)
+
+    sua <- add_columns(sua, addnm = "foodFB", dim = 3.2, fill = 0)
+
+    for (i in unique(cerealFB)) {
+      suacereal <- cerealmap[which(cerealmap$FB == i), "SUA"]
+      # in the cereals case use total deomstic supply as the diasggregator of fb food of the cereal
+      cerRatio <- sua[, , "domestic_supply"][, , suacereal] /
+        dimSums(sua[, , "domestic_supply"][, , suacereal], dim = 3)
+      cerRatio[is.na(cerRatio)] <- 1
+      sua[, , "foodFB"][, , suacereal] <- cerRatio * fb[, , i][, , "food"]
+    }
 
 
     #### Definition of subfunctions #####
@@ -390,8 +391,8 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
                    - dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")))
         } else {
           diff <- dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort")) -
-                    dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")) -
-                     dimSums(objectO[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort")) 
+            dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")) -
+            dimSums(objectO[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort"))
         }
         if (any(abs(diff) > threshold)) {
           stop("NAs in dataset or function corrupt: process not balanced for ",
@@ -410,7 +411,8 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
             diff <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort", "ItemCodeItem"))
               - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
               - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-              + dimSums(objectO[, , list(goodsOut, c("production_estimated", residual))], dim = c("ElementShort", "ItemCodeItem"))
+              + dimSums(objectO[, , list(goodsOut, c("production_estimated", residual))],
+                        dim = c("ElementShort", "ItemCodeItem"))
             )
           }
           if (any(abs(diff) > threshold)) {
@@ -419,12 +421,12 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
           }
 
           # ... in production?
-          if ("production_tmp" %in% getNames(object, dim =2)) {
-          diff <- (sum(object[, , list(goodsOut, "production_estimated")]) -
-                   sum(object[, , list(goodsOut, "production_tmp")]))
+          if ("production_tmp" %in% getNames(object, dim = 2)) {
+            diff <- (sum(object[, , list(goodsOut, "production_estimated")]) -
+                       sum(object[, , list(goodsOut, "production_tmp")]))
           } else {
-          diff <- (sum(object[, , list(goodsOut, "production_estimated")])
-                   - sum(object[, , list(goodsOut, "production")]))
+            diff <- (sum(object[, , list(goodsOut, "production_estimated")])
+                     - sum(object[, , list(goodsOut, "production")]))
           }
           if (any(abs(diff) > threshold)) {
             stop("Global estimated production does not meet global production for ",
@@ -500,7 +502,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
     # "reportAs".
     # The calculated production quantity is also added to "goodOut.production_estimated".
     .extractGoodFromFlow2 <- function(object,
-                                      objectO = NULL,                # original object for when processes are additive to original
+                                      objectO = NULL,                # original object for when processes are additive to original #nolint
                                       goodIn,                        # FAO-defined input product, e.g. "2536|Sugar cane"
                                       from,                          # FAO-defined process, e.g. "other_util"
                                       process,                       # MAgPIE-defined process, e.g. "distilling"
@@ -514,12 +516,12 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       if (length(from) > 1 || length(reportAs) > 1 || length(goodIn) > 1 || length(goodOut) > 1) {
         stop("please only use one item each for \"from\", \"reportAs\", \"goodIn\", and \"goodOut\"")
       }
-      
+
       if (residual != "alcoholloss" &&
          any(object[, , list(goodIn, c(reportAs, residual))] != 0)) { # nolint
         stop("Output flows already exist.")
       }
-   
+
       # relevant attributes for extraction quantity
       attrNoWM <- setdiff(attributeTypes, "wm")
 
@@ -543,7 +545,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       extracted <- object[, , list(goodIn, from, extractionAttribute), drop = TRUE] * extractionQuantity * attributesTo
       losses    <- dimSums(object[, , list(goodIn, from)], dim = "ElementShort") - extracted
 
-      object[, , list(goodIn, reportAs)] <- extracted + object[, , list(goodIn, reportAs)] 
+      object[, , list(goodIn, reportAs)] <- extracted + object[, , list(goodIn, reportAs)]
       object[, , list(goodIn, residual)] <- losses + object[, , list(goodIn, residual)]
 
       object[, , list(goodOut, "production_estimated")] <- object[, , list(goodOut, "production_estimated")] + extracted
@@ -580,7 +582,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
         stop("Output flows already exist.")
       }
 
-      if ( process != "fermentation" && 
+      if (process != "fermentation" &&
            any(object[, , list(goodsOut, "production_estimated")] != 0)) { # nolint
         stop("Output flows already exist.")
       }
@@ -609,13 +611,13 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsIn, reportAs[j])],
                                                                            dim = c("ElementShort", "ItemCodeItem")) +
-                                                                  object[, , list(goodsOut[j], "production_estimated")] 
+            object[, , list(goodsOut[j], "production_estimated")]
         }
 
         if (from %in% c("processed", "other_util")) {
           object[, , list(goodsIn, "process_estimated")] <- dimSums(object[, , list(goodsIn, from)],
                                                                     dim = "ElementShort") +
-                                                            object[, , list(goodsIn, "process_estimated")]
+            object[, , list(goodsIn, "process_estimated")]
         }
 
         # calculate refining losses as mass balance difference
@@ -638,16 +640,14 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
         ratioIns[is.na(ratioIns)] <- 1 / length(goodsIn)
         # estimate outputs
 
-          attributesTo <- attributesWM[, , goodsOut]
-          attributesFrom <- attributesWM[, , goodsIn]
+        attributesTo <- attributesWM[, , goodsOut]
 
         if (!is.null(extractionFactor)) {
-       
-       #make an extractionFactor mag object for multiple conversions
-         extractionFactorMag <- new.magpie(cells_and_regions = "GLO", years = NULL,
-                                     names = goodsOut, fill = 0)
-          for (n in seq_along(1:length(extractionFactor))){
-          extractionFactorMag[, , n] <-extractionFactor[n]
+          # make an extractionFactor mag object for multiple conversions
+          extractionFactorMag <- new.magpie(cells_and_regions = "GLO", years = NULL,
+                                            names = goodsOut, fill = 0)
+          for (n in seq_along(extractionFactor)) {
+            extractionFactorMag[, , n] <- extractionFactor[n]
           }
 
           attributesTo <- attributesWM[, , goodsIn]
@@ -655,16 +655,16 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
                                                    dimSums((object[, , list(goodsOut,
-                                                                           "production")][, , extractionAttribute] * 
-                                                             extractionConversion),
+                                                                            "production")][, , extractionAttribute] *
+                                                              extractionConversion),
                                                            dim = c("ElementShort", "ItemCodeItem"))) +
-                                                   object[, , list(goodsIn, process)]
+            object[, , list(goodsIn, process)]
         } else {
 
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
                                                    dimSums(object[, , list(goodsOut, "production")],
                                                            dim = c("ElementShort", "ItemCodeItem"))) +
-                                              object[, , list(goodsIn, process)]
+            object[, , list(goodsIn, process)]
 
         }
 
@@ -676,7 +676,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsOut[j], "production")],
                                                                            dim = "ElementShort") +
-          object[, , list(goodsOut[j], "production_estimated")]
+            object[, , list(goodsOut[j], "production_estimated")]
         }
 
         object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, process)],
@@ -841,7 +841,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
                                                                         dim = 3.2)
         object[, , list(names(starches)[[i]], c("sugar1", "sugar2"))] <- object[, , list(starches[[i]],
                                                                                          c("sugar1", "sugar2"))]
-        # also take away the starch production from 
+        # also take away the starch production from
         # if process_estimated already exists (i.e. maize from the fermenting step before, add it on)
         object[, , list(names(starches)[[i]], "process_estimated")] <-  object[, , list(names(starches)[[i]],
                                                                                         "process_estimated")] +
@@ -859,7 +859,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
 
     # processing of tece (processed) to alcohol1 and alcoholloss
-    # actually beer and 'whiskey' processing now 
+    # actually beer and 'whiskey' processing now
     .beerProcessing <- function(object) {  ### do it product specific
 
       beerCereals <- c("44|Barley", "27|Rice",  "56|Maize (corn)", "15|Wheat", "79|Millet", "83|Sorghum")
@@ -868,7 +868,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
                     "86|Beer of sorghum, malted")
 
       for (j in seq_along(beerCereals)) {
-   
+
         object[, , c(beerCereals[j], beersOut[j])] <- .processingGlobal2(object = object[, ,
                                                                                          c(beerCereals[j],
                                                                                            beersOut[j])],
@@ -923,10 +923,10 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       whtGerm <- "19|Germ of wheat"
 
       # add wheat germ to brans
-      object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] + 
-                                        dimSums(object[, , whtGerm], dim = 3.1)
-       # brans are part of food demand and not processing in the food balances, here we 
-       # take the brans from FB food demand and add it to the food 
+      object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] +
+        dimSums(object[, , whtGerm], dim = 3.1)
+      # brans are part of food demand and not processing in the food balances, here we
+      # take the brans from FB food demand and add it to the food
       # main crops
       for (j in seq_along(cropsIn)) {
 
@@ -1119,7 +1119,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
                                 "ethanol1", "intermediate", "distillers_grain1", "distillingloss")
       fermentationDimensions <- c("production", "production_estimated", "process_estimated", "processed",
                                   "fermentation", "alcohol1", "alcohol3", "alcohol4",
-                                   "intermediate", "brewers_grain1", "alcoholloss")
+                                  "intermediate", "brewers_grain1", "alcoholloss")
       refiningDimensions <- c("production", "production_estimated", "process_estimated", "processed",
                               "sugar1", "sugar2", "sugar3", "molasses1", "refining", "refiningloss")
       extractingDimensions <- c("production", "production_estimated", "process_estimated", "domestic_supply",
@@ -1140,13 +1140,14 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")), beers,  "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec",
                                                fermentationSUA)]
-      fermentationSUA <- c(fermentationSUA, "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", #nolint
-                                           "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
+      fermentationSUA <- c(fermentationSUA, "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
+                           "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       fermentationSUA <- fermentationSUA[fermentationSUA != ""]
 
-      refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato", "maiz", "tece", "rice_pro", "sugar", "cassav_sp")),
+      refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato",
+                                         "maiz", "tece", "rice_pro", "sugar", "cassav_sp")),
                        molasses)
-      refiningSUA <- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec|Sweet pot|Yautia|Taro|Yams|ananas",
+      refiningSUA <- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec|Sweet pot|Yautia|Taro|Yams|ananas", # nolint
                                        refiningSUA)]
       refiningSUA <- refiningSUA[refiningSUA != ""]
 
@@ -1156,32 +1157,34 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
 
       flowsCBC <- suaFlows
 
-      #deal with starches and gluten here as the process is not included explicitly
-      #subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
+      # deal with starches and gluten here as the process is not included explicitly
+      # subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
       # attribute end use (feed, other_util, food, to main crop)
       # subtract starch production from main crop processed
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
-      flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
+        flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
           flowsCBC[, , list(starches[[i]], "feed")]
-      flowsCBC[, , list(names(starches)[[i]], "other_util")] <-  flowsCBC[, , list(names(starches)[[i]], "other_util")] +
+        flowsCBC[, , list(names(starches)[[i]], "other_util")] <-  flowsCBC[, , list(names(starches)[[i]],
+                                                                                     "other_util")] +
           flowsCBC[, , list(starches[[i]], "other_util")]
-      flowsCBC[, , list(names(starches)[[i]], "food")] <-  flowsCBC[, , list(names(starches)[[i]], "food")] +
+        flowsCBC[, , list(names(starches)[[i]], "food")] <-  flowsCBC[, , list(names(starches)[[i]], "food")] +
           flowsCBC[, , list(starches[[i]], "food")]
       }
 
       # do the same for the glutens, in this case the processed glutens also go into feed
-    names(glutens)<- c("15|Wheat", "27|Rice", "56|Maize (corn)")
-        for (i in seq_along(glutens)) {
-      flowsCBC[, , list(glutens[[i]], "feed")] <-  flowsCBC[, , list(glutens[[i]], "feed")] +
+      names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
+      for (i in seq_along(glutens)) {
+        flowsCBC[, , list(glutens[[i]], "feed")] <- flowsCBC[, , list(glutens[[i]], "feed")] +
           flowsCBC[, , list(glutens[[i]], "processed")]
-      flowsCBC[, , list(names(glutens)[[i]], "feed")] <-  flowsCBC[, , list(names(glutens)[[i]], "feed")] +
+        flowsCBC[, , list(names(glutens)[[i]], "feed")] <- flowsCBC[, , list(names(glutens)[[i]], "feed")] +
           flowsCBC[, , list(glutens[[i]], "feed")]
-      flowsCBC[, , list(names(glutens)[[i]], "other_util")] <-  flowsCBC[, , list(names(glutens)[[i]], "other_util")] +
+        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- flowsCBC[, , list(names(glutens)[[i]],
+                                                                                   "other_util")] +
           flowsCBC[, , list(glutens[[i]], "other_util")]
-       flowsCBC[, , list(names(glutens)[[i]], "food")] <-  flowsCBC[, , list(names(glutens)[[i]], "food")] +
+        flowsCBC[, , list(names(glutens)[[i]], "food")] <- flowsCBC[, , list(names(glutens)[[i]], "food")] +
           flowsCBC[, , list(glutens[[i]], "food")]
-        }      
+      }
 
       flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
@@ -1204,11 +1207,11 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
         flowsCBC[, , bransNoGerm][, , "processed", drop = TRUE]
       flowsCBC[, , bransNoGerm][, , "processed"]  <- 0
 
-    # remove starches now as based on FAO flowcharts starches processed
-    # are used only to produce glucose and fructose
+      # remove starches now as based on FAO flowcharts starches processed
+      # are used only to produce glucose and fructose
       flowsCBC <- flowsCBC[, , starches, invert = TRUE]
-     # remove glutens
-       flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
+      # remove glutens
+      flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
 
       # we need to do some harmonizing of the tece conversion factors
       teceIn <- c("15|Wheat", "44|Barley", "71|Rye",
@@ -1309,10 +1312,10 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
                                   "brewers_grain1",
                                   "alcohol3", "alcohol4", "intermediate", "alcoholloss")
      strongAlcohols <- c("634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
-                      "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
+                         "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       fermentationProducts <- c(cropsAlcohol, "564|Wine", strongAlcohols)
 
-     flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
+      flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
         flowsCBC[, , list(fermentationProducts, fermentationDimensions)], # nolint
         objectO = flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
         goodsIn  = cropsAlcohol,
@@ -1342,7 +1345,7 @@ primSUA <- c("103|Mixed grain", "108|Cereals nec","116|Potatoes","125|Cassava, f
       flowsCBC <- flowsCBC[, , c("processed", "intermediate"), invert = TRUE]
       gc()
 
-      #remove the foodFB column from flowsCBC
+      # remove the foodFB column from flowsCBC
       flowsCBC  <- flowsCBC[, , "foodFB", invert = TRUE]
 
       # first map to food balance sheet
