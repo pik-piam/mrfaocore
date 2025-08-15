@@ -135,7 +135,9 @@ readFAO_online <- function(subtype) { # nolint
       break
     }
   }
-
+  if (grepl("downloaded", file)) {
+    file <- sub("_[^_]*(\\.csv)$", "\\1", file)
+  }
   # ---- Select columns to be read from file and read file ----
 
   ## efficient reading of csv file: read only needed columns in the needed type (codes as factor)
