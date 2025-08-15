@@ -14,7 +14,7 @@
 #' \item `CropProc`: Production Crops Processed ("Production_CropsProcessed_E_All_Data.zip")
 #' \item `FB2010`: New Food Balance Sheet, 2010 onwards ("FoodBalanceSheets_E_All_Data.zip")
 #' \item `SUA2010`: New Supply Utilization Accounts, 2010 onwards ("SUA_Crops_Livestock_E_All_Data_(Normalized).zip")
-#' \item `CB2010`: New Commodity Balance Sheets, 2010 onwards ("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip")
+#' \item `CB2010`: New Commodity Balance Sheets, 2010 onwards ("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip") #nolint
 #' \item `Fertilizer`: Fertilizer ("Resources_Fertilizers_E_All_Data.zip")
 #' \item `FertilizerProducts`: Fertilizer by product ("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip")
 #' \item `FertilizerNutrients`: Fertilizer by nutrient ("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip")
@@ -90,7 +90,8 @@ readFAO_online <- function(subtype) { # nolint
     FoodSecurity            = c("Food_Security_Data_E_All_Data.zip"),
     ForestProdTrade         = c("Forestry_E_All_Data_(Normalized).zip"),
     # old source file: Resources_Land_E_All_Data.zip
-    Land                    = c("Resources_Land_E_All_Data.zip", "Inputs_LandUse_E_All_Data_(Normalized).zip"),
+    Land                    = c("Resources_Land_E_All_Data.zip",
+                                "Inputs_LandUse_E_All_Data_(Normalized)_140825downloaded.zip"),
     LiveHead                = c("Production_Livestock_E_All_Data.zip"),
     LivePrim                = c("Production_LivestockPrimary_E_All_Data.zip"),
     LiveProc                = c("Production_LivestockProcessed_E_All_Data.zip"),
@@ -131,17 +132,22 @@ readFAO_online <- function(subtype) { # nolint
       break
     } else if (extension == "zip" && file.exists(file)) {
       tempfolder <- local_tempdir()
-      tryCatch({
-        unzip(file, exdir = tempfolder)
-      }, warning = stop)
+      tryCatch(
+               {
+                 unzip(file, exdir = tempfolder)
+               },
+               warning = stop)
       file <- file.path(tempfolder, csvName)
       break
     }
   }
 
-if (grepl("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", file, perl = TRUE)) {
+  if (grepl("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", file, perl = TRUE)) {
     # Remove the underscore and 6-digit number before the extension
     file <- sub("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", "", file, perl = TRUE)
+  }
+  if (grepl("downloaded", file)) {
+    file <- sub("_[^_]*(\\.csv)$", "\\1", file)
   }
   # ---- Select columns to be read from file and read file ----
 
