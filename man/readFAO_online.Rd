@@ -15,7 +15,7 @@ readFAO_online(subtype)
 \item `CropProc`: Production Crops Processed ("Production_CropsProcessed_E_All_Data.zip")
 \item `FB2010`: New Food Balance Sheet, 2010 onwards ("FoodBalanceSheets_E_All_Data.zip")
 \item `SUA2010`: New Supply Utilization Accounts, 2010 onwards ("SUA_Crops_Livestock_E_All_Data_(Normalized).zip")
-\item `CB2010`: New Commodity Balance Sheets, 2010 onwards ("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip")
+\item `CB2010`: New Commodity Balance Sheets, 2010 onwards ("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip") #nolint
 \item `Fertilizer`: Fertilizer ("Resources_Fertilizers_E_All_Data.zip")
 \item `FertilizerProducts`: Fertilizer by product ("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip")
 \item `FertilizerNutrients`: Fertilizer by nutrient ("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip")
