@@ -29,7 +29,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   # ---- Settings ----
 
   ## datasets that have only absolute values
-  absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
+  absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs", "FbsHistoric",
                 "FertilizerProducts", "FertilizerNutrients", "Trade", "TradeMatrix")
 
@@ -49,6 +49,12 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                     "Yield_Carcass_Weight_(hg/An)",   # new FAO data
                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
                                     "Yield_(hg)")                     # new FAO data
+  relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
+                                "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",
+                                "Share_in_Agricultural_land_(%)",
+                                "Area_per_capita_(ha/cap)",
+                                "Share_in_Forest_land_(%)",
+                                "Share_in_Cropland_(%)")
 
   # Relative and unused datasets for the Capital Stock database
   relativeDelete[["CapitalStock"]] <-
