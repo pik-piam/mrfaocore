@@ -235,7 +235,12 @@ readFAO_online <- function(subtype) { # nolint
                      "Southern Asia (excluding intra-trade)",
                      "Southern Europe (excluding intra-trade)", "Western Africa (excluding intra-trade)",
                      "Western Asia (excluding intra-trade)",
-                     "Western Europe (excluding intra-trade)")
+                     "Western Europe (excluding intra-trade)",
+                     "Land Locked Developing Countries (LLDCs)",
+                     "Least Developed Countries (LDCs)",
+                     "Low Income Food Deficit Countries (LIFDCs)",
+                     "Net Food Importing Developing Countries (NFIDCs)",
+                     "Small Island Developing States (SIDS)")
 
   fao$ISO <- toolCountry2isocode(fao$Country, mapping = faoIsoFaoCode, ignoreCountries = ignoreRegions) # nolint
   # remove country aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)

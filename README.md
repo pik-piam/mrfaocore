@@ -49,7 +49,7 @@ A BibTeX entry for LaTeX users is
   title = {mrfaocore: madrat-based package providing core FAO-related preprocessing
     functions},
   author = {David Chen and Ulrich Kreidenweis and Abhijeet Mishra and Kristine Karstens and Benjamin {Leon Bodirsky} and Debbora Leip and Mishko Stevanovic and Benjamin {Leon Bodrisky} and David Klein and Edna {Molina Bacca}},
-  date = {2025-08-15},
+  date = {2025-08-16},
   year = {2025},
   url = {https://github.com/pik-piam/mrfaocore},
   note = {Version: 1.4.0},
