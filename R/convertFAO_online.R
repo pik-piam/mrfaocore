@@ -29,16 +29,9 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   # ---- Settings ----
 
   ## datasets that have only absolute values
-<<<<<<< HEAD
-  absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
-                "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "FbsHistoric",
-                "FertilizerProducts", "FertilizerNutrients", "Trade", "TradeMatrix", 
-                 "CB2010")
-=======
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs", "FbsHistoric",
                 "FertilizerProducts", "FertilizerNutrients", "Trade", "TradeMatrix")
->>>>>>> main
 
   ## datasets that contain relative values that can be deleted because they can
   ## be calculated again at a later point in time
@@ -56,34 +49,12 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                     "Yield_Carcass_Weight_(hg/An)",   # new FAO data
                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
                                     "Yield_(hg)")                     # new FAO data
-<<<<<<< HEAD
-  relativeDelete[["CropLive2010"]] <- c("Yield_(100_g/ha)",
-                                        "Yield_(100_mg/An)",               # new FAO data
-                                        "Yield_(No/An)",                  # new FAO data
-                                        "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
-                                        "Yield_Carcass_Weight_(0_1_g/An)", # new FAO data
-                                        "Yield_(100_g/An)")                     # new FAO data
-  
-  #Fbs, SUA has these both relative and absolute, so rel can be deleted
-  relativeDelete[["FB2010"]] <- 
-    c("Food_supply_(kcal_capita_day)_(kcal/cap/d)",
-      "Protein_supply_quantity_(g_capita_day)_(g/cap/d)", 
-       "Fat_supply_quantity_(g_capita_day)_(g/cap/d)",
-       "Food_supply_quantity_(kg_capita_yr)_(kg/cap)")
-
-  relativeDelete[["SUA2010"]] <- 
-    c("Food_supply_(kcal_capita_day)_(kcal/cap/d)",
-      "Protein_supply_quantity_(g_capita_day)_(g/cap/d)", 
-       "Fat_supply_quantity_(g_capita_day)_(g/cap/d)",
-       "Food_supply_quantity_(g_capita_day)_(g/cap/d)")
-=======
   relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
                                 "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",
                                 "Share_in_Agricultural_land_(%)",
                                 "Area_per_capita_(ha/cap)",
                                 "Share_in_Forest_land_(%)",
                                 "Share_in_Cropland_(%)")
->>>>>>> main
 
   # Relative and unused datasets for the Capital Stock database
   relativeDelete[["CapitalStock"]] <-
