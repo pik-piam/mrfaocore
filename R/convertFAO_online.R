@@ -49,6 +49,15 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                     "Yield_Carcass_Weight_(hg/An)",   # new FAO data
                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
                                     "Yield_(hg)")                     # new FAO data
+  relativeDelete[["CropLive2010"]] <- c("Yield_(100_g/ha)",
+                                    "Yield_Carcass_Weight_(Hg/An)",
+                                    "Yield_(100mg/An)",
+                                    "Yield_(No/An)",
+                                    "Yield_(100mg/An)",               # new FAO data
+                                    "Yield_(100_g/An)",                  # new FAO data
+                                    "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
+                                    "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
+                                    "Yield_(100_g)")                     # new FAO data
   relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
                                 "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",
                                 "Share_in_Agricultural_land_(%)",
@@ -304,16 +313,12 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
 
     # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
     } else if (any(subtype == c("CB2010", "FB2010", "SUA2010"))) {
-      #new dataset doesn't have country transitions making this easier, we only fill all missing with 0's
-   
+      #new dataset doesn't have country transitions,
+      #so we can fill all missing countries with 0's regardless of relative or absolute
+
     x <- complete_magpie(x)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
-    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
-      warning("The following elements could be relative: \n",
-              paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
-              "\n", "and would need a different treatment of NAs in convertFAO") 
-     }
-    
+
     } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]

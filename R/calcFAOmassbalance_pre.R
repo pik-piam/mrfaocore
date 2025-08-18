@@ -41,13 +41,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     fb <-  calcOutput("FAOharmonized", source = "post2010", return = "FB", aggregate = FALSE)
     sua <-  calcOutput("FAOharmonized", source = "post2010", return = "SUA", aggregate = FALSE)
     relationmatrix <-  toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
-    # give opening stocks to FB from SUA , not in data
+
+    # give opening stocks to FB from SUA , by aggregating the SUA products, as stocks not in FB
     openingStocks <- toolAggregate(sua[, , "opening_stocks"], rel = relationmatrix,
                                    from = "post2010_SupplyUtilizationItem", to = "post2010_FoodBalanceItem",
                                    partrel = TRUE, dim = 3.1)
     fb <- mbind(fb, openingStocks)
 
-    ### FAO Commodity Balance
     getSets(fb) <- c("region", "year", "ItemCodeItem.ElementShort")
     getSets(sua) <- c("region", "year", "ItemCodeItem.ElementShort")
 
@@ -109,9 +109,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     fb <- complete_magpie(fb, fill = 0)
 
-    # there are some products and processes in teh SUA we don't cover.
-    # here we first add them to the original product, in terms of demand categories,
-    # while subtracting them from the processing accounting
+    # there are some products and processes in the SUA we don't cover.
+    # here we first add them to the primary product,
+    # while subtracting them from the processing accounting.
+    # extraction rates and conversion factors are ignored in these cases.
     otherSecMapping <- toolGetMapping("FBSSUA_otherSecondary.csv", type = "sectoral",
                                       where = "mrfaocore")
     secMissing <- intersect(getItems(sua, dim = 3.1), otherSecMapping$Sec)
