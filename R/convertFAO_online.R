@@ -29,7 +29,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   # ---- Settings ----
 
   ## datasets that have only absolute values
-  absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "LiveHead",
+  absolute <- c("CBCrop", "CBLive", "CB2010", "CropProc", "Fertilizer", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs", "FbsHistoric",
                 "FertilizerProducts", "FertilizerNutrients", "Trade", "TradeMatrix")
 
@@ -121,6 +121,15 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                             "protein_supply_g/cap/day",
                             "fat_supply_g/cap/day")
 
+  relative[["FB2010"]] <- c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)", 
+                             "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                             "Protein_supply_quantity_(g_capita_day)_(g/cap/d)",
+                             "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
+
+  relative[["SUA2010"]] <- c("Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                             "Food_supply_quantity_(g_capita_day)_(g/cap/d)",
+                             "Protein_supply_quantity_(g_capita_day)_(g/cap/d)",
+                             "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
   # ---- Section for country specific treatment ----
 
   ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
@@ -294,7 +303,17 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     }
 
     # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
-  } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
+    } else if (any(subtype == c("CB2010", "FB2010", "SUA2010"))) {
+      #new dataset doesn't have country transitions making this easier, we only fill all missing with 0's
+   
+    x <- complete_magpie(x)
+    x <- toolCountryFill(x, fill = 0, verbosity = 2)
+    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
+      warning("The following elements could be relative: \n",
+              paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
+              "\n", "and would need a different treatment of NAs in convertFAO")
+    
+    } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]
     }
@@ -394,10 +413,6 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     novar <- setdiff(novar, "Stock_Variation_(t)")
     novar <- setdiff(novar, "Residuals_(t)")
     x[, , novar][x[, , novar] < 0] <- 0
-  }
-
-  if (subtype %in% c("FB2010", "SUA2010", "CB2010")) {
-    x <- complete_magpie(x, fill = 0)
   }
 
   return(x)
