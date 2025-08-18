@@ -311,7 +311,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
       warning("The following elements could be relative: \n",
               paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
-              "\n", "and would need a different treatment of NAs in convertFAO")
+              "\n", "and would need a different treatment of NAs in convertFAO") 
+     }
     
     } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
