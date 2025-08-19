@@ -281,8 +281,9 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
     faoData <- faoData[, , "losses", invert = TRUE]
 
 
-    # add tourist consumption to food - but note that this creates a mismatch in food_supply_kcal!!
-
+    # add tourist consumption to food - but note that this creates a small mismatch in food_supply_kcal,
+    # to live with for now.
+    faoData[is.na(faoData)] <- 0 
     faoData[, , "food"] <-  faoData[, , "food"] + faoData[, , "tourist_consumption"]
     faoData <- faoData[, , "tourist_consumption", invert = TRUE]
 
