@@ -123,26 +123,21 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       dimSums(suaSec[, , c("food", "feed", "other_util", "waste")],
               dim = 3.2)
     sua[sua < 0] <- 0
-    # tehre are negatives due to trade
 
-    # As current mass balance stands we ned flours, brans, oilcakes, Oilcrops Other, molasses
+    # As current mass balance stands we need flours, brans, oilcakes, Oilcrops Other, molasses
     # from the more disaggregated SUA categories
 
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {
       return(relationmatrix[relationmatrix$k %in% magpieItems, "post2010_SupplyUtilizationItem"])
     }
-
     # helper function for FB
     .getFAOitems <- function(magpieItems) {
       return(relationmatrix[relationmatrix$k %in% magpieItems, "post2010_FoodBalanceItem"])
     }
 
-
-
     # the following are the items required from SUA to disaggregate the large FB products,
     # everything else is too specific for our purposes here
-
 
     oilcakes <-  .getFAOitemsSUA("oilcakes")
     oilCrops <- .getFAOitemsSUA(c("soybean", "maiz", "groundnut", "rapeseed", "sunflower", "cottn_pro"))
@@ -164,12 +159,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     oilpalm <- oilpalm[oilpalm != ""]
 
     # need particular maize products
-
     maizeGerm <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                                        relationmatrix[grep("Germ of maize",
                                                                                            relationmatrix$post2010_SupplyUtilizationItem), # nolint
                                                                                       "post2010_SupplyUtilizationItem"])] # nolint
-
     sugarCane <- .getFAOitemsSUA("sugr_cane")
     sugarBeet <- .getFAOitemsSUA("sugr_beet")
     potato <- .getFAOitemsSUA("potato")
@@ -183,18 +176,16 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                                           relationmatrix$post2010_SupplyUtilizationItem), # nolint
                                                                                      "post2010_SupplyUtilizationItem"])]
     glutens <- glutens[-which(glutens == "846|Gluten feed and meal")]
-
+    #sugars and molasses
     sugar <- .getFAOitemsSUA("sugar")
     sugar <- sugar[sugar != ""]
-
     molasses <- .getFAOitemsSUA("molasses")
     cereals <- .getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce"))
     cereals <- cereals[cereals != ""]
-
-
+    #brans
     brans <- .getFAOitemsSUA("brans")
     brans <- brans[brans != ""]
-
+    #beers 
     beers <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                                                    relationmatrix[grep("Beer|-ferm",
                                                                                        relationmatrix$post2010_SupplyUtilizationItem), # nolint
@@ -207,20 +198,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                                     "post2010_SupplyUtilizationItem"])]
     others <- .getFAOitemsSUA("others")
     others <- others[others != ""]
-
     alcohol <- .getFAOitemsSUA("alcohol")
 
 
-    # keep the specific ones and all that are mapped
+    # all these to keep, drop the others
     keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
                      cereals, brans, beers, distillersBrewersG,
                      sugar, molasses, potato, cassava,  starches, glutens, maizeGerm, others, alcohol))
-
-
     sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
 
-    # add these products not existent in FAOSTAT to SUA for disaggregated process accounting
+    # add these products not existent in FAOSTAT to SUA for accounting in mass balance
     missingproducts <- c("X001|Ethanol",
                          "X002|Distillers_grain",
                          "X003|Palmoil_Kerneloil_Kernelcake",
@@ -228,7 +216,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     sua <- add_columns(sua, addnm = missingproducts, dim = 3.1)
     fb <- add_columns(fb, addnm = missingproducts, dim = 3.1)
 
-    #### Product Attributes
+    #### Get product Attributes
     prodAttributes <- calcOutput("Attributes", aggregate = FALSE)
     attributeTypes <- getNames(prodAttributes, dim  = 1)
     removeProd     <- c("betr", "begr", "pasture", "scp", "res_cereals",
@@ -242,7 +230,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                            dim = 3.2, from = "k",
                                            to = "post2010_FoodBalanceItem", partrel = TRUE)
 
-    # reduce the mapping to those in SUA, as there are too many SUA items
+    # reduce the mapping to those in SUA, as there are so many SUA items
     relationmatrixS <- relationmatrix[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                               getItems(sua, dim = 3.1)), ]
     prodAttributesSUA      <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
@@ -255,10 +243,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     getSets(prodAttributesFB) <- c("region", "year", "attributes", "ItemCodeItem")
     getSets(prodAttributesSUA) <- c("region", "year", "attributes", "ItemCodeItem")
 
-
     # change prod attributes from share of dm to share of wm
     attributesWM <- (prodAttributes / dimSums(prodAttributes[, , "wm"], dim = "attributes"))
-
+    # combine all attributes
     itemNames <- c(getNames(fb, dim = "ItemCodeItem"), getNames(sua, dim = "ItemCodeItem"))
     itemNamesAttributes <- getNames(attributesWM, dim = 2)
     if (!(all(itemNames %in% itemNamesAttributes))) {
@@ -291,8 +278,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
 
     # we want to use the amount processed from the food balances and not the supply utilization
-    # in order to account for how much actually leaves the sector
-
+    # in order to account for how much actually leaves the sector, make a mapping here
 
     primFB <- c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
                 "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
@@ -325,20 +311,18 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                  "71|Rye", "75|Oats", "79|Millet", "83|Sorghum", "89|Buckwheat", "94|Fonio",
                  "97|Triticale")
 
-
     mapPrimSUA <- relationmatrixS[which(relationmatrixS$post2010_SupplyUtilizationItem %in% primSUA),
                                   c("post2010_FoodBalanceItem", "post2010_SupplyUtilizationItem")]
 
-
+    #assign the processed to sua here
     for (i in c(primFB)) {
       suaprods <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
-      # for products that map to multiple food balance items, get their ratio of processing
+      # for products that map to multiple food balance items, divide them based on their ratio in processing
       suaRatio <- sua[, , "processed"][, , suaprods] /
         dimSums(sua[, , "processed"][, , suaprods], dim = 3)
       suaRatio[is.na(suaRatio)] <- 1
       sua[, , "processed"][, , suaprods] <- suaRatio * fb[, , i][, , "processed"]
     }
-
 
     # the brans also need a special treatment as we need to
     # take the amount of brans produced in the SUA from the food category
@@ -480,13 +464,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           warning("Massbalancing failed, negative values for ",
                   paste(unique(unname(where(relValues < -threshold)[[1]]$individual[, 3])), collapse = ", "))
         }
-
-
       }
       gc()
-
-
-
       return(object)
     }
 
@@ -517,8 +496,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       if (length(from) > 1 || length(reportAs) > 1 || length(goodIn) > 1 || length(goodOut) > 1) {
         stop("please only use one item each for \"from\", \"reportAs\", \"goodIn\", and \"goodOut\"")
       }
-
-      if (residual != "alcoholloss" &&
+      #alcohol processing happens twice for beers and strong alcohols
+      if (residual != "alcoholloss" && 
          any(object[, , list(goodIn, c(reportAs, residual))] != 0)) { # nolint
         stop("Output flows already exist.")
       }
@@ -565,9 +544,15 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # In contrast to .extractGoodFromFlow, this function calculates global
     # conversion factors per attribute instead of using an "extractionQuantity"
     # and "extractionAttribute" for calculations.
+    # Furthermore, with the 2010 update, we need to distinguish cases where not all of
+    # the "processed" quantity is used up in one process, i.e. in the case of maize, 
+    # in which case extractionBasis is set to "output", and the amount taken away from 
+    # "processing" is based on how much processed good is produced. This can also be 
+    # adjusted based on extractionFactor, to apply a factor on the input required for a
+    # quantity of output. In these cases, residuals are added on to previously existing amounts
     .processingGlobal2 <- function(object,
-      objectO = NULL, # for cases where there is some residual already we need the original object
-      goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
+                                  objectO = NULL, # for cases where there is some residual already we need the original object for check and clear #nolint
+                                  goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
                                   from,     # e.g. "processed" #nolint
                                   process,  # e.g. "refining"
                                   goodsOut, # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses")(the order matters!)
@@ -578,6 +563,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                   extractionAttribute = "wm", # only relevant with extractionFactor
                                   residual  # e.g. "refiningloss"
     ) {
+      #these processes have multiple steps, avoid the check
       if (residual != "food" && residual != "alcoholloss" && process != "fermentation" &&
          any(object[, , list(goodsIn, c(reportAs, residual))] != 0)) { # nolint
         stop("Output flows already exist.")
@@ -587,7 +573,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
            any(object[, , list(goodsOut, "production_estimated")] != 0)) { # nolint
         stop("Output flows already exist.")
       }
-
 
       # attributes relevant for checking massbalance and convFactor
       relevantAttributes <- setdiff(attributeTypes, "wm")
@@ -628,19 +613,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       } else if (extractionBasis == "output") {
 
-        if (any(factors > 1)) {
-          vcat(verbosity = 2, "The following items and attributes had summed conversion factor greater than 1,
-                            some more inputs processed than attributes would suggest: ",
-               paste0(c(getItems(object[, , c(goodsIn, goodsOut)], dim = 3.1),
-                        unique(as.vector(where(factors > 1)$true$individual)))))
-        }
-
+        # For multiple inputs or outputs, 
         # we can't know how much of each input goes into each out so we distribute them proportionally
         ratioIns <- object[, , list(goodsIn, from)] / dimSums(object[, , list(goodsIn, from)], dim = "ItemCodeItem")
         # just in case there is production but no goodsIn we give it equal shares so it shows up in production estimated
         ratioIns[is.na(ratioIns)] <- 1 / length(goodsIn)
+        
         # estimate outputs
-
         attributesTo <- attributesWM[, , goodsOut]
 
         if (!is.null(extractionFactor)) {
@@ -652,8 +631,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           }
 
           attributesTo <- attributesWM[, , goodsIn]
+          #use extraction factor to get conversion factor across attributes
           extractionConversion <- attributesTo / extractionFactorMag
-
+          # assign amount processed based on conversion factor
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
                                                    dimSums((object[, , list(goodsOut,
                                                                             "production")][, , extractionAttribute] *
@@ -661,7 +641,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                            dim = c("ElementShort", "ItemCodeItem"))) +
             object[, , list(goodsIn, process)]
         } else {
-
+          # no extractionFactor means the amount produced is assigned to the process
+          # and later subtracted from input going to processing
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
                                                    dimSums(object[, , list(goodsOut, "production")],
                                                            dim = c("ElementShort", "ItemCodeItem"))) +
@@ -670,33 +651,35 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         }
 
         for (j in seq_along(goodsOut)) {
-
+           #assign report As based on the goods produced
           object[, , list(goodsIn, reportAs[j])] <- ratioIns * dimSums(object[, , list(goodsOut[j], "production")],
                                                                        dim = c("ElementShort", "ItemCodeItem")) +
             object[, , list(goodsIn, reportAs[j])]
-
+           # assign production estimated based on goods produced
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsOut[j], "production")],
                                                                            dim = "ElementShort") +
             object[, , list(goodsOut[j], "production_estimated")]
         }
-
+         # residual is difference between how much went into processing and how much reported
+         # 0 in the case of no extractionFactor
         object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, process)],
                                                         dim = c("ElementShort", "ItemCodeItem"))
                                                 - (dimSums(object[, , list(goodsIn, reportAs)],
                                                            dim = c("ElementShort", "ItemCodeItem"))))
 
         if (from == "processed") {
+          # as we are on output basis we also track how much went into processing based on the output
+          # which can be different from how much is reported in the data going into processing
           object[, , list(goodsIn, "process_estimated")] <- dimSums(object[, , list(goodsIn, process)],
                                                                     dim = c("ElementShort"))  +
             object[, , list(goodsIn, "process_estimated")]
         }
-        # remove the amount processed
+        # remove the amount processed from the "from"
         object[, , list(goodsIn, from)] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
                                             - (dimSums(object[, , list(goodsIn, process)], dim = c("ElementShort"))))
 
         # if less than zero this is tracked in difference between production and process_estimated, remove 0's here
         object[, , list(goodsIn, from)][which(object[, , list(goodsIn, from)] < 0)] <- 0
-
       }
 
 
@@ -712,7 +695,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     # processing of maiz and sugar cane  (other_util) to ethanol, distillers grain and distilling loss
     .ethanolProcessing <- function(object) {
-      # subtract the starch and keep it in the other_util, afterwards add IEA residual to other_util (stays as is)
       "
     ethanol and maize:  https://doi.org/10.3390/fermentation7040268 #nolint
     Production of Bioethanol - A Review of Factors Affecting Ethanol Yield
@@ -721,13 +703,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     ethanol weight per l:  789g
     "
 
-      # subtract the starch and keep it in the other_util, afterwards add IEA residual to other_util (stays as is)
-
       prodIn <- "56|Maize (corn)"
+
       # liter yield multiplied by product attributes
       ethanolYieldLiterPerTonMaize <- 400 / attributesWM[, , prodIn][, , "dm"]
-
-
       # liter yield converted to dm (-> extraction factor)
       extractionQuantityMaize <- 0.789 * ethanolYieldLiterPerTonMaize / 1000
 
@@ -784,7 +763,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # liter yield converted to dm (-> extraction factor)
       extractionQuantitySugar <- 0.789 * ethanolYieldLiterPerTonSugar / 1000
 
-      # ethanol processing from sugarcane (only ethanol1 and distillingloss)
+      # ethanol processing from cane sugar (only ethanol1 and distillingloss)
       object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")] <- .extractGoodFromFlow2(
         object = object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")], # nolint
         goodIn = "163|Cane sugar, non-centrifugal",
@@ -826,9 +805,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                               extractionBasis = "output",
                                                               residual = "refiningloss")
 
-      # we use the starches as these alllow us to know how much is going into processed,
-      # remove these from the amount of processed in the main crop,
-      # as well as assign the amount refining (along with demand etc to the main crop)
+      # we use the starches as these alllow us to know how much of the product is going into sugar processing, #nolint
+      # we will remove these from the amount of processed in the main crop, based on sugar attributes
+      # and assign the amount refining (along with demand etc to the main crop)
 
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
@@ -854,13 +833,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # here we need to make negatives 0, still tracked in process_estimated
       object[object < 0] <- 0
 
-
       return(object)
     }
 
 
-    # processing of tece (processed) to alcohol1 and alcoholloss
-    # actually beer and 'whiskey' processing now
+    # processing of grains to alcohol1 and alcoholloss
     .beerProcessing <- function(object) {  ### do it product specific
 
       beerCereals <- c("44|Barley", "27|Rice",  "56|Maize (corn)", "15|Wheat", "79|Millet", "83|Sorghum")
@@ -881,6 +858,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                          residual = "intermediate",
                                                                          extractionBasis = "output",
                                                                          extractionFactor = 5)
+                                                                         #this extraction factor based on 
+                                                                         #FAOSTAT wm conversion factors 
+                                                                         #in product tree description
+
 
         object[, , c(beerCereals[j], "X004|Brewers_grain")] <- .extractGoodFromFlow2(object = object[, , c(beerCereals[j], "X004|Brewers_grain")], # nolint
                                                                                      goodIn = beerCereals[j],
@@ -923,12 +904,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       whtGerm <- "19|Germ of wheat"
 
-      # add wheat germ to brans
+      # add wheat germ production to brans, ignore the bran to germ process
       object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] +
         dimSums(object[, , whtGerm], dim = 3.1)
       # brans are part of food demand and not processing in the food balances, here we
       # take the brans from FB food demand and add it to the food
-      # main crops
+
       for (j in seq_along(cropsIn)) {
 
         object[, , c(cropsIn[j],  bransOut[j])] <-  .processingGlobal2(object = object[, , c(cropsIn[j], bransOut[j])],
@@ -941,7 +922,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                        residual = "flour1",
                                                                        extractionBasis = "input")
       }
-      # milling of maize makes brans germoil and germcakes
 
       # rice makes brancakes - assigned to brans due to its attributes, and branoils
       riceIn <-  c("27|Rice")
@@ -959,11 +939,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                  reportAs = c("oilcakes1", "branoil1"),
                                                                  residual = "flour1",
                                                                  extractionBasis = "input")
+
+      # milling of maize makes brans germoil and germcakes
       maizIn <-  c("56|Maize (corn)")
       brOut <- c("59|Bran of maize")
       moOut <- c("60|Oil of maize")
       mcOut <- c("61|Cake of maize")
-
 
       object[, , c(maizIn, brOut, moOut, mcOut)] <-  .processingGlobal2(object = object[, , c(maizIn, brOut,
                                                                                               moOut, mcOut)],
@@ -977,7 +958,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                         residual = "flour1",
                                                                         extractionBasis = "input")
 
-
       return(object)
     }
 
@@ -985,13 +965,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # extraction of oil and oilcakes from oilcrops (processed)
     .oilProcessing <- function(object) {
       # we combine olives with rapeseed here as they have no cakes,
-      # leading to imbalcnce in processing conversion later on when the rapeseed k category
+      # with harmonization of processing conversion later on when the rapeseed k category
       # gets harmonized. Mostly Spain now produces very expensive rapsoil
       object[, , "270|Rape or colza seed"] <-  object[, , "270|Rape or colza seed"] +
         dimSums(object[, , "260|Olives"], dim = 3.1)
       object[, , "271|Rapeseed or canola oil, crude"] <-  object[, , "271|Rapeseed or canola oil, crude"] +
         dimSums(object[, , "261|Olive oil"], dim = 3.1)
-
 
       # do the oilcrops with cakes
       # orders must match!
@@ -1012,7 +991,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                    "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
                    "335|Cake of  linseed",  "338|Cake of hempseed",
                    "341|Cake, oilseeds nes")
-
 
       # oils processed -> food
 
@@ -1036,8 +1014,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                        extractionAttribute = "dm",
                                                                        prodAttributes = prodAttributes)
       }
-
-
       return(object)
     }
 
@@ -1074,10 +1050,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                 extractionQuantity = "max",
                                                                 extractionAttribute = "dm",
                                                                 prodAttributes = prodAttributes)
-
       return(object)
     }
-
 
 
     # main function combining all processing functions
@@ -1127,7 +1101,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                 "processed", "extracting", "oil1", "oil2",
                                 "intermediate", "oilcakes1", "extractionloss")
 
-      # relevant processing products
+      # relevant processing products, some finnicky product selection here again
       millingSUA <- c(.getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce", "brans")),
                       "61|Cake of maize", "37|Cake of rice bran",
                       "60|Oil of maize", "36|Oil of rice bran")
@@ -1158,6 +1132,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       flowsCBC <- suaFlows
 
+
       # deal with starches and gluten here as the process is not included explicitly
       # subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
       # attribute end use (feed, other_util, food, to main crop)
@@ -1173,7 +1148,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           flowsCBC[, , list(starches[[i]], "food")]
       }
 
-      # do the same for the glutens, in this case the processed glutens also go into feed
+      # do the same for the glutens, in this case the processed glutens also go into feed, as
+      # the processed glutens become "gluten feed and meal", a feed product
       names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
       for (i in seq_along(glutens)) {
         flowsCBC[, , list(glutens[[i]], "feed")] <- flowsCBC[, , list(glutens[[i]], "feed")] +
@@ -1187,6 +1163,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           flowsCBC[, , list(glutens[[i]], "food")]
       }
 
+
+      # here the main processings start 
+
       flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
       flowsCBC[, , list(fermentationSUA, fermentationDimensions)] <-
@@ -1195,11 +1174,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
       flowsCBC[, , list(millingSUA, millingDimensions)] <-
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
-      # add germ of wheat to the wheat bran for all those not added in the processing
+      # germ of wheat was added to the wheat bran in milling, but we need to include it in the 
+      # other non-milling dimensions
       flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "17|Bran of wheat"] <-
         flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "17|Bran of wheat"] +
         flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "19|Germ of wheat", drop = TRUE]
-      # we combined wheat germ with brans in the above, so remove here
+      # we combined wheat germ with brans in the above, so remove here 
       flowsCBC <- flowsCBC[, , "19|Germ of wheat", invert = TRUE]
       # FAO accoutns for brans as brans --> processing -- > gluten feed an meal --> feed
       # so we assign brans --> processing directly to feed
@@ -1209,7 +1189,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       flowsCBC[, , bransNoGerm][, , "processed"]  <- 0
 
       # remove starches now as based on FAO flowcharts starches processed
-      # are used only to produce glucose and fructose
+      # are used only to produce glucose and fructose and we accounted for this
+      # in sugar processing, to avoid double counting in other dimensions
       flowsCBC <- flowsCBC[, , starches, invert = TRUE]
       # remove glutens
       flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
