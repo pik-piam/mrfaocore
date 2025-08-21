@@ -200,11 +200,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     others <- others[others != ""]
     alcohol <- .getFAOitemsSUA("alcohol")
 
+    # milk products for a correction of FAO FBS, we use SUA demands instead
+    milks <- .getFAOitemsSUA("livst_milk")
 
     # all these to keep, drop the others
     keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
                      cereals, brans, beers, distillersBrewersG,
-                     sugar, molasses, potato, cassava,  starches, glutens, maizeGerm, others, alcohol))
+                     sugar, molasses, potato, cassava,  starches, glutens, maizeGerm, others, alcohol, 
+                     milks))
     sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
 
@@ -1408,6 +1411,45 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       gc()
       massbalanceNoProcessing <- massbalanceNoProcessing[, , "", invert = TRUE]
 
+    # we need to do a correction for livst_milk, as the FAOSTAT FBS domestic supply values are 
+    # much higher than production than in SUA and trade data , so we will scale the uses in the FBS
+    # by a global conversion factor, the ratio between global domestic supply and global production
+    # which should normally be 1
+      cells <- getCells(sua)
+      milkP <- .getFAOitemsSUA("livst_milk")
+      milkSUA <- sua[, , milkP]
+    # dry matter conversion factors for processed milk products to raw milk, 
+    # based on FAOSTAT technical conversion factors
+    # fill with dm content of milk as default
+    milkConv <- new.magpie(cells_and_regions = "GLO", years = NULL, names = milkP, fill = 0.122)
+    # add the dm content of the processed products
+    milkConv[, , "Cheese", pmatch = TRUE] <- 0.5
+    milkConv[, , c("Butter", "Ghee"), pmatch = TRUE] <- 0.8
+    milkConv[, , c("Yoghurt"), pmatch = TRUE] <- 0.15
+    milkConv[, , c("condensed"), pmatch = TRUE] <- 0.7
+    milkConv[, , c("evaporated"), pmatch = TRUE] <- 1
+    milkConv[, , c("powder"), pmatch = TRUE] <- 1
+    milkConv[, , c("Cream"), pmatch = TRUE] <- 0.3
+    milkConv[, , c("Whey, fresh"), pmatch = TRUE] <- 0.05
+
+    # domestic supply categories without the processing, which is double counting
+    # multiplied to get dry matter contents
+    milkDems <- dimSums((milkSUA[, , c("food", "feed", "other_util",
+                                "seed", "waste")] *
+                                milkConv), dim =3.1)
+   # ratio of demands scaled to production 
+    milkDemCorrected <- milkDems / dimSums(milkDems, dim = c(1,3)) *
+                        dimSums(massbalanceNoProcessing[, , "livst_milk"][, , "dm"][, , "production"], dim = 1)
+    milkDemCorrected <- collapseDim(milkDemCorrected, dim = c(3.3, 3.4))
+    milkDemCorrected <- dimOrder(milkDemCorrected, perm = c(2,1), dim = 3)
+    # add domestic supply
+    milkDemCorrected <- add_columns(milkDemCorrected, addnm = "domestic_supply", dim = 3.2)
+    milkDemCorrected[, , "domestic_supply"] <- dimSums(milkDemCorrected[, , "domestic_supply", invert = TRUE], dim = 3)
+    # get the attributes again
+    prodAttributes <- calcOutput("Attributes", aggregate = FALSE)
+    milkDemCorrected <- milkDemCorrected * prodAttributes[, , "livst_milk"]
+    # replace these columns in the main object
+    massbalanceNoProcessing[ , , "livst_milk"][, , getItems(milkDemCorrected, dim = 3.2)] <- milkDemCorrected
     }
 
 
@@ -1422,6 +1464,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     massbalanceProcessing <- .massbalanceProcessing(years)
     # put results together
     massbalance <- mbind(massbalanceProcessing, massbalanceNoProcessing)
+
+
+
+
 
 
 
