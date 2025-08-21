@@ -1450,6 +1450,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     milkDemCorrected <- milkDemCorrected * prodAttributes[, , "livst_milk"]
     # replace these columns in the main object
     massbalanceNoProcessing[ , , "livst_milk"][, , getItems(milkDemCorrected, dim = 3.2)] <- milkDemCorrected
+   return(massbalanceNoProcessing)
     }
 
 
