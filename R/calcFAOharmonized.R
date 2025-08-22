@@ -40,7 +40,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
 
     pre <- complete_magpie(pre)
     post <- complete_magpie(post)
-    names <- intersect(getNames(pre, dim = 1), getNames(out, dim = 1))
+    names <- intersect(getNames(pre, dim = 1), getNames(post, dim = 1))
 
 
     faoData <- mbind(pre[, , names], post[, , names])
