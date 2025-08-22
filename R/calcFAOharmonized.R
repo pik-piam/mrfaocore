@@ -306,12 +306,12 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
                "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
                "335|Cake of  linseed",  "338|Cake of hempseed",
                "341|Cake, oilseeds nes", "61|Cake of maize", "259|Cake of palm kernel", "37|Cake of rice bran")
+    #re add pop for adding
+    sua <- add_columns(sua, dim = 3.2, addnm = "total_population_both_sexes", fill = 0)
 
     suab <- sua[, , brans]
     suab <- dimSums(suab, dim = 3.1)
     suab <- add_dimension(suab, dim = 3.1, add = "ItemCodeItem", nm = "2600|Brans")
-    suab <- add_columns(suab, dim = 3.2, addnm = "total_population_both_sexes", fill = 0)
-
 
     faoData <- mbind(faoData, suab[, , getNames(faoData, dim = 2)])
     faoData <- mbind(faoData, sua[, ,  cakes])
