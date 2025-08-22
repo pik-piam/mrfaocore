@@ -1431,13 +1431,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     milkConv[, , c("powder"), pmatch = TRUE] <- 1
     milkConv[, , c("Cream"), pmatch = TRUE] <- 0.3
     milkConv[, , c("Whey, fresh"), pmatch = TRUE] <- 0.05
+    milkConv[, , c("Raw milk of buffalo"), pmatch = TRUE] <- 0.18
+    milkConv[, , c("Casein"), pmatch=TRUE] <- 1
+    milkConv[, , c("Buttermilk"), pmatch = TRUE] <- 0.9
+    milkConv[, , c("Skim milk of cows"), pmatch = TRUE] <- 0.09
 
     # domestic supply categories without the processing, which is double counting
     # multiplied to get dry matter contents
     milkDems <- dimSums((milkSUA[, , c("food", "feed", "other_util",
                                 "seed", "waste")] *
                                 milkConv), dim =3.1)
-   # ratio of demands scaled to production 
+   # ratio of demands scaled to production  
     milkDemCorrected <- milkDems / dimSums(milkDems, dim = c(1,3)) *
                         dimSums(massbalanceNoProcessing[, , "livst_milk"][, , "dm"][, , "production"], dim = 1)
     milkDemCorrected <- collapseDim(milkDemCorrected, dim = c(3.3, 3.4))
