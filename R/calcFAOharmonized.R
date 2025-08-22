@@ -189,6 +189,12 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
       fb <- fb[, , "Processing_(t)", invert = TRUE]
       out <- complete_magpie(mbind(fb, cb), fill = 0)
 
+        # remove the relative food supplys kcal/cap/d and kg/cap
+    out <- out[, , c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)", "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                              "Fat_supply_quantity_(g_capita_day)_(g/cap/d)", "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
+                       invert = TRUE]
+
+
 
     } else if (return == "SUA") {
 
@@ -212,6 +218,11 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
       sua <- sua[, , c("Food_supply_quantity_(tonnes)_(t)", "Fats_Year_(t)",
                        "Loss_(t)", "Proteins_Year_(t)", "Calories_Year_(Kcal)"),
                  invert = TRUE]
+
+              # remove the relative food supplys kcal/cap/d and kg/cap
+    sua <- sua[, , c("Food_supply_quantity_(g_capita_day)_(g/cap/d)", "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                              "Fat_supply_quantity_(g_capita_day)_(g/cap/d)", "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
+                       invert = TRUE]
 
       # create domestic supply quantity
       suad <- dimSums(sua[, , c("Food_(t)", "Feed_(t)", "Other_uses_(non_food)_(t)",
@@ -248,11 +259,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
     rm(areaHarvested)
 
     # change names to old convention, units from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
-    # remove the relative food supplys kcal/cap/d and kg/cap
-    faoData <- faoData[, , c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)", "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
-                              "Fat_supply_quantity_(g_capita_day)_(g/cap/d)", "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
-                       invert = TRUE]
-
+  
     getNames(faoData, dim = 2) <- tolower(gsub("_\\(.*", "", getNames(faoData, dim  = 2)))
     getNames(faoData, dim = 2) <- tolower(gsub("_quantity", "", getNames(faoData, dim  = 2)))
 
