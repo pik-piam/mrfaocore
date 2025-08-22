@@ -1428,12 +1428,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     milkConv[, , c("Yoghurt"), pmatch = TRUE] <- 0.15
     milkConv[, , c("condensed"), pmatch = TRUE] <- 0.7
     milkConv[, , c("evaporated"), pmatch = TRUE] <- 1
-    milkConv[, , c("powder"), pmatch = TRUE] <- 1
+    milkConv[, , c("powder"), pmatch = TRUE] <- 0.97
     milkConv[, , c("Cream"), pmatch = TRUE] <- 0.3
     milkConv[, , c("Whey, fresh"), pmatch = TRUE] <- 0.05
     milkConv[, , c("Raw milk of buffalo"), pmatch = TRUE] <- 0.18
-    milkConv[, , c("Casein"), pmatch=TRUE] <- 1
-    milkConv[, , c("Buttermilk"), pmatch = TRUE] <- 0.9
+    milkConv[, , c("Casein"), pmatch=TRUE] <- 0.88
+    milkConv[, , c("Buttermilk"), pmatch = TRUE] <- 0.09
     milkConv[, , c("Skim milk of cows"), pmatch = TRUE] <- 0.09
 
     # domestic supply categories without the processing, which is double counting
