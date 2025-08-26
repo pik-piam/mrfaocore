@@ -50,14 +50,14 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
                                     "Yield_(hg)")                     # new FAO data
   relativeDelete[["CropLive2010"]] <- c("Yield_(100_g/ha)",
-                                    "Yield_Carcass_Weight_(Hg/An)",
-                                    "Yield_(100mg/An)",
-                                    "Yield_(No/An)",
-                                    "Yield_(100mg/An)",               # new FAO data
-                                    "Yield_(100_g/An)",                  # new FAO data
-                                    "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
-                                    "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
-                                    "Yield_(100_g)")                     # new FAO data
+                                        "Yield_Carcass_Weight_(Hg/An)",
+                                        "Yield_(100mg/An)",
+                                        "Yield_(No/An)",
+                                        "Yield_(100mg/An)",               # new FAO data
+                                        "Yield_(100_g/An)",                  # new FAO data
+                                        "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
+                                        "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
+                                        "Yield_(100_g)")                     # new FAO data
   relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
                                 "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",
                                 "Share_in_Agricultural_land_(%)",
@@ -228,7 +228,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
-      x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
+    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
       warning("The following elements could be relative: \n",
@@ -249,7 +249,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
         warning("The following elements could be relative: \n",
                 paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
                 "\n", "and would need a different treatment of NAs in convertFAO")
-      } 
+      }
     }
 
   } else if (any(subtype == c("FSCrop", "FSLive"))) {
@@ -319,7 +319,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     x <- complete_magpie(x)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
-    } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
+    } else if (startsWith(subtype, "EmisAg") || startsWith(subtype, "EmisLu")) {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]
     }
