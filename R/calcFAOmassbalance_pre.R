@@ -805,6 +805,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # processing of starches to glucose and fructose
     .sugarProcessing <- function(object) {
 
+      starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
+                 "119|Starch of potatoes")
+
       goodsIn <- c("156|Sugar cane", "157|Sugar beet")
       goodsOut <- c("164|Refined sugar", "165|Molasses", "163|Cane sugar, non-centrifugal")
       object[, , c(goodsIn, goodsOut)] <- .processingGlobal2(object = object[, , c(goodsIn, goodsOut)],
