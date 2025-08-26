@@ -220,8 +220,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
              "893|Buttermilk, curdled and acidified milk",
              "903|Whey, fresh", "954|Skim milk of buffalo")
 
-    sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
+    sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
     # add these products not existent in FAOSTAT to SUA for accounting in mass balance
     missingproducts <- c("X001|Ethanol",
@@ -815,10 +815,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                              reportAs = c("sugar1", "molasses1", "sugar3"),
                                                              residual = "refiningloss")
 
-      goodsIn <- c(starches)
+      goodsIn <- starches
       goodsOut <- c("166|Other fructose and syrup", "172|Glucose and dextrose")
       object[, , c(starches, goodsOut)] <- .processingGlobal2(object = object[, , c(starches, goodsOut)],
-                                                              goodsIn = goodsIn,
+                                                              goodsIn = starches,
                                                               from = "processed",
                                                               process = "refining",
                                                               goodsOut = goodsOut,
@@ -1176,6 +1176,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
       # attribute end use (feed, other_util, food, to main crop)
       # subtract starch production from main crop processed
+      starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
+                 "119|Starch of potatoes")
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
         flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
@@ -1189,7 +1191,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # do the same for the glutens, in this case the processed glutens also go into feed, as
       # the processed glutens become "gluten feed and meal", a feed product
-      names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
+     glutens <- c("24|Wheat gluten", "33|Rice, gluten", "63|Maize gluten")
+     names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
       for (i in seq_along(glutens)) {
         flowsCBC[, , list(glutens[[i]], "feed")] <- flowsCBC[, , list(glutens[[i]], "feed")] +
           flowsCBC[, , list(glutens[[i]], "processed")]
@@ -1201,7 +1204,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , list(names(glutens)[[i]], "food")] <- flowsCBC[, , list(names(glutens)[[i]], "food")] +
           flowsCBC[, , list(glutens[[i]], "food")]
       }
-
+     
+   brans <- c("17|Bran of wheat", "59|Bran of maize", "81|Bran of millet", "85|Bran of sorghum",
+              "91|Bran of buckwheat", "112|Bran of cereals nec", "35|Bran of rice", "105|Bran of mixed grain",
+              "19|Germ of wheat", "73|Bran of rye", "47|Bran of barley",
+              "77|Bran of oats", "96|Bran of fonio", "99|Bran of triticale")
 
       # here the main processings start
 
