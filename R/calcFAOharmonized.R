@@ -4,22 +4,22 @@
 #'
 #' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
 #' @author Ulrich Kreidenweis, David Chen, Kristine Karstens
-#' @param source "pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
+#' @param src source "pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
 #' until 2013 (actually 2013, but gets effectively chopped to 2010 by massbalance). "post2010" combines
 #' the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards.
-#' @param return whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)
+#' @param output whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("FAOharmonized")
 #' }
 #' @importFrom utils read.csv
 
-calcFAOharmonized <- function(source = "pre2010", return = "FB") {
+calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
   if (source == "join2010") { # nolint
     # take new values from 2010 onwards
-    pre <- calcOutput("FAOharmonized", source = "pre2010", aggregate = FALSE)
-    post <- calcOutput("FAOharmonized", source = "post2010", return = "FB", aggregate = FALSE)
+    pre <- calcOutput("FAOharmonized", src = "pre2010", aggregate = FALSE)
+    post <- calcOutput("FAOharmonized", src = "post2010", output = "FB", aggregate = FALSE)
 
     mapping <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
     pre <- toolAggregate(pre, rel = mapping, from = "pre2010_FoodBalanceItem", to = "post2010_FoodBalanceItem",
@@ -146,10 +146,12 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
       fb <- fb[, , "Processing_(t)", invert = TRUE]
       out <- complete_magpie(mbind(fb, cb), fill = 0)
 
-        # remove the relative food supplys kcal/cap/d and kg/cap
-    out <- out[, , c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)", "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
-                              "Fat_supply_quantity_(g_capita_day)_(g/cap/d)", "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
-                       invert = TRUE]
+      # remove the relative food supplys kcal/cap/d and kg/cap
+      out <- out[, , c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)",
+                       "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                       "Fat_supply_quantity_(g_capita_day)_(g/cap/d)",
+                       "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
+                 invert = TRUE]
 
     } else if (return == "SUA") {
 
@@ -175,10 +177,12 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
                        "Loss_(t)", "Proteins_Year_(t)", "Calories_Year_(Kcal)"),
                  invert = TRUE]
 
-              # remove the relative food supplys kcal/cap/d and kg/cap
-    sua <- sua[, , c("Food_supply_quantity_(g_capita_day)_(g/cap/d)", "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
-                              "Fat_supply_quantity_(g_capita_day)_(g/cap/d)", "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
-                       invert = TRUE]
+      # remove the relative food supplys kcal/cap/d and kg/cap
+      sua <- sua[, , c("Food_supply_quantity_(g_capita_day)_(g/cap/d)",
+                       "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                       "Fat_supply_quantity_(g_capita_day)_(g/cap/d)",
+                       "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
+                 invert = TRUE]
 
       # create domestic supply quantity
       suad <- dimSums(sua[, , c("Food_(t)", "Feed_(t)", "Other_uses_(non_food)_(t)",
@@ -214,11 +218,11 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
 
     rm(areaHarvested)
 
-    # change names to old convention, units from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
-  
+    # change names to old convention
+
     getNames(faoData, dim = 2) <- tolower(gsub("_\\(.*", "", getNames(faoData, dim  = 2)))
     getNames(faoData, dim = 2) <- tolower(gsub("_quantity", "", getNames(faoData, dim  = 2)))
-
+    # change units from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
     faoData <- faoData / 1e6
     faoData <- complete_magpie(faoData)
 
@@ -250,7 +254,7 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
 
     # add tourist consumption to food - but note that this creates a small mismatch in food_supply_kcal,
     # to live with for now.
-    faoData[is.na(faoData)] <- 0 
+    faoData[is.na(faoData)] <- 0
     faoData[, , "food"] <-  faoData[, , "food"] + faoData[, , "tourist_consumption"]
     faoData <- faoData[, , "tourist_consumption", invert = TRUE]
 
@@ -272,51 +276,51 @@ calcFAOharmonized <- function(source = "pre2010", return = "FB") {
 
 
 
-    # get the brans, oilcakes, molasses  post 2010 from SUA
-    sua <- calcOutput("FAOharmonized", source = "post2010", return = "SUA",
-                      aggregate = FALSE)[, , "opening_stocks", invert = TRUE]
-    brans <- c("59|Bran of maize",
-               "17|Bran of wheat",
-               "47|Bran of barley",
-               "73|Bran of rye",
-               "77|Bran of oats",
-               "105|Bran of mixed grain",
-               "91|Bran of buckwheat",
-               "96|Bran of fonio",
-               "81|Bran of millet",
-               "85|Bran of sorghum",
-               "112|Bran of cereals nec",
-               "35|Bran of rice")
+      # get the brans, oilcakes, molasses  post 2010 from SUA
+      sua <- calcOutput("FAOharmonized", src = "post2010", output = "SUA",
+                        aggregate = FALSE)[, , "opening_stocks", invert = TRUE]
+      brans <- c("59|Bran of maize",
+                 "17|Bran of wheat",
+                 "47|Bran of barley",
+                 "73|Bran of rye",
+                 "77|Bran of oats",
+                 "105|Bran of mixed grain",
+                 "91|Bran of buckwheat",
+                 "96|Bran of fonio",
+                 "81|Bran of millet",
+                 "85|Bran of sorghum",
+                 "112|Bran of cereals nec",
+                 "35|Bran of rice")
 
-    # subtract the bran  kcal and protein from the respective products, a few countries report
-    brancrop <- c("2514|Maize and products", "2511|Wheat and products", "2513|Barley and products",
-                  "2515|Rye and products", "2516|Oats", "2520|Cereals, Other",
-                  "2520|Cereals, Other", "2520|Cereals, Other", "2517|Millet and products",
-                  "2518|Sorghum and products", "2520|Cereals, Other", "2807|Rice and products")
-    branmap <- data.frame("bran" = brans, "crop" = brancrop)
-    # rename via toolAggregate to sum the "cereals, other"
-    foodbrans <- toolAggregate(sua[, , brans][, , c("protein_supply", "food_supply_kcal")],
-                               rel = branmap, from = "bran", to = "crop", dim = 3.1)
-    faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] <-
-      faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] -
-      foodbrans 
+      # subtract the bran  kcal and protein from the respective products, a few countries report
+      brancrop <- c("2514|Maize and products", "2511|Wheat and products", "2513|Barley and products",
+                    "2515|Rye and products", "2516|Oats", "2520|Cereals, Other",
+                    "2520|Cereals, Other", "2520|Cereals, Other", "2517|Millet and products",
+                    "2518|Sorghum and products", "2520|Cereals, Other", "2807|Rice and products")
+      branmap <- data.frame("bran" = brans, "crop" = brancrop)
+      # rename via toolAggregate to sum the "cereals, other"
+      foodbrans <- toolAggregate(sua[, , brans][, , c("protein_supply", "food_supply_kcal")],
+                                 rel = branmap, from = "bran", to = "crop", dim = 3.1)
+      faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] <-
+        faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] -
+        foodbrans
 
-    cakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
-               "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
-               "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
-               "335|Cake of  linseed",  "338|Cake of hempseed",
-               "341|Cake, oilseeds nes", "61|Cake of maize", "259|Cake of palm kernel", "37|Cake of rice bran")
-    #re add pop for adding
-    sua <- add_columns(sua, dim = 3.2, addnm = "total_population_both_sexes", fill = 0)
+      cakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
+                 "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
+                 "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                 "335|Cake of  linseed",  "338|Cake of hempseed",
+                 "341|Cake, oilseeds nes", "61|Cake of maize", "259|Cake of palm kernel", "37|Cake of rice bran")
+      # re add pop for adding
+      sua <- add_columns(sua, dim = 3.2, addnm = "total_population_both_sexes", fill = 0)
 
-    suab <- sua[, , brans]
-    suab <- dimSums(suab, dim = 3.1)
-    suab <- add_dimension(suab, dim = 3.1, add = "ItemCodeItem", nm = "2600|Brans")
+      suab <- sua[, , brans]
+      suab <- dimSums(suab, dim = 3.1)
+      suab <- add_dimension(suab, dim = 3.1, add = "ItemCodeItem", nm = "2600|Brans")
 
-    faoData <- mbind(faoData, suab[, , getNames(faoData, dim = 2)])
-    faoData <- mbind(faoData, sua[, ,  cakes])
-    faoData[, , "165|Molasses"] <- sua[, , "165|Molasses"]
-    faoData <- complete_magpie(faoData)
+      faoData <- mbind(faoData, suab[, , getNames(faoData, dim = 2)])
+      faoData <- mbind(faoData, sua[, ,  cakes])
+      faoData[, , "165|Molasses"] <- sua[, , "165|Molasses"]
+      faoData <- complete_magpie(faoData)
 
     }
 

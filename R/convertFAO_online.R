@@ -130,10 +130,10 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                             "protein_supply_g/cap/day",
                             "fat_supply_g/cap/day")
 
-  relative[["FB2010"]] <- c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)", 
-                             "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
-                             "Protein_supply_quantity_(g_capita_day)_(g/cap/d)",
-                             "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
+  relative[["FB2010"]] <- c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)",
+                            "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                            "Protein_supply_quantity_(g_capita_day)_(g/cap/d)",
+                            "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
 
   relative[["SUA2010"]] <- c("Food_supply_(kcal_capita_day)_(kcal/cap/d)",
                              "Food_supply_quantity_(g_capita_day)_(g/cap/d)",
@@ -312,14 +312,14 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     }
 
     # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
-    } else if (any(subtype == c("CB2010", "FB2010", "SUA2010"))) {
-      #new dataset doesn't have country transitions,
-      #so we can fill all missing countries with 0's regardless of relative or absolute
+  } else if (any(subtype == c("CB2010", "FB2010", "SUA2010"))) {
+    # new dataset doesn't have country transitions,
+    # so we can fill all missing countries with 0's regardless of relative or absolute
 
     x <- complete_magpie(x)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
-    } else if (startsWith(subtype, "EmisAg") || startsWith(subtype, "EmisLu")) {
+  } else if (startsWith(subtype, "EmisAg") || startsWith(subtype, "EmisLu")) {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]
     }
@@ -372,7 +372,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
 
-    if (subtype == "ValueOfProd") {
+  if (subtype == "ValueOfProd") {
     x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_USD)"]
     x2 <- toolConvertGDP(x2, unit_in = "current US$MER",
                          unit_out = "constant 2017 US$MER",

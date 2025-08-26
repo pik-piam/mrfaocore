@@ -38,8 +38,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
   } else if (version == "post2010") {
 
-    fb <-  calcOutput("FAOharmonized", source = "post2010", return = "FB", aggregate = FALSE)
-    sua <-  calcOutput("FAOharmonized", source = "post2010", return = "SUA", aggregate = FALSE)
+    fb <-  calcOutput("FAOharmonized", src = "post2010", output = "FB", aggregate = FALSE)
+    sua <-  calcOutput("FAOharmonized", src = "post2010", output = "SUA", aggregate = FALSE)
     relationmatrix <-  toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
 
     # give opening stocks to FB from SUA , by aggregating the SUA products, as stocks not in FB
@@ -139,75 +139,88 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # the following are the items required from SUA to disaggregate the large FB products,
     # everything else is too specific for our purposes here
 
-    oilcakes <-  .getFAOitemsSUA("oilcakes")
-    oilCrops <- .getFAOitemsSUA(c("soybean", "maiz", "groundnut", "rapeseed", "sunflower", "cottn_pro"))
-    oilCrops <- oilCrops[grep("Maize (corn)|Cotton|Rape|Mustard|Coco|Sesame|Soya|Groundnut|Kapok|inseed|Sunflower|Hemp|Other oil seeds|Oliv", oilCrops)] # nolint
-    # other oil crops more complicated, restrict to those which have cakes, others accounted for via "others"
-    oils <- .getFAOitemsSUA("oils")
-    oils <- oils[grep("Soy|maize|Rapeseed|Mustard|sesame|Coconut|palm kernel|Palm|Sunflower|Groundnut|inseed|Cottonseed|hemp|kapok|poppy|Safflower|rice bran|Other oil|Olive", oils)] # nolint
-    otherOilCrops <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in% # nolint
-                                                                           relationmatrix[grep("2570", relationmatrix$post2010_FoodBalanceItem), # nolint
-                                                                                          "post2010_SupplyUtilizationItem"])] # nolint
-    otherOilCrops <- otherOilCrops[grep("copra|Other|Hemp|Safflower|Kapok|Poppy", otherOilCrops)]
-    otherOils <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in% # nolint
-                                                                       relationmatrix[grep("2586", relationmatrix$post2010_FoodBalanceItem), # nolint
-                                                                                      "post2010_SupplyUtilizationItem"])] # nolint
-    otherOils <- otherOils[which(otherOils %in% relationmatrix[grep("oils", relationmatrix$k),
-                                                               "post2010_SupplyUtilizationItem"])]
-    otherOils <- otherOils[otherOils != ""]
-    oilpalm <-  .getFAOitemsSUA("oilpalm")
-    oilpalm <- oilpalm[oilpalm != ""]
+    keep <- c("329|Cotton seed", "242|Groundnuts, excluding shelled", "270|Rape or colza seed",
+              "292|Mustard seed", "249|Coconuts, in shell", "289|Sesame seed", "260|Olives",
+              "310|Kapok fruit", "311|Kapokseed in shell", "333|Linseed", "336|Hempseed",
+              "339|Other oil seeds, nec", "236|Soya beans", "267|Sunflower seed",
+              "238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
+              "272|Cake of rapeseed", "294|Cake of mustard seed", "332|Cake of cottonseed",
+              "259|Cake of palm kernel", "253|Cake of copra", "291|Cake of sesame seed",
+              "61|Cake of maize", "341|Cake, oilseeds nes", "335|Cake of  linseed",
+              "338|Cake of hempseed", "37|Cake of rice bran", "282|Cake of safflowerseed",
+              "314|Cake of kapok", "298|Cake, poppy seed", "237|Soya bean oil", "244|Groundnut oil",
+              "268|Sunflower-seed oil, crude", "271|Rapeseed or canola oil, crude", "331|Cottonseed oil",
+              "258|Oil of palm kernel", "257|Palm oil", "252|Coconut oil", "290|Oil of sesame seed",
+              "261|Olive oil", "36|Oil of rice bran", "60|Oil of maize", "281|Safflower-seed oil, crude",
+              "334|Oil of linseed", "297|Oil of poppy seed", "313|Oil of kapok",
+              "340|Other oil of vegetable origin, crude nec",
+              "293|Mustard seed oil, crude", "337|Oil of hempseed", "280|Safflower seed", "296|Poppy seed",
+              "1242|Margarine and shortening", "1241|Liquid margarine",
+              "264|Butter of karite nuts", "266|Oil of castor beans",
+              "306|Vegetable tallow", "664|Cocoa butter, fat and oil",
+              "1275|hydrogenated oils and fats", "278|Jojoba oil",
+              "276|Oil of tung nuts", "1273|Castor oil, hydrogenated",
+              "X003|Palmoil_Kerneloil_Kernelcake", "156|Sugar cane",
+              "157|Sugar beet", "56|Maize (corn)", "27|Rice", "15|Wheat",
+              "44|Barley", "71|Rye", "75|Oats", "103|Mixed grain",
+              "108|Cereals nec", "89|Buckwheat", "94|Fonio",
+              "97|Triticale", "79|Millet", "83|Sorghum", "57|Germ of maize",
+              "23|Starch of wheat", "24|Wheat gluten", "33|Rice, gluten", "34|Starch of rice", "63|Maize gluten",
+              "64|Starch of maize", "17|Bran of wheat", "59|Bran of maize", "81|Bran of millet", "85|Bran of sorghum",
+              "91|Bran of buckwheat", "112|Bran of cereals nec", "35|Bran of rice", "105|Bran of mixed grain",
+              "19|Germ of wheat", "73|Bran of rye", "47|Bran of barley",
+              "77|Bran of oats", "96|Bran of fonio", "99|Bran of triticale",
+              "51|Beer of barley, malted", "26|Wheat-fermented beverages", "39|Rice-fermented beverages",
+              "66|Beer of maize, malted", "82|Beer of millet, malted",
+              "86|Beer of sorghum, malted", "X002|Distillers_grain",
+              "X004|Brewers_grain", "163|Cane sugar, non-centrifugal", "166|Other fructose and syrup",
+              "164|Refined sugar", "172|Glucose and dextrose", "165|Molasses", "116|Potatoes", "119|Starch of potatoes",
+              "125|Cassava, fresh", "129|Starch of cassava", "216|Brazil nuts, in shell", "217|Cashew nuts, in shell",
+              "220|Chestnuts, in shell", "221|Almonds, in shell", "222|Walnuts, in shell", "223|Pistachios, in shell",
+              "224|Kola nuts", "225|Hazelnuts, in shell", "226|Areca nuts",
+              "234|Other nuts (excluding wild edible nuts and groundnuts), in shell, nec", "388|Tomatoes",
+              "403|Onions and shallots, dry (excluding dehydrated)", "358|Cabbages", "366|Artichokes", "367|Asparagus",
+              "372|Lettuce and chicory", "373|Spinach", "378|Cassava leaves", "393|Cauliflowers and broccoli",
+              "394|Pumpkins, squash and gourds", "397|Cucumbers and gherkins", "399|Eggplants (aubergines)",
+              "401|Chillies and peppers, green (Capsicum spp and Pimenta spp)", "402|Onions and shallots, green",
+              "406|Green garlic", "407|Leeks and other alliaceous vegetables",
+              "414|Other beans, green", "417|Peas, green",
+              "420|Broad beans and horse beans, green", "423|String beans", "426|Carrots and turnips", "430|Okra",
+              "446|Green corn (maize)", "449|Mushrooms and truffles", "459|Chicory roots", "461|Locust beans (carobs)",
+              "463|Other vegetables, fresh nec", "567|Watermelons", "568|Cantaloupes and other melons", "490|Oranges",
+              "495|Tangerines, mandarins, clementines", "497|Lemons and limes", "507|Pomelos and grapefruits",
+              "512|Other citrus fruit, nec", "515|Apples", "574|Pineapples", "577|Dates", "560|Grapes", "521|Pears",
+              "523|Quinces", "526|Apricots", "530|Sour cherries", "531|Cherries", "534|Peaches and nectarines",
+              "536|Plums and sloes", "541|Other stone fruits", "542|Other pome fruits",
+              "544|Strawberries", "547|Raspberries",
+              "549|Gooseberries", "550|Currants", "552|Blueberries", "554|Cranberries",
+              "558|Other berries and fruits of the genus vaccinium nec", "569|Figs",
+              "571|Mangoes, guavas and mangosteens", "572|Avocados", "587|Persimmons",
+              "591|Cashewapple", "592|Kiwi fruit", "600|Papayas",
+              "603|Other tropical fruits, nec", "619|Other fruits, nec", "656|Coffee, green", "661|Cocoa beans",
+              "667|Tea leaves", "671|Mat? leaves",
+              "687|Pepper (Piper spp), raw", "689|Chillies and peppers, dry (Capsicum spp, Pimenta spp), raw",
+              "698|Cloves (whole stems), raw", "692|Vanilla, raw", "693|Cinnamon and cinnamon-tree flowers, raw",
+              "702|Nutmeg, mace, cardamoms, raw",
+              "711|Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw",
+              "720|Ginger, raw", "723|Other stimulant, spice and aromatic crops, nec", "564|Wine",
+              "517|Cider and other fermented beverages",
+             "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
+             "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher",
+             "565|Vermouth and other wine of fresh grapes flavoured with plats or aromatic substances",
+             "886|Butter of cow milk", "887|Ghee from cow milk", "952|Butter of buffalo milk",
+             "953|Ghee from buffalo milk", "983|Butter and ghee of sheep milk", "885|Cream, fresh",
+             "1020|Raw milk of goats",
+             "1021|Cheese from milk of goats, fresh or processed", "1130|Raw milk of camel",
+             "882|Raw milk of cattle", "888|Skim milk of cows", "889|Whole milk, condensed", "890|Whey, condensed",
+             "891|Yoghurt", "894|Whole milk, evaporated", "895|Skim milk, evaporated", "896|Skim milk, condensed",
+             "897|Whole milk powder", "898|Skim milk and whey powder", "899|Buttermilk, dry", "900|Whey, dry",
+             "901|Cheese from whole cow milk", "904|Cheese from skimmed cow milk", "951|Raw milk of buffalo",
+             "955|Cheese from milk of buffalo, fresh or processed", "982|Raw milk of sheep",
+             "984|Cheese from milk of sheep, fresh or processed", "917|Casein",
+             "893|Buttermilk, curdled and acidified milk",
+             "903|Whey, fresh", "954|Skim milk of buffalo")
 
-    # need particular maize products
-    maizeGerm <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                                                       relationmatrix[grep("Germ of maize",
-                                                                                           relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                      "post2010_SupplyUtilizationItem"])] # nolint
-    sugarCane <- .getFAOitemsSUA("sugr_cane")
-    sugarBeet <- .getFAOitemsSUA("sugr_beet")
-    potato <- .getFAOitemsSUA("potato")
-
-    starches <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                                                      relationmatrix[grep("Starch of ",
-                                                                                          relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                     "post2010_SupplyUtilizationItem"])]
-    glutens <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                                                     relationmatrix[grep("luten",
-                                                                                          relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                     "post2010_SupplyUtilizationItem"])]
-    glutens <- glutens[-which(glutens == "846|Gluten feed and meal")]
-    #sugars and molasses
-    sugar <- .getFAOitemsSUA("sugar")
-    sugar <- sugar[sugar != ""]
-    molasses <- .getFAOitemsSUA("molasses")
-    cereals <- .getFAOitemsSUA(c("tece", "maiz", "rice_pro", "trce"))
-    cereals <- cereals[cereals != ""]
-    #brans
-    brans <- .getFAOitemsSUA("brans")
-    brans <- brans[brans != ""]
-    #beers 
-    beers <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                                                   relationmatrix[grep("Beer|-ferm",
-                                                                                       relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                  "post2010_SupplyUtilizationItem"])]
-    distillersBrewersG <- .getFAOitemsSUA(c("distillers_grain", "brewers_grain"))
-
-    cassava <- relationmatrix$post2010_SupplyUtilizationItem[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                                                     relationmatrix[grep("Cassava, fresh",
-                                                                                         relationmatrix$post2010_SupplyUtilizationItem), # nolint
-                                                                                    "post2010_SupplyUtilizationItem"])]
-    others <- .getFAOitemsSUA("others")
-    others <- others[others != ""]
-    alcohol <- .getFAOitemsSUA("alcohol")
-
-    # milk products for a correction of FAO FBS, we use SUA demands instead
-    milks <- .getFAOitemsSUA("livst_milk")
-
-    # all these to keep, drop the others
-    keep <- unique(c(oilCrops, oilcakes, oils, otherOilCrops, otherOils, oilpalm, sugarCane, sugarBeet,
-                     cereals, brans, beers, distillersBrewersG,
-                     sugar, molasses, potato, cassava,  starches, glutens, maizeGerm, others, alcohol, 
-                     milks))
     sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
 
@@ -317,7 +330,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     mapPrimSUA <- relationmatrixS[which(relationmatrixS$post2010_SupplyUtilizationItem %in% primSUA),
                                   c("post2010_FoodBalanceItem", "post2010_SupplyUtilizationItem")]
 
-    #assign the processed to sua here
+    # assign the processed to sua here
     for (i in c(primFB)) {
       suaprods <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
       # for products that map to multiple food balance items, divide them based on their ratio in processing
@@ -499,8 +512,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       if (length(from) > 1 || length(reportAs) > 1 || length(goodIn) > 1 || length(goodOut) > 1) {
         stop("please only use one item each for \"from\", \"reportAs\", \"goodIn\", and \"goodOut\"")
       }
-      #alcohol processing happens twice for beers and strong alcohols
-      if (residual != "alcoholloss" && 
+      # alcohol processing happens twice for beers and strong alcohols
+      if (residual != "alcoholloss" &&
          any(object[, , list(goodIn, c(reportAs, residual))] != 0)) { # nolint
         stop("Output flows already exist.")
       }
@@ -548,9 +561,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # conversion factors per attribute instead of using an "extractionQuantity"
     # and "extractionAttribute" for calculations.
     # Furthermore, with the 2010 update, we need to distinguish cases where not all of
-    # the "processed" quantity is used up in one process, i.e. in the case of maize, 
-    # in which case extractionBasis is set to "output", and the amount taken away from 
-    # "processing" is based on how much processed good is produced. This can also be 
+    # the "processed" quantity is used up in one process, i.e. in the case of maize,
+    # in which case extractionBasis is set to "output", and the amount taken away from
+    # "processing" is based on how much processed good is produced. This can also be
     # adjusted based on extractionFactor, to apply a factor on the input required for a
     # quantity of output. In these cases, residuals are added on to previously existing amounts
     .processingGlobal2 <- function(object,
@@ -566,7 +579,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                   extractionAttribute = "wm", # only relevant with extractionFactor
                                   residual  # e.g. "refiningloss"
     ) {
-      #these processes have multiple steps, avoid the check
+      # these processes have multiple steps, avoid the check
       if (residual != "food" && residual != "alcoholloss" && process != "fermentation" &&
          any(object[, , list(goodsIn, c(reportAs, residual))] != 0)) { # nolint
         stop("Output flows already exist.")
@@ -615,13 +628,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
            - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
 
       } else if (extractionBasis == "output") {
-
-        # For multiple inputs or outputs, 
+        # For multiple inputs or outputs,
         # we can't know how much of each input goes into each out so we distribute them proportionally
         ratioIns <- object[, , list(goodsIn, from)] / dimSums(object[, , list(goodsIn, from)], dim = "ItemCodeItem")
         # just in case there is production but no goodsIn we give it equal shares so it shows up in production estimated
         ratioIns[is.na(ratioIns)] <- 1 / length(goodsIn)
-        
+
         # estimate outputs
         attributesTo <- attributesWM[, , goodsOut]
 
@@ -634,7 +646,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           }
 
           attributesTo <- attributesWM[, , goodsIn]
-          #use extraction factor to get conversion factor across attributes
+          # use extraction factor to get conversion factor across attributes
           extractionConversion <- attributesTo / extractionFactorMag
           # assign amount processed based on conversion factor
           object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
@@ -654,17 +666,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         }
 
         for (j in seq_along(goodsOut)) {
-           #assign report As based on the goods produced
+          # assign report As based on the goods produced
           object[, , list(goodsIn, reportAs[j])] <- ratioIns * dimSums(object[, , list(goodsOut[j], "production")],
                                                                        dim = c("ElementShort", "ItemCodeItem")) +
             object[, , list(goodsIn, reportAs[j])]
-           # assign production estimated based on goods produced
+          # assign production estimated based on goods produced
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsOut[j], "production")],
                                                                            dim = "ElementShort") +
             object[, , list(goodsOut[j], "production_estimated")]
         }
-         # residual is difference between how much went into processing and how much reported
-         # 0 in the case of no extractionFactor
+        # residual is difference between how much went into processing and how much reported
+        # 0 in the case of no extractionFactor
         object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, process)],
                                                         dim = c("ElementShort", "ItemCodeItem"))
                                                 - (dimSums(object[, , list(goodsIn, reportAs)],
@@ -861,9 +873,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                          residual = "intermediate",
                                                                          extractionBasis = "output",
                                                                          extractionFactor = 5)
-                                                                         #this extraction factor based on 
-                                                                         #FAOSTAT wm conversion factors 
-                                                                         #in product tree description
+        # this extraction factor based on
+        # FAOSTAT wm conversion factors
+        # in product tree description
 
 
         object[, , c(beerCereals[j], "X004|Brewers_grain")] <- .extractGoodFromFlow2(object = object[, , c(beerCereals[j], "X004|Brewers_grain")], # nolint
@@ -1167,7 +1179,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       }
 
 
-      # here the main processings start 
+      # here the main processings start
 
       flowsCBC[, , list(distillingSUA, distillingDimensions)] <-
         .ethanolProcessing(flowsCBC[, , list(distillingSUA, distillingDimensions)])
@@ -1177,12 +1189,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         .sugarProcessing(flowsCBC[, , list(refiningSUA, refiningDimensions)])
       flowsCBC[, , list(millingSUA, millingDimensions)] <-
         .cerealMilling(flowsCBC[, , list(millingSUA, millingDimensions)])
-      # germ of wheat was added to the wheat bran in milling, but we need to include it in the 
+      # germ of wheat was added to the wheat bran in milling, but we need to include it in the
       # other non-milling dimensions
       flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "17|Bran of wheat"] <-
         flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "17|Bran of wheat"] +
         flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "19|Germ of wheat", drop = TRUE]
-      # we combined wheat germ with brans in the above, so remove here 
+      # we combined wheat germ with brans in the above, so remove here
       flowsCBC <- flowsCBC[, , "19|Germ of wheat", invert = TRUE]
       # FAO accoutns for brans as brans --> processing -- > gluten feed an meal --> feed
       # so we assign brans --> processing directly to feed
@@ -1411,50 +1423,51 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       gc()
       massbalanceNoProcessing <- massbalanceNoProcessing[, , "", invert = TRUE]
 
-    # we need to do a correction for livst_milk, as the FAOSTAT FBS domestic supply values are 
-    # much higher than production than in SUA and trade data , so we will scale the uses in the FBS
-    # by a global conversion factor, the ratio between global domestic supply and global production
-    # which should normally be 1
+      # we need to do a correction for livst_milk, as the FAOSTAT FBS domestic supply values are
+      # much higher than production than in SUA and trade data , so we will scale the uses in the FBS
+      # by a global conversion factor, the ratio between global domestic supply and global production
+      # which should normally be 1
       cells <- getCells(sua)
       milkP <- .getFAOitemsSUA("livst_milk")
       milkSUA <- sua[, , milkP]
-    # dry matter conversion factors for processed milk products to raw milk, 
-    # based on FAOSTAT technical conversion factors
-    # fill with dm content of milk as default
-    milkConv <- new.magpie(cells_and_regions = "GLO", years = NULL, names = milkP, fill = 0.122)
-    # add the dm content of the processed products
-    milkConv[, , "Cheese", pmatch = TRUE] <- 0.5
-    milkConv[, , c("Butter", "Ghee"), pmatch = TRUE] <- 0.8
-    milkConv[, , c("Yoghurt"), pmatch = TRUE] <- 0.15
-    milkConv[, , c("condensed"), pmatch = TRUE] <- 0.7
-    milkConv[, , c("evaporated"), pmatch = TRUE] <- 1
-    milkConv[, , c("powder"), pmatch = TRUE] <- 0.97
-    milkConv[, , c("Cream"), pmatch = TRUE] <- 0.3
-    milkConv[, , c("Whey, fresh"), pmatch = TRUE] <- 0.05
-    milkConv[, , c("Raw milk of buffalo"), pmatch = TRUE] <- 0.18
-    milkConv[, , c("Casein"), pmatch=TRUE] <- 0.88
-    milkConv[, , c("Buttermilk"), pmatch = TRUE] <- 0.09
-    milkConv[, , c("Skim milk of cows"), pmatch = TRUE] <- 0.09
+      # dry matter conversion factors for processed milk products to raw milk,
+      # based on FAOSTAT technical conversion factors
+      # fill with dm content of milk as default
+      milkConv <- new.magpie(cells_and_regions = "GLO", years = NULL, names = milkP, fill = 0.122)
+      # add the dm content of the processed products
+      milkConv[, , "Cheese", pmatch = TRUE] <- 0.5
+      milkConv[, , c("Butter", "Ghee"), pmatch = TRUE] <- 0.8
+      milkConv[, , c("Yoghurt"), pmatch = TRUE] <- 0.15
+      milkConv[, , c("condensed"), pmatch = TRUE] <- 0.7
+      milkConv[, , c("evaporated"), pmatch = TRUE] <- 1
+      milkConv[, , c("powder"), pmatch = TRUE] <- 0.97
+      milkConv[, , c("Cream"), pmatch = TRUE] <- 0.3
+      milkConv[, , c("Whey, fresh"), pmatch = TRUE] <- 0.05
+      milkConv[, , c("Raw milk of buffalo"), pmatch = TRUE] <- 0.18
+      milkConv[, , c("Casein"), pmatch = TRUE] <- 0.88
+      milkConv[, , c("Buttermilk"), pmatch = TRUE] <- 0.09
+      milkConv[, , c("Skim milk of cows"), pmatch = TRUE] <- 0.09
 
-    # domestic supply categories without the processing, which is double counting
-    # multiplied to get dry matter contents
-    milkDems <- dimSums((milkSUA[, , c("food", "feed", "other_util",
-                                "seed", "waste")] *
-                                milkConv), dim =3.1)
-   # ratio of demands scaled to production  
-    milkDemCorrected <- milkDems / dimSums(milkDems, dim = c(1,3)) *
-                        dimSums(massbalanceNoProcessing[, , "livst_milk"][, , "dm"][, , "production"], dim = 1)
-    milkDemCorrected <- collapseDim(milkDemCorrected, dim = c(3.3, 3.4))
-    milkDemCorrected <- dimOrder(milkDemCorrected, perm = c(2,1), dim = 3)
-    # add domestic supply
-    milkDemCorrected <- add_columns(milkDemCorrected, addnm = "domestic_supply", dim = 3.2)
-    milkDemCorrected[, , "domestic_supply"] <- dimSums(milkDemCorrected[, , "domestic_supply", invert = TRUE], dim = 3)
-    # get the attributes again
-    prodAttributes <- calcOutput("Attributes", aggregate = FALSE)
-    milkDemCorrected <- milkDemCorrected * prodAttributes[, , "livst_milk"]
-    # replace these columns in the main object
-    massbalanceNoProcessing[ , , "livst_milk"][, , getItems(milkDemCorrected, dim = 3.2)] <- milkDemCorrected
-   return(massbalanceNoProcessing)
+      # domestic supply categories without the processing, which is double counting
+      # multiplied to get dry matter contents
+      milkDems <- dimSums((milkSUA[, , c("food", "feed", "other_util",
+                                         "seed", "waste")] *
+                             milkConv), dim = 3.1)
+      # ratio of demands scaled to production
+      milkDemCorrected <- milkDems / dimSums(milkDems, dim = c(1, 3)) *
+        dimSums(massbalanceNoProcessing[, , "livst_milk"][, , "dm"][, , "production"], dim = 1)
+      milkDemCorrected <- collapseDim(milkDemCorrected, dim = c(3.3, 3.4))
+      milkDemCorrected <- dimOrder(milkDemCorrected, perm = c(2, 1), dim = 3)
+      # add domestic supply
+      milkDemCorrected <- add_columns(milkDemCorrected, addnm = "domestic_supply", dim = 3.2)
+      milkDemCorrected[, , "domestic_supply"] <- dimSums(milkDemCorrected[, ,
+                                                                          "domestic_supply", invert = TRUE], dim = 3)
+      # get the attributes again
+      prodAttributes <- calcOutput("Attributes", aggregate = FALSE)
+      milkDemCorrected <- milkDemCorrected * prodAttributes[, , "livst_milk"]
+      # replace these columns in the main object
+      massbalanceNoProcessing[, , "livst_milk"][, , getItems(milkDemCorrected, dim = 3.2)] <- milkDemCorrected
+      return(massbalanceNoProcessing)
     }
 
 

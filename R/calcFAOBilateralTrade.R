@@ -135,9 +135,9 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
     weight <- qty
     unit <- "US$17/tDM"
   }
-  
+
   if (output %in% c("value", "price")) {
-    out <- GDPuc::convertGDP(out, unit_in = "current US$MER", 
+    out <- GDPuc::convertGDP(out, unit_in = "current US$MER",
                              unit_out = "constant 2017 US$MER",
                              replace_NAs = "with_USA")
   }
