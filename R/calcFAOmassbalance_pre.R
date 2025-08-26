@@ -1133,7 +1133,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "X002|Distillers_grain")
       distillingSUA <- distillingSUA[-grep("gluten|lour|Germ", distillingSUA)]
 
-      fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")), beers,  "X004|Brewers_grain")
+      fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")),
+                           "51|Beer of barley, malted",
+                          "39|Rice-fermented beverages", "66|Beer of maize, malted",
+                          "26|Wheat-fermented beverages", "82|Beer of millet, malted",
+                          "86|Beer of sorghum, malted", "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec",
                                                fermentationSUA)]
       fermentationSUA <- c(fermentationSUA, "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
@@ -1142,15 +1146,29 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato",
                                          "maiz", "tece", "rice_pro", "sugar", "cassav_sp")),
-                       molasses)
+                       "165|Molasses")
       refiningSUA <- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec|Sweet pot|Yautia|Taro|Yams|ananas", # nolint
                                        refiningSUA)]
       refiningSUA <- refiningSUA[refiningSUA != ""]
 
       extracting1SUA <- c("257|Palm oil", "258|Oil of palm kernel",
                           "259|Cake of palm kernel", "X003|Palmoil_Kerneloil_Kernelcake")
-      extracting2SUA <- c(oils, oilCrops, oilcakes)
-
+      extracting2SUA <- c("236|Soya beans", "242|Groundnuts, excluding shelled", "267|Sunflower seed",
+                   "329|Cotton seed", "270|Rape or colza seed", "292|Mustard seed",
+                   "249|Coconuts, in shell", "289|Sesame seed", "311|Kapokseed in shell",
+                   "333|Linseed", "336|Hempseed",
+                   "339|Other oil seeds, nec", 
+                   "237|Soya bean oil", "244|Groundnut oil", "268|Sunflower-seed oil, crude",
+                  "331|Cottonseed oil", "271|Rapeseed or canola oil, crude",
+                  "293|Mustard seed oil, crude",
+                  "252|Coconut oil", "290|Oil of sesame seed", "313|Oil of kapok",
+                  "334|Oil of linseed", "337|Oil of hempseed",
+                  "340|Other oil of vegetable origin, crude nec",
+                  "238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
+                   "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
+                   "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                   "335|Cake of  linseed",  "338|Cake of hempseed",
+                   "341|Cake, oilseeds nes")
       flowsCBC <- suaFlows
 
 
@@ -1372,10 +1390,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       cprods <-    intersect(getItems(fbFlows, dim = 3.1), getItems(processedFB, dim = 3.1))
 
       fbFlows[, , proc][, , cprods] <- processedFB[, , proc][, , cprods]
+ 
+      # ethanols, oilcakes, brans, and molasses are not part of FB so add all categories here
+  
+      oilcakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
+                   "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
+                   "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                   "335|Cake of  linseed",  "338|Cake of hempseed",
+                   "341|Cake, oilseeds nes")
 
-      # oilpalm,  oilcakes, brans, and molasses are not part of FB so add all categories here
-      replace <-  processedFB[, , c(oilcakes, missingproducts, molasses, "2600|Brans")][, , proc, invert = TRUE]
-      fbFlows[, , c(oilcakes, missingproducts, molasses, "2600|Brans")][, , getItems(replace, dim = 3)] <- replace
+      replace <-  processedFB[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , proc, invert = TRUE]
+      fbFlows[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , getItems(replace, dim = 3)] <- replace
 
       # map to magpie categories
       massbalanceProcessing <- toolAggregate(x = fbFlows,
