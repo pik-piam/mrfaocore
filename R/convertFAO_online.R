@@ -359,12 +359,12 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
 
     if (subtype == "PricesProducerAnnual") {
       x <- convertGDP(x, unit_in = "current US$MER",
-                      unit_out = "constant 2005 US$MER",
+                      unit_out = "constant 2017 US$MER",
                       replace_NAs = "no_conversion")
 
     } else if (subtype == "PricesProducerAnnualLCU") {
       x <- convertGDP(x, unit_in = "current LCU",
-                      unit_out = "constant 2005 LCU",
+                      unit_out = "constant 2017 LCU",
                       replace_NAs = "no_conversion")
     }
 

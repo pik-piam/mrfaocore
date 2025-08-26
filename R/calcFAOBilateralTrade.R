@@ -44,7 +44,8 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
         }
 
         if (value) {
-          # imports generally reported on cif basis, use generic 12% (FAOSTAT) for now.
+          # imports generally reported on cif (cost,insurance,frieght), as opposed to fob (free on board),
+          # basis, use generic 12% (see FAOSTAT trade documentation) for now.
           fobCvn <- 1.12
           # convert exporter values to cif
           ex <- ex * fobCvn
@@ -124,7 +125,7 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
       unit <- "MtWM"
     } else if (output == "value") {
       out <- out / 1e3 # in millions
-      unit <- "million USD$05"
+      unit <- "million USD$17"
     }
 
   } else if (output == "price") {
@@ -132,7 +133,13 @@ calcFAOBilateralTrade <- function(output = "value", products = "kcr", prodAgg = 
     value <- calcOutput("FAOBilateralTrade", output = "value", products = products, prodAgg = FALSE, aggregate = FALSE)
     out <- value / qty
     weight <- qty
-    unit <- "US$05/tDM"
+    unit <- "US$17/tDM"
+  }
+  
+  if (output %in% c("value", "price")) {
+    out <- GDPuc::convertGDP(out, unit_in = "current US$MER", 
+                             unit_out = "constant 2017 US$MER",
+                             replace_NAs = "with_USA")
   }
 
   if (prodAgg) {
