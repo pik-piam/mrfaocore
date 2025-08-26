@@ -112,14 +112,18 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     if (any(getNames(faoData) == "remaining.production")) {
       remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
                            dimSums(dimSums(faoData[, , "production"], dim = 3), dim = 1))
-      if (remainProd > 0.02) vcat(1, "Aggregation created a 'remaining' category. Production is",
-                                  round(remainProd, digits = 3) * 100, "% of total \n")
+      if (remainProd > 0.02) {
+        vcat(1, "Aggregation created a 'remaining' category. Production is ",
+             round(remainProd, digits = 3) * 100, "% of total")
+      }
     }
     if (any(getNames(faoData) == "remaining.area_harvested")) {
       remainArea <- mean(dimSums(faoData[, , "remaining.area_harvested"], dim = 1) /
                            dimSums(dimSums(faoData[, , "area_harvested"], dim = 3), dim = 1))
-      if (remainArea > 0.02) vcat(1, "Aggregation created a 'remaining' category. The area harvested is",
-                                  round(remainArea, digits = 3) * 100, "% of total \n")
+      if (remainArea > 0.02) {
+        vcat(1, "Aggregation created a 'remaining' category. The area harvested is ",
+             round(remainArea, digits = 3) * 100, "% of total")
+      }
     }
 
     # conversion from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
@@ -158,16 +162,16 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       sua <- readSource("FAO_online", subtype = "SUA2010")
       sua[is.na(sua)] <- 0
 
-      sua <- add_columns(sua, addnm =  "Food_supply_(kcal)_(Kcal)", dim = 3.2)
+      sua <- add_columns(sua, addnm = "Food_supply_(kcal)_(Kcal)", dim = 3.2)
       sua[, , "Food_supply_(kcal)_(Kcal)"] <- sua[, , "Calories_Year_(Kcal)"]
 
-      sua <- add_columns(sua, addnm =  "Protein_supply_quantity_(t)_(t)", dim = 3.2)
+      sua <- add_columns(sua, addnm = "Protein_supply_quantity_(t)_(t)", dim = 3.2)
       sua[, , "Protein_supply_quantity_(t)_(t)"] <- sua[, , "Proteins_Year_(t)"]
 
-      sua <- add_columns(sua, addnm =  "Fat_supply_quantity_(t)_(t)", dim = 3.2)
-      sua[, ,  "Fat_supply_quantity_(t)_(t)"] <- sua[, ,  "Fats_Year_(t)"]
+      sua <- add_columns(sua, addnm = "Fat_supply_quantity_(t)_(t)", dim = 3.2)
+      sua[, , "Fat_supply_quantity_(t)_(t)"] <- sua[, , "Fats_Year_(t)"]
 
-      sua <- add_columns(sua, addnm =  "Losses_(t)", dim = 3.2)
+      sua <- add_columns(sua, addnm = "Losses_(t)", dim = 3.2)
       sua[, , "Losses_(t)"] <- sua[, , "Loss_(t)"]
 
       sua <- add_columns(sua, addnm = "Food_(t)", dim = 3.2)
@@ -246,7 +250,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     waste <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
                         years = getItems(faoData, dim = 2),
                         names = paste0(getItems(faoData, dim = 3.1), ".waste"))
-    waste[, ,  "waste"] <- faoData[, ,  "losses"]
+    waste[, , "waste"] <- faoData[, , "losses"]
     faoData <- mbind(faoData, waste)
     # remove
     faoData <- faoData[, , "losses", invert = TRUE]
@@ -333,14 +337,18 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     if (any(getNames(faoData) == "remaining.production")) {
       remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
                            dimSums(dimSums(faoData[, , "production"], dim = 3), dim = 1))
-      if (remainProd > 0.02) vcat(1, "Aggregation created a 'remaining' category. Production is",
-                                  round(remainProd, digits = 3) * 100, "% of total \n")
+      if (remainProd > 0.02) {
+        vcat(1, "Aggregation created a 'remaining' category. Production is ",
+             round(remainProd, digits = 3) * 100, "% of total")
+      }
     }
     if (any(getNames(faoData) == "remaining.area_harvested")) {
       remainArea <- mean(dimSums(faoData[, , "remaining.area_harvested"], dim = 1) /
                            dimSums(dimSums(faoData[, , "area_harvested"], dim = 3), dim = 1))
-      if (remainArea > 0.02) vcat(1, "Aggregation created a 'remaining' category. The area harvested is",
-                                  round(remainArea, digits = 3) * 100, "% of total \n")
+      if (remainArea > 0.02) {
+        vcat(1, "Aggregation created a 'remaining' category. The area harvested is ",
+             round(remainArea, digits = 3) * 100, "% of total")
+      }
     }
 
     # remove population item
