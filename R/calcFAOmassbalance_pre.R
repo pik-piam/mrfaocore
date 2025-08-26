@@ -1160,7 +1160,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                    "329|Cotton seed", "270|Rape or colza seed", "292|Mustard seed",
                    "249|Coconuts, in shell", "289|Sesame seed", "311|Kapokseed in shell",
                    "333|Linseed", "336|Hempseed",
-                   "339|Other oil seeds, nec", 
+                   "339|Other oil seeds, nec", "260|Olives", "261|Olive oil",
                    "237|Soya bean oil", "244|Groundnut oil", "268|Sunflower-seed oil, crude",
                   "331|Cottonseed oil", "271|Rapeseed or canola oil, crude",
                   "293|Mustard seed oil, crude",
