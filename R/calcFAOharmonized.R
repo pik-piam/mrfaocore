@@ -16,7 +16,7 @@
 
 calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
-  if (source == "join2010") { # nolint
+  if (src == "join2010") { # nolint
     # take new values from 2010 onwards
     pre <- calcOutput("FAOharmonized", src = "pre2010", aggregate = FALSE)
     post <- calcOutput("FAOharmonized", src = "post2010", output = "FB", aggregate = FALSE)
@@ -48,7 +48,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     faoData[is.na(faoData)] <- 0
 
 
-  } else if (source == "pre2010") { # nolint
+  } else if (src == "pre2010") { # nolint
     # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
     cbCrop <- readSource("FAO_online", "CBCrop")
     cbLive <- readSource("FAO_online", "CBLive")
@@ -129,9 +129,9 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     # conversion from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
     faoData <- faoData / 10^6
 
-  } else if (source == "post2010") { # nolint
+  } else if (src == "post2010") { # nolint
 
-    if (return == "FB") {
+    if (output == "FB") {
       # input data: Food Balance, Supply Utilization Account (more disaggregated), Commodity Balance (non-food)
       fb <- readSource("FAO_online", subtype = "FB2010")
       fb[is.na(fb)] <- 0
@@ -157,7 +157,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
                        "Protein_supply_quantity_(g_capita_day)_(g/cap/d)"),
                  invert = TRUE]
 
-    } else if (return == "SUA") {
+    } else if (output == "SUA") {
 
       sua <- readSource("FAO_online", subtype = "SUA2010")
       sua[is.na(sua)] <- 0
@@ -208,9 +208,9 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     remove <- setdiff(getNames(prod, dim = 1), aggregation$post2010_ProductionItem)
     prod <- prod[, , remove, invert = TRUE]
 
-    if (return == "FB") {
+    if (output == "FB") {
       toCol <- "post2010_FoodBalanceItem"
-    } else if (return == "SUA") {
+    } else if (output == "SUA") {
       toCol <- "post2010_SupplyUtilizationItem"
     }
     areaHarvested <- toolAggregate(prod, rel = aggregation, from = "post2010_ProductionItem", to = toCol,
@@ -264,7 +264,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
     ### add Fodder data and add brans, oilcakes, and molasses (not in FB but in SUA) if at FB level ###
 
-    if (return == "FB") {
+    if (output == "FB") {
       fodder <- readSource("FAO", "Fodder")
       fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
       fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
