@@ -53,10 +53,10 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                         "Yield_Carcass_Weight_(Hg/An)",
                                         "Yield_(100mg/An)",
                                         "Yield_(No/An)",
-                                        "Yield_(100mg/An)",               # new FAO data
+                                        "Yield_(100_mg/An)",               # new FAO data
                                         "Yield_(100_g/An)",                  # new FAO data
                                         "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
-                                        "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
+                                        "Yield_Carcass_Weight_(0_1_g/An)", # new FAO data
                                         "Yield_(100_g)")                     # new FAO data
   relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
                                 "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",

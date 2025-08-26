@@ -124,9 +124,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
               dim = 3.2)
     sua[sua < 0] <- 0
 
-    # As current mass balance stands we need flours, brans, oilcakes, Oilcrops Other, molasses
-    # from the more disaggregated SUA categories
-
+  # Below we get all the names and attributes for the processed and non-processed goods
+  # from the FB and SUA
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {
       return(relationmatrix[relationmatrix$k %in% magpieItems, "post2010_SupplyUtilizationItem"])
@@ -277,11 +276,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       prodAttributes <- prodAttributes[, , itemNamesAttributes[itemNamesAttributes %in% itemNames]]
     }
 
-    ### FAO items not relevant to processing, and processing dimensions that need to be added
+    # FAO items that don't undergo processing in our mass balancing, i.e. mostly livestock products
+    # to be used later after all the mass balancing
     noProcessing <- c("livst_rum", "livst_pig", "livst_milk", "livst_egg", "livst_chick", "foddr", "fish", "fibres")
     noProcessingFAO <- .getFAOitems(noProcessing)
     noProcessingFAO <- unique(noProcessingFAO[noProcessingFAO %in% getNames(fb, dim = 1)])
 
+    # Processing dimensions that we explicitly track and need to be added
     namesProcessing <- c("production_estimated", "process_estimated",
                          "milling", "brans1", "branoil1", "flour1",
                          "refining", "sugar1", "sugar2", "sugar3", "molasses1", "refiningloss",
@@ -293,8 +294,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "households")
 
 
-    # we want to use the amount processed from the food balances and not the supply utilization
-    # in order to account for how much actually leaves the sector, make a mapping here
+    # The SUA with disaggregated processed goods 'overaccounts' for processing, i.e. maiz into maiz germ
+    # we are interested in how much maize becomes a processed good that is no longer 
+    # categorized as maize in our mappings, i.e. maize into oil.
+    # so want to use the amount processed from the food balances and not the supply utilization
+    # in order to account for how much actually leaves the "maize sector", so we make a mapping here
+    # This requires still a different treatment of flours and brans, as the flours don't leave the sector
+    # but we still account for milling, see milling section
 
     primFB <- c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
                 "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
@@ -1607,11 +1613,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     }
 
 
-    ### FAO items not relevant to processing, and processing dimensions that need to be added
+    ## FAO items where we don't track processing (i.e .livestock mostly)
     noProcessing <- c("livst_rum", "livst_pig", "livst_milk", "livst_egg", "livst_chick", "foddr", "fish", "fibres")
     noProcessingFAO <- .getFAOitems(noProcessing)
     noProcessingFAO <- noProcessingFAO[noProcessingFAO %in% getNames(cbc, dim = 1)]
 
+    # Processing dimensions that we explicitly track, add here
     namesProcessing <- c("production_estimated",
                          "milling", "brans1", "branoil1", "flour1",
                          "refining", "sugar1", "molasses1", "refiningloss",
