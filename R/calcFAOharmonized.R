@@ -104,8 +104,8 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       if (sum(faoData[, , ""]) == 0) {
         faoData <- faoData[, , "", invert = TRUE]
       } else  {
-        vcat(1, 'Aggregation created entries without name (""),
-             but containing information. This should not be the case.')
+        vcat(1, 'Aggregation created entries without name (""), ',
+             'but containing information. This should not be the case.')
       }
     }
 
