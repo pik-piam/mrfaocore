@@ -301,7 +301,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
                     "2515|Rye and products", "2516|Oats", "2520|Cereals, Other",
                     "2520|Cereals, Other", "2520|Cereals, Other", "2517|Millet and products",
                     "2518|Sorghum and products", "2520|Cereals, Other", "2807|Rice and products")
-      branmap <- data.frame("bran" = brans, "crop" = brancrop)
+      branmap <- data.frame(bran = brans, crop = brancrop)
       # rename via toolAggregate to sum the "cereals, other"
       foodbrans <- toolAggregate(sua[, , brans][, , c("protein_supply", "food_supply_kcal")],
                                  rel = branmap, from = "bran", to = "crop", dim = 3.1)

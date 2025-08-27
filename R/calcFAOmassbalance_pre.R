@@ -1476,18 +1476,32 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # fill with dm content of milk as default
       milkConv <- new.magpie(cells_and_regions = "GLO", years = NULL, names = milkP, fill = 0.122)
       # add the dm content of the processed products
-      milkConv[, , "Cheese", pmatch = TRUE] <- 0.5
-      milkConv[, , c("Butter", "Ghee"), pmatch = TRUE] <- 0.8
-      milkConv[, , c("Yoghurt"), pmatch = TRUE] <- 0.15
-      milkConv[, , c("condensed"), pmatch = TRUE] <- 0.7
-      milkConv[, , c("evaporated"), pmatch = TRUE] <- 1
-      milkConv[, , c("powder"), pmatch = TRUE] <- 0.97
-      milkConv[, , c("Cream"), pmatch = TRUE] <- 0.3
-      milkConv[, , c("Whey, fresh"), pmatch = TRUE] <- 0.05
-      milkConv[, , c("Raw milk of buffalo"), pmatch = TRUE] <- 0.18
-      milkConv[, , c("Casein"), pmatch = TRUE] <- 0.88
-      milkConv[, , c("Buttermilk"), pmatch = TRUE] <- 0.09
-      milkConv[, , c("Skim milk of cows"), pmatch = TRUE] <- 0.09
+      milkConv[, , "899|Buttermilk, dry"] <- 1
+      milkConv[, , "900|Whey, dry"] <- 1
+      milkConv[, , "894|Whole milk, evaporated"] <- 1
+      milkConv[, , "895|Skim milk, evaporated"] <- 1
+      milkConv[, , "898|Skim milk and whey powder"] <- 0.97
+      milkConv[, , "897|Whole milk powder"] <- 0.97
+      milkConv[, , "917|Casein", pmatch = TRUE] <- 0.88
+      milkConv[, , "886|Butter of cow milk"] <- 0.8
+      milkConv[, , "887|Ghee from cow milk"] <- 0.8
+      milkConv[, , "952|Butter of buffalo milk"] <- 0.8
+      milkConv[, , "953|Ghee from buffalo milk"] <- 0.8
+      milkConv[, ,"983|Butter and ghee of sheep milk"] <- 0.8
+      milkConv[, , "889|Whole milk, condensed"] <- 0.7
+      milkConv[, , "890|Whey, condensed"] <- 0.7
+      milkConv[, , "896|Skim milk, condensed"] <- 0.7
+      milkConv[, , "901|Cheese from whole cow milk"] <- 0.5
+      milkConv[, , "904|Cheese from skimmed cow milk"] <- 0.5
+      milkConv[, , "955|Cheese from milk of buffalo, fresh or processed"] <- 0.5
+      milkConv[, , "984|Cheese from milk of sheep, fresh or processed"] <- 0.5
+      milkConv[, , "1021|Cheese from milk of goats, fresh or processed"] <- 0.5
+      milkConv[, , "885|Cream, fresh"] <- 0.3
+      milkConv[, , "951|Raw milk of buffalo"] <- 0.18
+      milkConv[, , "891|Yoghurt"] <- 0.15
+      milkConv[, , "903|Whey, fresh"] <- 0.05
+      milkConv[, , "888|Skim milk of cows"] <- 0.09
+      milkConv[, , "893|Buttermilk, curdled and acidified milk"] <- 0.09
 
       # domestic supply categories without the processing, which is double counting
       # multiplied to get dry matter contents
