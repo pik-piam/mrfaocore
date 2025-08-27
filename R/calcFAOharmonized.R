@@ -272,6 +272,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "post2010_ProductionItem",
                                         to = "post2010_FoodBalanceItem", dim = 3.1, partrel = TRUE)
       cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
+     # change units from tonnes to Mt, hectares to Mha
       fodderAggregated <- fodderAggregated / 1e6
 
       faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
