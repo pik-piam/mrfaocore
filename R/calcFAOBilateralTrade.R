@@ -3,7 +3,7 @@
 #' @param output "value", "qty", or "price"
 #' @param products "kcr", "kli", or "kothers"
 #' @param prodAgg binary to keep FAO product level or magpie
-#' @param fiveYear only 5 year steps due to memory load
+#' @param fiveYear if TRUE calculate only 5 years (1995 to 2020, 5-year steps) to reduce memory load
 #' @param harmonize combine input and export sheets with harmonization algorithm
 #'  based on reliability index(Gelhar 1996)
 #' default off as there are some big differences
