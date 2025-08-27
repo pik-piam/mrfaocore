@@ -2,18 +2,17 @@
 #' @description Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas
 #'              are taken from ProdSTAT. This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
 #'
-#' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
-#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens
 #' @param src source "pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
 #' until 2013 (actually 2013, but gets effectively chopped to 2010 by massbalance). "post2010" combines
 #' the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards.
 #' @param output whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)
+#' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
+#'
+#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("FAOharmonized")
 #' }
-#' @importFrom utils read.csv
-
 calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
   if (src == "join2010") { # nolint
@@ -24,7 +23,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     mapping <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
     pre <- toolAggregate(pre, rel = mapping, from = "pre2010_FoodBalanceItem", to = "post2010_FoodBalanceItem",
                          partrel = TRUE, dim = 3.1)
-    pre <- pre[, c(2010:2013), invert = TRUE]
+    pre <- pre[, 2010:2013, invert = TRUE]
 
     # create residuals with 0 in the old harmonized
     res <- pre[, , "production"]
@@ -105,7 +104,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
         faoData <- faoData[, , "", invert = TRUE]
       } else  {
         vcat(1, 'Aggregation created entries without name (""), ',
-             'but containing information. This should not be the case.')
+             "but containing information. This should not be the case.")
       }
     }
 
@@ -307,8 +306,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       foodbrans <- toolAggregate(sua[, , brans][, , c("protein_supply", "food_supply_kcal")],
                                  rel = branmap, from = "bran", to = "crop", dim = 3.1)
       faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] <-
-        faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] -
-        foodbrans
+        faoData[, , c("protein_supply", "food_supply_kcal")][, , unique(brancrop)] - foodbrans
 
       cakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
                  "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
