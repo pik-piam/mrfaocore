@@ -570,27 +570,27 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # "processing" is based on how much processed good is produced. This can also be
     # adjusted based on extractionFactor, to apply a factor on the input required for a
     # quantity of output. In these cases, residuals are added on to previously existing amounts
-    .processingGlobal2 <- function(object,
-                                  objectO = NULL, # for cases where there is some residual already we need the original object for check and clear #nolint
-                                  goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
-                                  from,     # e.g. "processed" #nolint
-                                  process,  # e.g. "refining"
-                                  goodsOut, # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses")(the order matters!)
-                                  reportAs, # e.g. c("sugar1", "molasses1") - (the order matters!)
-                                  extractionBasis = "input", # Base quantity extracted on input good (default),
-                                  # or output good in the case of one input good multiple processes
-                                  extractionFactor = NULL, # only relevant for extractionBasis output, when we have a factor for outputs #nolint
-                                  extractionAttribute = "wm", # only relevant with extractionFactor
-                                  residual  # e.g. "refiningloss"
+    .processingGlobal2 <- function(
+      object,
+      objectO = NULL, # for cases where there is some residual already we need the original object for check and clear
+      goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
+      from,     # e.g. "processed"
+      process,  # e.g. "refining"
+      goodsOut, # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses")(the order matters!)
+      reportAs, # e.g. c("sugar1", "molasses1") - (the order matters!)
+      extractionBasis = "input", # Base quantity extracted on input good (default),
+      # or output good in the case of one input good multiple processes
+      extractionFactor = NULL, # only relevant for extractionBasis output, when we have a factor for outputs
+      extractionAttribute = "wm", # only relevant with extractionFactor
+      residual  # e.g. "refiningloss"
     ) {
       # these processes have multiple steps, avoid the check
-      if (residual != "food" && residual != "alcoholloss" && process != "fermentation" &&
-         any(object[, , list(goodsIn, c(reportAs, residual))] != 0)) { # nolint
+      if (residual != "food" && residual != "alcoholloss" && process != "fermentation"
+          && any(object[, , list(goodsIn, c(reportAs, residual))] != 0)) {
         stop("Output flows already exist.")
       }
 
-      if (process != "fermentation" &&
-           any(object[, , list(goodsOut, "production_estimated")] != 0)) { # nolint
+      if (process != "fermentation" && any(object[, , list(goodsOut, "production_estimated")] != 0)) {
         stop("Output flows already exist.")
       }
 
@@ -714,13 +714,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     # processing of maiz and sugar cane  (other_util) to ethanol, distillers grain and distilling loss
     .ethanolProcessing <- function(object) {
-      "
-    ethanol and maize:  https://doi.org/10.3390/fermentation7040268 #nolint
-    Production of Bioethanol - A Review of Factors Affecting Ethanol Yield
-    corn: 400 l/t
-    sugarcane: 72.5 l/t
-    ethanol weight per l:  789g
-    "
+      # ethanol and maize:  https://doi.org/10.3390/fermentation7040268
+      # Production of Bioethanol - A Review of Factors Affecting Ethanol Yield
+      # corn: 400 l/t
+      # sugarcane: 72.5 l/t
+      # ethanol weight per l:  789g
 
       prodIn <- "56|Maize (corn)"
 
@@ -731,7 +729,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # ethanol processing from maize (ethanol1, distillers_grain, and distillingloss)
       object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow2(
-          object = object[, , c(prodIn, "X001|Ethanol")], # nolint
+          object = object[, , c(prodIn, "X001|Ethanol")],
           goodIn = prodIn,
           from = "other_util",
           process = "distilling",
@@ -743,7 +741,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           prodAttributes = prodAttributes)
 
       object[, , c(prodIn, "X002|Distillers_grain")] <- .extractGoodFromFlow2(
-          object = object[, , c(prodIn, "X002|Distillers_grain")], # nolint
+          object = object[, , c(prodIn, "X002|Distillers_grain")],
           goodIn = prodIn,
           from = "intermediate",
           process = "intermediate",
@@ -764,7 +762,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # ethanol processing from sugarcane (only ethanol1 and distillingloss)
       object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow2(
-        object = object[, , c(prodIn, "X001|Ethanol")], # nolint
+        object = object[, , c(prodIn, "X001|Ethanol")],
         goodIn = prodIn,
         from = "other_util",
         process = "distilling",
@@ -784,7 +782,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # ethanol processing from cane sugar (only ethanol1 and distillingloss)
       object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")] <- .extractGoodFromFlow2(
-        object = object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")], # nolint
+        object = object[, , c("163|Cane sugar, non-centrifugal", "X001|Ethanol")],
         goodIn = "163|Cane sugar, non-centrifugal",
         from = "other_util",
         process = "distilling",
@@ -885,16 +883,18 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         # in product tree description
 
 
-        object[, , c(beerCereals[j], "X004|Brewers_grain")] <- .extractGoodFromFlow2(object = object[, , c(beerCereals[j], "X004|Brewers_grain")], # nolint
-                                                                                     goodIn = beerCereals[j],
-                                                                                     from = "intermediate",
-                                                                                     process = "intermediate",
-                                                                                     goodOut = "X004|Brewers_grain",
-                                                                                     reportAs = "brewers_grain1",
-                                                                                     residual = "alcoholloss",
-                                                                                     extractionQuantity = "max",
-                                                                                     extractionAttribute = "dm",
-                                                                                     prodAttributes = prodAttributes)
+        object[, , c(beerCereals[j], "X004|Brewers_grain")] <- .extractGoodFromFlow2(
+          object = object[, , c(beerCereals[j], "X004|Brewers_grain")],
+          goodIn = beerCereals[j],
+          from = "intermediate",
+          process = "intermediate",
+          goodOut = "X004|Brewers_grain",
+          reportAs = "brewers_grain1",
+          residual = "alcoholloss",
+          extractionQuantity = "max",
+          extractionAttribute = "dm",
+          prodAttributes = prodAttributes
+        )
       }
       return(object)
     }
@@ -1141,14 +1141,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                            "86|Beer of sorghum, malted", "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec",
                                                fermentationSUA)]
-      fermentationSUA <- c(fermentationSUA, "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
+      fermentationSUA <- c(fermentationSUA,
+                           paste0("634|Undenatured ethyl alcohol of an alcoholic strength by ",
+                                  "volume of less than 80% vol; spirits, liqueurs and other spirituous beverages"),
                            "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       fermentationSUA <- fermentationSUA[fermentationSUA != ""]
 
       refiningSUA <- c(.getFAOitemsSUA(c("sugr_cane", "sugr_beet", "potato",
                                          "maiz", "tece", "rice_pro", "sugar", "cassav_sp")),
                        "165|Molasses")
-      refiningSUA <- refiningSUA[-grep("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|Rye|nec|Sweet pot|Yautia|Taro|Yams|ananas", # nolint
+      refiningSUA <- refiningSUA[-grep(paste0("gluten|lour|Germ|Barley|grain|Buckwheat|Oats|Fonio|Triticale|",
+                                              "Rye|nec|Sweet pot|Yautia|Taro|Yams|ananas"),
                                        refiningSUA)]
       refiningSUA <- refiningSUA[refiningSUA != ""]
 
@@ -1339,18 +1342,19 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                   "fermentation", "alcohol2",
                                   "brewers_grain1",
                                   "alcohol3", "alcohol4", "intermediate", "alcoholloss")
-     strongAlcohols <- c("634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
+     strongAlcohols <- c(paste0("634|Undenatured ethyl alcohol of an alcoholic strength by ",
+                                "volume of less than 80% vol; spirits, liqueurs and other spirituous beverages"),
                          "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       fermentationProducts <- c(cropsAlcohol, "564|Wine", strongAlcohols)
 
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
-        flowsCBC[, , list(fermentationProducts, fermentationDimensions)], # nolint
+        flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
         objectO = flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
         goodsIn  = cropsAlcohol,
         from      = "processed",
         process   = "fermentation",
         goodsOut = c("564|Wine", strongAlcohols),
-        reportAs = c("alcohol2", "alcohol3", "alcohol4"), # nolint
+        reportAs = c("alcohol2", "alcohol3", "alcohol4"),
         residual  = "alcoholloss")
 
       # Define use of products that are not existing in FAOSTAT
@@ -1983,7 +1987,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # ethanol processing from tece and maize (ethanol1, distillers_grain, and distillingloss)
       for (j in seq_along(teceMaize)) {
         object[, , c(teceMaize[j], "X001|Ethanol")] <- .extractGoodFromFlow(
-          object = object[, , c(teceMaize[j], "X001|Ethanol")], # nolint
+          object = object[, , c(teceMaize[j], "X001|Ethanol")],
           goodIn = teceMaize[j],
           from = "other_util",
           process = "distilling",
@@ -1995,7 +1999,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           prodAttributes = prodAttributes)
 
         object[, , c(teceMaize[j], "X002|Distillers_grain")] <- .extractGoodFromFlow(
-          object = object[, , c(teceMaize[j], "X002|Distillers_grain")], # nolint
+          object = object[, , c(teceMaize[j], "X002|Distillers_grain")],
           goodIn = teceMaize[j],
           from = "intermediate",
           process = "intermediate",
@@ -2009,7 +2013,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # ethanol processing from sugarcane (only ethanol1 and distillingloss)
       object[, , c("2536|Sugar cane", "X001|Ethanol")] <- .extractGoodFromFlow(
-        object = object[, , c("2536|Sugar cane", "X001|Ethanol")], # nolint
+        object = object[, , c("2536|Sugar cane", "X001|Ethanol")],
         goodIn = "2536|Sugar cane",
         from = "other_util",
         process = "distilling",
@@ -2278,14 +2282,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       fermentationProducts <- .getFAOitems(c("tece", "others", "trce", "rice_pro", "potato", "cassav_sp", "sugar",
                                              "molasses", "brans", "alcohol", "distillers_grain"))
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal(
-        flowsCBC[, , list(fermentationProducts, fermentationDimensions)], # nolint
+        flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
         goodsIn  = cropsAlcohol,
-        from      = "processed",
-        process   = "fermentation",
+        from     = "processed",
+        process  = "fermentation",
         goodsOut = c("2655|Wine", "2657|Beverages, Fermented",
                      "2658|Beverages, Alcoholic", "2659|Alcohol, Non-Food"),
-        reportAs = c("alcohol1", "alcohol2", "alcohol3", "alcohol4"), # nolint
-        residual  = "alcoholloss")
+        reportAs = c("alcohol1", "alcohol2", "alcohol3", "alcohol4"),
+        residual = "alcoholloss")
 
       # Define use of products that are not existing in FAOSTAT
       goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
