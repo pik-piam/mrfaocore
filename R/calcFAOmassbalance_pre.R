@@ -828,7 +828,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                               extractionBasis = "output",
                                                               residual = "refiningloss")
 
-      # we use the starches as these alllow us to know how much of the product is going into sugar processing, #nolint
+      # we use the starches as these alllow us to know how much of the product is going into sugar processing,
       # we will remove these from the amount of processed in the main crop, based on sugar attributes
       # and assign the amount refining (along with demand etc to the main crop)
 
@@ -870,18 +870,18 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       for (j in seq_along(beerCereals)) {
 
-        object[, , c(beerCereals[j], beersOut[j])] <- .processingGlobal2(object = object[, ,
-                                                                                         c(beerCereals[j],
-                                                                                           beersOut[j])],
-                                                                         goodsIn = beerCereals[j],
-                                                                         from = "processed",
-                                                                         process = "fermentation",
-                                                                         goodsOut = beersOut[j],
-                                                                         reportAs = "alcohol1",
-                                                                         residual = "intermediate",
-                                                                         extractionBasis = "output",
-                                                                         extractionFactor = 5)
-        # this extraction factor based on
+        object[, , c(beerCereals[j], beersOut[j])] <- .processingGlobal2(
+          object = object[, , c(beerCereals[j], beersOut[j])],
+          goodsIn = beerCereals[j],
+          from = "processed",
+          process = "fermentation",
+          goodsOut = beersOut[j],
+          reportAs = "alcohol1",
+          residual = "intermediate",
+          extractionBasis = "output",
+          extractionFactor = 5
+        )
+        # this extraction factor is based on
         # FAOSTAT wm conversion factors
         # in product tree description
 
@@ -930,8 +930,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       whtGerm <- "19|Germ of wheat"
 
       # add wheat germ production to brans, ignore the bran to germ process
-      object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] +
-        dimSums(object[, , whtGerm], dim = 3.1)
+      object[, , "17|Bran of wheat"] <- object[, , "17|Bran of wheat"] + dimSums(object[, , whtGerm], dim = 3.1)
       # brans are part of food demand and not processing in the food balances, here we
       # take the brans from FB food demand and add it to the food
 
@@ -949,14 +948,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       }
 
       # rice makes brancakes - assigned to brans due to its attributes, and branoils
-      riceIn <-  c("27|Rice")
-      roOut <- c("36|Oil of rice bran")
-      rcOut <- c("37|Cake of rice bran")
+      riceIn <- "27|Rice"
+      roOut <- "36|Oil of rice bran"
+      rcOut <- "37|Cake of rice bran"
 
-      object[, , c(riceIn, roOut, rcOut)] <-  .processingGlobal2(object = object[, , c(riceIn,
-                                                                                       roOut, rcOut)],
-                                                                 objectO = object[, , c(riceIn,
-                                                                                        roOut, rcOut)],
+      object[, , c(riceIn, roOut, rcOut)] <-  .processingGlobal2(object = object[, , c(riceIn, roOut, rcOut)],
+                                                                 objectO = object[, , c(riceIn, roOut, rcOut)],
                                                                  goodsIn = riceIn,
                                                                  from = "foodFB",
                                                                  process = "milling",
@@ -966,10 +963,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                  extractionBasis = "input")
 
       # milling of maize makes brans germoil and germcakes
-      maizIn <-  c("56|Maize (corn)")
-      brOut <- c("59|Bran of maize")
-      moOut <- c("60|Oil of maize")
-      mcOut <- c("61|Cake of maize")
+      maizIn <- "56|Maize (corn)"
+      brOut <- "59|Bran of maize"
+      moOut <- "60|Oil of maize"
+      mcOut <- "61|Cake of maize"
 
       object[, , c(maizIn, brOut, moOut, mcOut)] <-  .processingGlobal2(object = object[, , c(maizIn, brOut,
                                                                                               moOut, mcOut)],
@@ -992,10 +989,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # we combine olives with rapeseed here as they have no cakes,
       # with harmonization of processing conversion later on when the rapeseed k category
       # gets harmonized. Mostly Spain now produces very expensive rapsoil
-      object[, , "270|Rape or colza seed"] <-  object[, , "270|Rape or colza seed"] +
-        dimSums(object[, , "260|Olives"], dim = 3.1)
-      object[, , "271|Rapeseed or canola oil, crude"] <-  object[, , "271|Rapeseed or canola oil, crude"] +
-        dimSums(object[, , "261|Olive oil"], dim = 3.1)
+      object[, , "270|Rape or colza seed"] <- (object[, , "270|Rape or colza seed"]
+                                               + dimSums(object[, , "260|Olives"], dim = 3.1))
+      object[, , "271|Rapeseed or canola oil, crude"] <- (object[, , "271|Rapeseed or canola oil, crude"]
+                                                          + dimSums(object[, , "261|Olive oil"], dim = 3.1))
 
       # do the oilcrops with cakes
       # orders must match!
@@ -1823,13 +1820,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # In contrast to .extractGoodFromFlow, this function calculates global
     # conversion factors per attribute instead of using an "extractionQuantity"
     # and "extractionAttribute" for calculations.
-    .processingGlobal <- function(object,
+    .processingGlobal <- function(
+      object,
       goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
-                                  from,     # e.g. "processed" #nolint
-                                  process,  # e.g. "refining"
-                                  goodsOut, # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses") (the order matters!)
-                                  reportAs, # e.g. c("sugar1", "molasses1") - (the order matters!)
-                                  residual  # e.g. "refiningloss"
+      from,     # e.g. "processed"
+      process,  # e.g. "refining"
+      goodsOut, # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses") (the order matters!)
+      reportAs, # e.g. c("sugar1", "molasses1") - (the order matters!)
+      residual  # e.g. "refiningloss"
     ) {
       if (any(object[, , list(goodsIn, c(reportAs, residual))] != 0)) {
         stop("Output flows already exist.")
@@ -1962,13 +1960,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     # processing of tece and maiz (other_util) to ethanol, distillers grain and distilling loss
     .ethanolProcessing <- function(object) {
-      "
-    ethanol and maize:  https://doi.org/10.3390/fermentation7040268 #nolint
-    Production of Bioethanol - A Review of Factors Affecting Ethanol Yield
-    corn: 400 l/t
-    sugarcane: 72.5 l/t
-    ethanol weight per l:  789g
-    "
+      # ethanol and maize:  https://doi.org/10.3390/fermentation7040268
+      # Production of Bioethanol - A Review of Factors Affecting Ethanol Yield
+      # corn: 400 l/t
+      # sugarcane: 72.5 l/t
+      # ethanol weight per l:  789g
+
       # Wheat instead of tece would be more correct, but we need to have homogeneous products
       tece <- .getFAOitems("tece")
       teceMaize <- c(tece,  "2514|Maize and products")
