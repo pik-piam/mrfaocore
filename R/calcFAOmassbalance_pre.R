@@ -614,8 +614,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
         # estimate outputs
         for (j in seq_along(goodsOut)) {
-          object[, , list(goodsIn, reportAs[j])] <- dimSums(object[, , list(goodsIn, from)], dim = "ElementShort") *
-            convFactor[, , goodsOut[j], drop = TRUE]
+          object[, , list(goodsIn, reportAs[j])] <- (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+                                                     * convFactor[, , goodsOut[j], drop = TRUE])
 
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsIn, reportAs[j])],
                                                                            dim = c("ElementShort", "ItemCodeItem")) +
@@ -629,9 +629,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         }
 
         # calculate refining losses as mass balance difference
-        object[, , list(goodsIn, residual)] <-  object[, , list(goodsIn, residual)] +
-          (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
-           - dimSums(object[, , list(goodsIn, reportAs)], dim = "ElementShort"))
+        object[, , list(goodsIn, residual)] <- (object[, , list(goodsIn, residual)]
+                                                + (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+                                                   - dimSums(object[, , list(goodsIn, reportAs)],
+                                                             dim = "ElementShort")))
 
       } else if (extractionBasis == "output") {
         # For multiple inputs or outputs,
@@ -645,8 +646,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
         if (!is.null(extractionFactor)) {
           # make an extractionFactor mag object for multiple conversions
-          extractionFactorMag <- new.magpie(cells_and_regions = "GLO", years = NULL,
-                                            names = goodsOut, fill = 0)
+          extractionFactorMag <- new.magpie(cells_and_regions = "GLO", years = NULL, names = goodsOut, fill = 0)
           for (n in seq_along(extractionFactor)) {
             extractionFactorMag[, , n] <- extractionFactor[n]
           }
@@ -655,27 +655,28 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           # use extraction factor to get conversion factor across attributes
           extractionConversion <- attributesTo / extractionFactorMag
           # assign amount processed based on conversion factor
-          object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
-                                                   dimSums((object[, , list(goodsOut,
-                                                                            "production")][, , extractionAttribute] *
-                                                              extractionConversion),
-                                                           dim = c("ElementShort", "ItemCodeItem"))) +
-            object[, , list(goodsIn, process)]
+          object[, , list(goodsIn, process)] <- ((dimSums(ratioIns, dim = "ElementShort")
+                                                  * dimSums(object[, , list(goodsOut,
+                                                                            "production")][, , extractionAttribute]
+                                                            * extractionConversion,
+                                                            dim = c("ElementShort", "ItemCodeItem")))
+                                                 + object[, , list(goodsIn, process)])
         } else {
           # no extractionFactor means the amount produced is assigned to the process
           # and later subtracted from input going to processing
-          object[, , list(goodsIn, process)] <- (dimSums(ratioIns, dim = "ElementShort") *
-                                                   dimSums(object[, , list(goodsOut, "production")],
-                                                           dim = c("ElementShort", "ItemCodeItem"))) +
-            object[, , list(goodsIn, process)]
+          object[, , list(goodsIn, process)] <- ((dimSums(ratioIns, dim = "ElementShort")
+                                                  * dimSums(object[, , list(goodsOut, "production")],
+                                                            dim = c("ElementShort", "ItemCodeItem")))
+                                                 + object[, , list(goodsIn, process)])
 
         }
 
         for (j in seq_along(goodsOut)) {
           # assign report As based on the goods produced
-          object[, , list(goodsIn, reportAs[j])] <- ratioIns * dimSums(object[, , list(goodsOut[j], "production")],
-                                                                       dim = c("ElementShort", "ItemCodeItem")) +
-            object[, , list(goodsIn, reportAs[j])]
+          object[, , list(goodsIn, reportAs[j])] <- (ratioIns
+                                                     * dimSums(object[, , list(goodsOut[j], "production")],
+                                                               dim = c("ElementShort", "ItemCodeItem"))
+                                                     + object[, , list(goodsIn, reportAs[j])])
           # assign production estimated based on goods produced
           object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsOut[j], "production")],
                                                                            dim = "ElementShort") +
@@ -691,9 +692,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         if (from == "processed") {
           # as we are on output basis we also track how much went into processing based on the output
           # which can be different from how much is reported in the data going into processing
-          object[, , list(goodsIn, "process_estimated")] <- dimSums(object[, , list(goodsIn, process)],
-                                                                    dim = "ElementShort")  +
-            object[, , list(goodsIn, "process_estimated")]
+          object[, , list(goodsIn, "process_estimated")] <- (dimSums(object[, , list(goodsIn, process)],
+                                                                     dim = "ElementShort")
+                                                             + object[, , list(goodsIn, "process_estimated")])
         }
         # remove the amount processed from the "from"
         object[, , list(goodsIn, from)] <- (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
@@ -730,29 +731,29 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       extractionQuantityMaize <- 0.789 * ethanolYieldLiterPerTonMaize / 1000
 
       # ethanol processing from maize (ethanol1, distillers_grain, and distillingloss)
-      object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow2(
-          object = object[, , c(prodIn, "X001|Ethanol")],
-          goodIn = prodIn,
-          from = "other_util",
-          process = "distilling",
-          goodOut = "X001|Ethanol",
-          reportAs = "ethanol1",
-          residual = "intermediate",
-          extractionQuantity = extractionQuantityMaize,
-          extractionAttribute = "dm",
-          prodAttributes = prodAttributes)
+      object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow2(object = object[, , c(prodIn, "X001|Ethanol")],
+                                                                     goodIn = prodIn,
+                                                                     from = "other_util",
+                                                                     process = "distilling",
+                                                                     goodOut = "X001|Ethanol",
+                                                                     reportAs = "ethanol1",
+                                                                     residual = "intermediate",
+                                                                     extractionQuantity = extractionQuantityMaize,
+                                                                     extractionAttribute = "dm",
+                                                                     prodAttributes = prodAttributes)
 
       object[, , c(prodIn, "X002|Distillers_grain")] <- .extractGoodFromFlow2(
-          object = object[, , c(prodIn, "X002|Distillers_grain")],
-          goodIn = prodIn,
-          from = "intermediate",
-          process = "intermediate",
-          goodOut = "X002|Distillers_grain",
-          reportAs = "distillers_grain1",
-          residual = "distillingloss",
-          extractionQuantity = "max",
-          extractionAttribute = "nr",
-          prodAttributes = prodAttributes)
+        object = object[, , c(prodIn, "X002|Distillers_grain")],
+        goodIn = prodIn,
+        from = "intermediate",
+        process = "intermediate",
+        goodOut = "X002|Distillers_grain",
+        reportAs = "distillers_grain1",
+        residual = "distillingloss",
+        extractionQuantity = "max",
+        extractionAttribute = "nr",
+        prodAttributes = prodAttributes
+      )
 
 
       prodIn <- "156|Sugar cane"
@@ -763,17 +764,16 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000
 
       # ethanol processing from sugarcane (only ethanol1 and distillingloss)
-      object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow2(
-        object = object[, , c(prodIn, "X001|Ethanol")],
-        goodIn = prodIn,
-        from = "other_util",
-        process = "distilling",
-        goodOut = "X001|Ethanol",
-        reportAs = "ethanol1",
-        residual = "distillingloss",
-        extractionQuantity = extractionQuantitySugarcane,
-        extractionAttribute = "dm",
-        prodAttributes = prodAttributes)
+      object[, , c(prodIn, "X001|Ethanol")] <- .extractGoodFromFlow2(object = object[, , c(prodIn, "X001|Ethanol")],
+                                                                     goodIn = prodIn,
+                                                                     from = "other_util",
+                                                                     process = "distilling",
+                                                                     goodOut = "X001|Ethanol",
+                                                                     reportAs = "ethanol1",
+                                                                     residual = "distillingloss",
+                                                                     extractionQuantity = extractionQuantitySugarcane,
+                                                                     extractionAttribute = "dm",
+                                                                     prodAttributes = prodAttributes)
 
 
       # liter yield for non-centrifugal sugar
@@ -793,7 +793,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         residual = "distillingloss",
         extractionQuantity = extractionQuantitySugar,
         extractionAttribute = "dm",
-        prodAttributes = prodAttributes)
+        prodAttributes = prodAttributes
+      )
 
 
       return(object)
@@ -1344,9 +1345,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                   "fermentation", "alcohol2",
                                   "brewers_grain1",
                                   "alcohol3", "alcohol4", "intermediate", "alcoholloss")
-     strongAlcohols <- c(paste0("634|Undenatured ethyl alcohol of an alcoholic strength by ",
-                                "volume of less than 80% vol; spirits, liqueurs and other spirituous beverages"),
-                         "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
+      strongAlcohols <- c(paste0("634|Undenatured ethyl alcohol of an alcoholic strength by ",
+                                 "volume of less than 80% vol; spirits, liqueurs and other spirituous beverages"),
+                          "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher")
       fermentationProducts <- c(cropsAlcohol, "564|Wine", strongAlcohols)
 
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
@@ -1357,7 +1358,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         process   = "fermentation",
         goodsOut = c("564|Wine", strongAlcohols),
         reportAs = c("alcohol2", "alcohol3", "alcohol4"),
-        residual  = "alcoholloss")
+        residual  = "alcoholloss"
+      )
 
       # Define use of products that are not existing in FAOSTAT
       goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
@@ -1998,7 +2000,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           residual = "intermediate",
           extractionQuantity = extractionQuantityTeceMaize[j],
           extractionAttribute = "dm",
-          prodAttributes = prodAttributes)
+          prodAttributes = prodAttributes
+        )
 
         object[, , c(teceMaize[j], "X002|Distillers_grain")] <- .extractGoodFromFlow(
           object = object[, , c(teceMaize[j], "X002|Distillers_grain")],
@@ -2010,7 +2013,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           residual = "distillingloss",
           extractionQuantity = "max",
           extractionAttribute = "nr",
-          prodAttributes = prodAttributes)
+          prodAttributes = prodAttributes
+        )
       }
 
       # ethanol processing from sugarcane (only ethanol1 and distillingloss)
@@ -2024,7 +2028,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         residual = "distillingloss",
         extractionQuantity = extractionQuantitySugarcane,
         extractionAttribute = "dm",
-        prodAttributes = prodAttributes)
+        prodAttributes = prodAttributes
+      )
 
       return(object)
     }
@@ -2291,7 +2296,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         goodsOut = c("2655|Wine", "2657|Beverages, Fermented",
                      "2658|Beverages, Alcoholic", "2659|Alcohol, Non-Food"),
         reportAs = c("alcohol1", "alcohol2", "alcohol3", "alcohol4"),
-        residual = "alcoholloss")
+        residual = "alcoholloss"
+      )
 
       # Define use of products that are not existing in FAOSTAT
       goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
