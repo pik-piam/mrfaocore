@@ -1643,7 +1643,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     getSets(prodAttributes) <- c("region", "year", "attributes", "ItemCodeItem")
 
     # change prod attributes from share of dm to share of wm
-    attributesWM <- (prodAttributes / dimSums(prodAttributes[, , "wm"], dim = "attributes"))
+    attributesWM <- prodAttributes / dimSums(prodAttributes[, , "wm"], dim = "attributes")
 
     cbcItemnames <- getNames(cbc, dim = "ItemCodeItem")
     itemnamesAttributes <- getNames(attributesWM, dim = "ItemCodeItem")
@@ -1701,9 +1701,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       if (!is.null(goodsOut)) {
         # ... with input goods?
         diff <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort", "ItemCodeItem"))
-          - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
-          - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-        )
+                 - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
+                 - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem")))
         if (any(abs(diff) > threshold)) {
           stop("NAs in dataset or function corrupt: goods not balanced for ",
                paste(goodsOut, collapse = ", "), " from ", paste(goodsIn, collapse = ", "))
@@ -1779,10 +1778,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       attrNoWM <- setdiff(attributeTypes, "wm")
 
       # calculating possible extraction quantity per attribute
-      attributesFrom   <- dimSums(object[, , list(goodIn, from), drop = TRUE], dim = "region") /
-        dimSums(object[, , list(goodIn, from, extractionAttribute), drop = TRUE], dim = c("region"))
-      attributesTo     <- prodAttributes[, , goodOut, drop = TRUE] /
-        prodAttributes[, , list(goodOut, extractionAttribute), drop = TRUE]
+      attributesFrom <- (dimSums(object[, , list(goodIn, from), drop = TRUE], dim = "region")
+                         / dimSums(object[, , list(goodIn, from, extractionAttribute), drop = TRUE], dim = c("region")))
+      attributesTo <- (prodAttributes[, , goodOut, drop = TRUE]
+                       / prodAttributes[, , list(goodOut, extractionAttribute), drop = TRUE])
       extractionFactor <- attributesFrom[, , attrNoWM] / attributesTo[, , attrNoWM]
 
       # maximum extraction quantity as minimum over the possible quantity per attribute
@@ -1847,8 +1846,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # estimate outputs
       for (j in seq_along(goodsOut)) {
-        object[, , list(goodsIn, reportAs[j])] <- dimSums(object[, , list(goodsIn, from)], dim = "ElementShort") *
-          convFactor[, , goodsOut[j], drop = TRUE]
+        object[, , list(goodsIn, reportAs[j])] <- (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+                                                   * convFactor[, , goodsOut[j], drop = TRUE])
         object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsIn, reportAs[j])],
                                                                          dim = c("ElementShort", "ItemCodeItem"))
       }
@@ -1889,9 +1888,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         stop("Output flows already exist.")
       }
 
-      milledGlobal   <- dimSums(object[, , list(cereals, milled)], dim = c("region", "ElementShort"))
-      bransGlobal    <- dimSums(object[, , list(brans, "production")],
-                                dim = c("region", "ElementShort", "ItemCodeItem"))
+      milledGlobal <- dimSums(object[, , list(cereals, milled)], dim = c("region", "ElementShort"))
+      bransGlobal  <- dimSums(object[, , list(brans, "production")], dim = c("region", "ElementShort", "ItemCodeItem"))
 
       # as share of dm instaed of wm
       branAttributes <- bransGlobal / dimSums(bransGlobal[, , "dm"], dim = "attributes")
@@ -1908,8 +1906,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       branRatio <- branRatio * dimSums(bransGlobal[, , "dm"], dim = "attributes") / bransUncalibrated
 
       # bran estimation
-      branEstimated <- branRatio * branAttributes * dimSums(object[, , list(cereals, milled)][, , "dm"],
-                                                            dim = "attributes")
+      branEstimated <- (branRatio
+                        * branAttributes
+                        * dimSums(object[, , list(cereals, milled)][, , "dm"], dim = "attributes"))
       object[, , list(cereals, "brans1")]             <- dimSums(branEstimated[, , cereals], dim = "ElementShort")
       object[, , list(brans, "production_estimated")] <- dimSums(branEstimated[, , cereals],
                                                                  dim = c("ItemCodeItem", "ElementShort"))
@@ -1918,14 +1917,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # branoil estimation
       .branoil1Production <- function(object, branoilItem, cropItem) {
         branoilRatio <- (dimSums(object[, , list(branoilItem, "production")],
-                                 dim = c("region", "ItemCodeItem", "ElementShort")) /
-                           dimSums(milledGlobal[, , cropItem], dim = "ItemCodeItem"))
+                                 dim = c("region", "ItemCodeItem", "ElementShort"))
+                         / dimSums(milledGlobal[, , cropItem], dim = "ItemCodeItem"))
         estimatedBranoil <- object[, , list(cropItem, milled)] * branoilRatio
-        object[, , list(cropItem, "branoil1")]                <- dimSums(estimatedBranoil[, , cropItem],
-                                                                         dim = "ElementShort")
+        object[, , list(cropItem, "branoil1")] <- dimSums(estimatedBranoil[, , cropItem], dim = "ElementShort")
         object[, , list(branoilItem, "production_estimated")] <- dimSums(estimatedBranoil[, , cropItem],
                                                                          dim = c("ItemCodeItem", "ElementShort"))
-        object[, , list(cropItem, flour)]                     <- object[, , list(cropItem, flour)] - estimatedBranoil
+        object[, , list(cropItem, flour)] <- object[, , list(cropItem, flour)] - estimatedBranoil
         return(object)
       }
 
@@ -1936,7 +1934,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       object <- .checkAndClear(object, goodsIn = cereals, from = milled, process = process,
                                reportAs = c("brans1", "branoil1"), residual = flour)
 
-      ### Fooduse in brans is included in the commodity balance sheets, but not reflected in calories.
+      # Fooduse in brans is included in the commodity balance sheets, but not reflected in calories.
       # We subtract bran consumption from cereal consumption in the respective countries.
       # For simplicity, we distribute brans proportional to all cereal fooduse.
       relAttributes <- c("wm", "ge", "nr")
@@ -1948,8 +1946,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       }
       object[, , list(cereals, "households", relAttributes)] <- (1 - branshr) *
         object[, , list(cereals, "households", relAttributes)]
-      object[, , list(brans, "households", relAttributes)]   <- object[, , list(brans,
-                                                                                milled, relAttributes)]
+      object[, , list(brans, "households", relAttributes)] <- object[, , list(brans, milled, relAttributes)]
 
       return(object)
     }
@@ -2069,8 +2066,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                             reportAs = c("sugar1", "molasses1"),
                                                             residual = "refiningloss")
 
-      goodsIn <- c("2514|Maize and products")
-      goodsOut <- c("2543|Sweeteners, Other")
+      goodsIn <- "2514|Maize and products"
+      goodsOut <- "2543|Sweeteners, Other"
       object[, , c(goodsIn, goodsOut)] <- .processingGlobal(object = object[, , c(goodsIn, goodsOut)],
                                                             goodsIn = goodsIn,
                                                             from = "processed",
