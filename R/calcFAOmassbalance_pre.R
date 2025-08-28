@@ -1201,8 +1201,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                      + flowsCBC[, , list(glutens[[i]], "processed")])
         flowsCBC[, , list(names(glutens)[[i]], "feed")] <- (flowsCBC[, , list(names(glutens)[[i]], "feed")]
                                                             + flowsCBC[, , list(glutens[[i]], "feed")])
-        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- (flowsCBC[, , list(names(glutens)[[i]],
-                                                                                   "other_util")]
+        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- (flowsCBC[, , list(names(glutens)[[i]], "other_util")]
                                                                   + flowsCBC[, , list(glutens[[i]], "other_util")])
         flowsCBC[, , list(names(glutens)[[i]], "food")] <- (flowsCBC[, , list(names(glutens)[[i]], "food")]
                                                             + flowsCBC[, , list(glutens[[i]], "food")])
