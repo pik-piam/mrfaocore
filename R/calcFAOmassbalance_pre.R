@@ -1974,10 +1974,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # liter yield converted to dm (-> extraction factor)
       ethanolYieldLiterPerTonTeceMaize <- c(rep(ethanolYieldLiterPerTonTece, length(tece)),
                                             ethanolYieldLiterPerTonMaize)
+      stopifnot(identical(dim(attributesWM[, , "dm.2514|Maize and products"]), c(1L, 1L, 1L)))
       extractionQuantityTeceMaize <- 0.789 * ethanolYieldLiterPerTonTeceMaize / 1000 /
-        attributesWM[, , "2514|Maize and products"][, , "dm"]
+        as.vector(attributesWM[, , "dm.2514|Maize and products"])
+      stopifnot(identical(dim(attributesWM[, , "dm.2536|Sugar cane"]), c(1L, 1L, 1L)))
       extractionQuantitySugarcane <- 0.789 * ethanolYieldLiterPerTonSugarcane / 1000 /
-        attributesWM[, , "2536|Sugar cane"][, , "dm"]
+        as.vector(attributesWM[, , "dm.2536|Sugar cane"])
 
       # ethanol processing from tece and maize (ethanol1, distillers_grain, and distillingloss)
       for (j in seq_along(teceMaize)) {
