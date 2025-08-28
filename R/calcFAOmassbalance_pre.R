@@ -41,9 +41,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     # give opening stocks to FB from SUA , by aggregating the SUA products, as stocks not in FB
     # need to remove the 3 objects in SUA that are not mapped to FB
-    openingStocks <- toolAggregate(sua[, , "opening_stocks"][, , 
-                                   c("1276|Industrial monocarboxylic fatty acids; acid oils from refining",
-                                     "1277|Residues of fatty substances", "254|Oil palm fruit"), invert = TRUE],
+    toRemove <- c("1276|Industrial monocarboxylic fatty acids; acid oils from refining",
+                  "1277|Residues of fatty substances", "254|Oil palm fruit")
+    openingStocks <- toolAggregate(sua[, , "opening_stocks"][, , toRemove, invert = TRUE],
                                    rel = relationmatrix,
                                    from = "post2010_SupplyUtilizationItem", to = "post2010_FoodBalanceItem",
                                    partrel = TRUE, dim = 3.1)
@@ -393,12 +393,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       if (extractionBasis == "input") {
         # 1) input goods balanced?
         if (is.null(objectO)) {
-          diff <- (dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort"))
-                   - dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")))
+          diff <- (dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = "ElementShort")
+                   - dimSums(object[, , list(goodsIn, from)], dim = "ElementShort"))
         } else {
-          diff <- dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort")) -
-            dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")) -
-            dimSums(objectO[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort"))
+          diff <- (dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = "ElementShort")
+                   - dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+                   - dimSums(objectO[, , list(goodsIn, c(reportAs, residual))], dim = "ElementShort"))
         }
         if (any(abs(diff) > threshold)) {
           stop("NAs in dataset or function corrupt: process not balanced for ",
@@ -410,16 +410,16 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           # ... with input goods?
           if (is.null(objectO)) {
             diff <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort", "ItemCodeItem"))
-              - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
-              - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-            )
+                     - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
+                     - dimSums(object[, , list(goodsOut, "production_estimated")],
+                               dim = c("ElementShort", "ItemCodeItem")))
           } else {
             diff <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort", "ItemCodeItem"))
-              - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
-              - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-              + dimSums(objectO[, , list(goodsOut, c("production_estimated", residual))],
-                        dim = c("ElementShort", "ItemCodeItem"))
-            )
+                     - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
+                     - dimSums(object[, , list(goodsOut, "production_estimated")],
+                               dim = c("ElementShort", "ItemCodeItem"))
+                     + dimSums(objectO[, , list(goodsOut, c("production_estimated", residual))],
+                               dim = c("ElementShort", "ItemCodeItem")))
           }
           if (any(abs(diff) > threshold)) {
             stop("NAs in dataset or function corrupt: goods not balanced for ",
@@ -428,8 +428,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
           # ... in production?
           if ("production_tmp" %in% getNames(object, dim = 2)) {
-            diff <- (sum(object[, , list(goodsOut, "production_estimated")]) -
-                       sum(object[, , list(goodsOut, "production_tmp")]))
+            diff <- (sum(object[, , list(goodsOut, "production_estimated")])
+                     - sum(object[, , list(goodsOut, "production_tmp")]))
           } else {
             diff <- (sum(object[, , list(goodsOut, "production_estimated")])
                      - sum(object[, , list(goodsOut, "production")]))
@@ -451,8 +451,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         # move from "from" to "process" and clear "from"
         # this is done in .extractGoodfromFlow in the "output" case
         if (from != process) {
-          object[, , list(goodsIn, process)] <- dimSums(object[, , list(goodsIn, from)], dim = 3.2) +
-            object[, , list(goodsIn, process)]
+          object[, , list(goodsIn, process)] <- (dimSums(object[, , list(goodsIn, from)], dim = 3.2)
+                                                 + object[, , list(goodsIn, process)])
         }
         object[, , list(goodsIn, from)] <- 0  # if from == process it is "intermediate" which is to be cleared as well
 
@@ -461,9 +461,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         if (!is.null(goodsOut)) {
           # ... with input goods?
           diff <- (dimSums(object[, , list(goodsIn, "process_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-            - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
-            - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-          )
+                   - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
+                   - dimSums(object[, , list(goodsOut, "production_estimated")],
+                             dim = c("ElementShort", "ItemCodeItem")))
           if (any(abs(diff) > threshold)) {
             stop("NAs in dataset or function corrupt: goods not balanced for ",
                  paste(goodsOut, collapse = ", "), " from ", paste(goodsIn, collapse = ", "))
@@ -503,13 +503,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # "reportAs".
     # The calculated production quantity is also added to "goodOut.production_estimated".
     .extractGoodFromFlow2 <- function(object,
-                                      objectO = NULL,                # original object for when processes are additive to original #nolint
-                                      goodIn,                        # FAO-defined input product, e.g. "2536|Sugar cane"
-                                      from,                          # FAO-defined process, e.g. "other_util"
-                                      process,                       # MAgPIE-defined process, e.g. "distilling"
-                                      goodOut,                       # FAO-defined output product, e.g. "X001|Ethanol"
-                                      reportAs,                      # MAgPIE-defined output product, e.g. "ethanol1"
-                                      residual,                      # MAgPIE-defined residual, e.g. "distillingloss"
+                                      objectO = NULL,      # original object for when processes are additive to original
+                                      goodIn,              # FAO-defined input product, e.g. "2536|Sugar cane"
+                                      from,                # FAO-defined process, e.g. "other_util"
+                                      process,             # MAgPIE-defined process, e.g. "distilling"
+                                      goodOut,             # FAO-defined output product, e.g. "X001|Ethanol"
+                                      reportAs,            # MAgPIE-defined output product, e.g. "ethanol1"
+                                      residual,            # MAgPIE-defined residual, e.g. "distillingloss"
                                       extractionQuantity,  # e.g. 0.516006
                                       extractionAttribute, # e.g. "dm"
                                       prodAttributes) {
@@ -518,8 +518,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         stop("please only use one item each for \"from\", \"reportAs\", \"goodIn\", and \"goodOut\"")
       }
       # alcohol processing happens twice for beers and strong alcohols
-      if (residual != "alcoholloss" &&
-         any(object[, , list(goodIn, c(reportAs, residual))] != 0)) { # nolint
+      if (residual != "alcoholloss" && any(object[, , list(goodIn, c(reportAs, residual))] != 0)) {
         stop("Output flows already exist.")
       }
 
@@ -527,10 +526,10 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       attrNoWM <- setdiff(attributeTypes, "wm")
 
       # calculating possible extraction quantity per attribute
-      attributesFrom   <- dimSums(object[, , list(goodIn, from), drop = TRUE], dim = "region") /
-        dimSums(object[, , list(goodIn, from, extractionAttribute), drop = TRUE], dim = c("region"))
-      attributesTo     <- prodAttributes[, , goodOut, drop = TRUE] /
-        prodAttributes[, , list(goodOut, extractionAttribute), drop = TRUE]
+      attributesFrom <- (dimSums(object[, , list(goodIn, from), drop = TRUE], dim = "region")
+                         / dimSums(object[, , list(goodIn, from, extractionAttribute), drop = TRUE], dim = c("region")))
+      attributesTo <- (prodAttributes[, , goodOut, drop = TRUE]
+                       / prodAttributes[, , list(goodOut, extractionAttribute), drop = TRUE])
       extractionFactor <- attributesFrom[, , attrNoWM] / attributesTo[, , attrNoWM]
       extractionFactor[is.na(extractionFactor)] <- 1
 
@@ -629,8 +628,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
         # calculate refining losses as mass balance difference
         object[, , list(goodsIn, residual)] <-  object[, , list(goodsIn, residual)] +
-          (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
-           - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
+          (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+           - dimSums(object[, , list(goodsIn, reportAs)], dim = "ElementShort"))
 
       } else if (extractionBasis == "output") {
         # For multiple inputs or outputs,
@@ -691,12 +690,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
           # as we are on output basis we also track how much went into processing based on the output
           # which can be different from how much is reported in the data going into processing
           object[, , list(goodsIn, "process_estimated")] <- dimSums(object[, , list(goodsIn, process)],
-                                                                    dim = c("ElementShort"))  +
+                                                                    dim = "ElementShort")  +
             object[, , list(goodsIn, "process_estimated")]
         }
         # remove the amount processed from the "from"
-        object[, , list(goodsIn, from)] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
-                                            - (dimSums(object[, , list(goodsIn, process)], dim = c("ElementShort"))))
+        object[, , list(goodsIn, from)] <- (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+                                            - (dimSums(object[, , list(goodsIn, process)], dim = "ElementShort")))
 
         # if less than zero this is tracked in difference between production and process_estimated, remove 0's here
         object[, , list(goodsIn, from)][which(object[, , list(goodsIn, from)] < 0)] <- 0
@@ -1690,8 +1689,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                threshold = 1e-5) {
       # perform massbalance tests:
       # 1) input goods balanced?
-      diff <- (dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort"))
-               - dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")))
+      diff <- (dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = "ElementShort")
+               - dimSums(object[, , list(goodsIn, from)], dim = "ElementShort"))
       if (any(abs(diff) > threshold)) {
         stop("NAs in dataset or function corrupt: process not balanced for ",
              paste(goodsIn, collapse = ", "), " reported as ", paste(reportAs, collapse = ", "))
@@ -1853,8 +1852,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       }
 
       # calculate refining losses as mass balance difference
-      object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
-                                              - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
+      object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, from)], dim = "ElementShort")
+                                              - dimSums(object[, , list(goodsIn, reportAs)], dim = "ElementShort"))
 
       # check results and clear processed position
       object <- .checkAndClear(object, goodsIn, from, process, reportAs, residual, relevantAttributes, goodsOut)
@@ -1909,7 +1908,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # bran estimation
       branEstimated <- branRatio * branAttributes * dimSums(object[, , list(cereals, milled)][, , "dm"],
                                                             dim = "attributes")
-      object[, , list(cereals, "brans1")]             <- dimSums(branEstimated[, , cereals], dim = c("ElementShort"))
+      object[, , list(cereals, "brans1")]             <- dimSums(branEstimated[, , cereals], dim = "ElementShort")
       object[, , list(brans, "production_estimated")] <- dimSums(branEstimated[, , cereals],
                                                                  dim = c("ItemCodeItem", "ElementShort"))
       object[, , list(cereals, flour)]                <- object[, , list(cereals, milled)] - branEstimated
@@ -1921,7 +1920,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                            dimSums(milledGlobal[, , cropItem], dim = "ItemCodeItem"))
         estimatedBranoil <- object[, , list(cropItem, milled)] * branoilRatio
         object[, , list(cropItem, "branoil1")]                <- dimSums(estimatedBranoil[, , cropItem],
-                                                                         dim = c("ElementShort"))
+                                                                         dim = "ElementShort")
         object[, , list(branoilItem, "production_estimated")] <- dimSums(estimatedBranoil[, , cropItem],
                                                                          dim = c("ItemCodeItem", "ElementShort"))
         object[, , list(cropItem, flour)]                     <- object[, , list(cropItem, flour)] - estimatedBranoil
