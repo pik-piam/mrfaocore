@@ -1183,13 +1183,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                     "119|Starch of potatoes")
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
-        flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
-          flowsCBC[, , list(starches[[i]], "feed")]
-        flowsCBC[, , list(names(starches)[[i]], "other_util")] <-  flowsCBC[, , list(names(starches)[[i]],
-                                                                                     "other_util")] +
-          flowsCBC[, , list(starches[[i]], "other_util")]
-        flowsCBC[, , list(names(starches)[[i]], "food")] <-  flowsCBC[, , list(names(starches)[[i]], "food")] +
-          flowsCBC[, , list(starches[[i]], "food")]
+        flowsCBC[, , list(names(starches)[[i]], "feed")] <- (flowsCBC[, , list(names(starches)[[i]], "feed")]
+                                                             + flowsCBC[, , list(starches[[i]], "feed")])
+        flowsCBC[, , list(names(starches)[[i]], "other_util")] <- (flowsCBC[, , list(names(starches)[[i]],
+                                                                                     "other_util")]
+                                                                   + flowsCBC[, , list(starches[[i]], "other_util")])
+        flowsCBC[, , list(names(starches)[[i]], "food")] <- (flowsCBC[, , list(names(starches)[[i]], "food")]
+                                                             + flowsCBC[, , list(starches[[i]], "food")])
       }
 
       # do the same for the glutens, in this case the processed glutens also go into feed, as
@@ -1197,15 +1197,15 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       glutens <- c("24|Wheat gluten", "33|Rice, gluten", "63|Maize gluten")
       names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
       for (i in seq_along(glutens)) {
-        flowsCBC[, , list(glutens[[i]], "feed")] <- flowsCBC[, , list(glutens[[i]], "feed")] +
-          flowsCBC[, , list(glutens[[i]], "processed")]
-        flowsCBC[, , list(names(glutens)[[i]], "feed")] <- flowsCBC[, , list(names(glutens)[[i]], "feed")] +
-          flowsCBC[, , list(glutens[[i]], "feed")]
-        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- flowsCBC[, , list(names(glutens)[[i]],
-                                                                                   "other_util")] +
-          flowsCBC[, , list(glutens[[i]], "other_util")]
-        flowsCBC[, , list(names(glutens)[[i]], "food")] <- flowsCBC[, , list(names(glutens)[[i]], "food")] +
-          flowsCBC[, , list(glutens[[i]], "food")]
+        flowsCBC[, , list(glutens[[i]], "feed")] <- (flowsCBC[, , list(glutens[[i]], "feed")]
+                                                     + flowsCBC[, , list(glutens[[i]], "processed")])
+        flowsCBC[, , list(names(glutens)[[i]], "feed")] <- (flowsCBC[, , list(names(glutens)[[i]], "feed")]
+                                                            + flowsCBC[, , list(glutens[[i]], "feed")])
+        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- (flowsCBC[, , list(names(glutens)[[i]],
+                                                                                   "other_util")]
+                                                                  + flowsCBC[, , list(glutens[[i]], "other_util")])
+        flowsCBC[, , list(names(glutens)[[i]], "food")] <- (flowsCBC[, , list(names(glutens)[[i]], "food")]
+                                                            + flowsCBC[, , list(glutens[[i]], "food")])
       }
 
       brans <- c("17|Bran of wheat", "59|Bran of maize", "81|Bran of millet", "85|Bran of sorghum",
@@ -1233,8 +1233,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # FAO accounts for brans as brans --> processing -- > gluten feed an meal --> feed
       # so we assign brans --> processing directly to feed
       bransNoGerm <- brans[-which(brans == "19|Germ of wheat")]
-      flowsCBC[, , bransNoGerm][, , "feed"] <- flowsCBC[, , bransNoGerm][, , "feed"] +
-        flowsCBC[, , bransNoGerm][, , "processed", drop = TRUE]
+      flowsCBC[, , bransNoGerm][, , "feed"] <- (flowsCBC[, , bransNoGerm][, , "feed"]
+                                                + flowsCBC[, , bransNoGerm][, , "processed", drop = TRUE])
       flowsCBC[, , bransNoGerm][, , "processed"]  <- 0
 
       # remove starches now as based on FAO flowcharts starches processed
@@ -1254,12 +1254,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                     "96|Bran of fonio", "99|Bran of triticale",
                     "112|Bran of cereals nec")
 
-      factor <- dimSums(flowsCBC[, , list(unlist(teceIn), "brans1")], dim = c(1, 3.1, 3.2)) /
-        dimSums(flowsCBC[, , list(teceIn, "milling")], dim = c(1, 3.1, 3.2))
-      flowsCBC[, , list(teceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(teceIn, "milling")],
-                                                               dim = 3.2)
-      flowsCBC[, , list(teceIn, "flour1")] <- dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2) -
-        dimSums(flowsCBC[, , list(teceIn, "brans1")], dim = 3.2)
+      factor <- (dimSums(flowsCBC[, , list(unlist(teceIn), "brans1")], dim = c(1, 3.1, 3.2))
+                 / dimSums(flowsCBC[, , list(teceIn, "milling")], dim = c(1, 3.1, 3.2)))
+      flowsCBC[, , list(teceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2)
+      flowsCBC[, , list(teceIn, "flour1")] <- (dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2)
+                                               - dimSums(flowsCBC[, , list(teceIn, "brans1")], dim = 3.2))
       gc()
 
       for (j in seq_along(bransOut)) {
@@ -1273,12 +1272,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       trceIn <- c("79|Millet", "83|Sorghum")
       bransOut <- c("81|Bran of millet", "85|Bran of sorghum")
 
-      factor <- dimSums(flowsCBC[, , list(unlist(trceIn), "brans1")], dim = c(1, 3.1, 3.2)) /
-        dimSums(flowsCBC[, , list(trceIn, "milling")], dim = c(1, 3.1, 3.2))
-      flowsCBC[, , list(trceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(trceIn, "milling")],
-                                                               dim = 3.2)
-      flowsCBC[, , list(trceIn, "flour1")] <- dimSums(flowsCBC[, , list(trceIn, "milling")], dim = 3.2) -
-        dimSums(flowsCBC[, , list(trceIn, "brans1")], dim = 3.2)
+      factor <- (dimSums(flowsCBC[, , list(trceIn, "brans1")], dim = c(1, 3.1, 3.2))
+                 / dimSums(flowsCBC[, , list(trceIn, "milling")], dim = c(1, 3.1, 3.2)))
+      flowsCBC[, , list(trceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(trceIn, "milling")], dim = 3.2)
+      flowsCBC[, , list(trceIn, "flour1")] <- (dimSums(flowsCBC[, , list(trceIn, "milling")], dim = 3.2)
+                                               - dimSums(flowsCBC[, , list(trceIn, "brans1")], dim = 3.2))
       gc()
 
       for (j in seq_along(bransOut)) {
@@ -1307,8 +1305,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                        "341|Cake, oilseeds nes")
 
       for (from in c("oil1", "oilcakes1", "extractionloss")) {
-        factor <- dimSums(flowsCBC[, , list(unlist(goodsIn), from)], dim = c(1, 3.1, 3.2)) /
-          dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")], dim = c(1, 3.1, 3.2))
+        factor <- (dimSums(flowsCBC[, , list(unlist(goodsIn), from)], dim = c(1, 3.1, 3.2))
+                   / dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")], dim = c(1, 3.1, 3.2)))
         flowsCBC[, , list(unlist(goodsIn), from)] <- factor * dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")],
                                                                       dim = 3.2)
         gc()
@@ -1333,7 +1331,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "554|Cranberries", "558|Other berries and fruits of the genus vaccinium nec",
                          "569|Figs", "577|Dates",
                          "603|Other tropical fruits, nec", "619|Other fruits, nec")
-      grainsAlcohol <-  .getFAOitemsSUA(c("potato", "cassav_sp", "sugar", "molasses"))
+      grainsAlcohol <- .getFAOitemsSUA(c("potato", "cassav_sp", "sugar", "molasses"))
       cropsAlcohol <- c(fruitsAlcohol, grainsAlcohol)
       cropsAlcohol <- intersect(getItems(flowsCBC, dim = 3.1), cropsAlcohol)
 
@@ -1349,13 +1347,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal2(
         flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
-        objectO = flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
+        objectO  = flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
         goodsIn  = cropsAlcohol,
-        from      = "processed",
-        process   = "fermentation",
+        from     = "processed",
+        process  = "fermentation",
         goodsOut = c("564|Wine", strongAlcohols),
         reportAs = c("alcohol2", "alcohol3", "alcohol4"),
-        residual  = "alcoholloss"
+        residual = "alcoholloss"
       )
 
       # Define use of products that are not existing in FAOSTAT
@@ -1399,7 +1397,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # use explicit processed values from SUA, remove from FB
       fbFlows <- fbFlows[, , c("processed", "intermediate"), invert = TRUE]
-      cprods <-    intersect(getItems(fbFlows, dim = 3.1), getItems(processedFB, dim = 3.1))
+      cprods <- intersect(getItems(fbFlows, dim = 3.1), getItems(processedFB, dim = 3.1))
 
       fbFlows[, , proc][, , cprods] <- processedFB[, , proc][, , cprods]
 
@@ -1411,7 +1409,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                     "335|Cake of  linseed",  "338|Cake of hempseed",
                     "341|Cake, oilseeds nes")
 
-      replace <-  processedFB[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , proc, invert = TRUE]
+      replace <- processedFB[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , proc, invert = TRUE]
       fbFlows[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , getItems(replace, dim = 3)] <- replace
 
       # map to magpie categories
@@ -1445,8 +1443,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       noProcessingFB[, , list("households", "nr")] <- noProcessingFB[, , list("protein_supply", "wm")] / 6.25
       noProcessingFB[, , list("households", "wm")] <- noProcessingFB[, , list("food", "wm")]
       noProcessingFB <- noProcessingFB[, , setdiff(getNames(noProcessingFB, dim = "ElementShort"),
-                                                   c("food_supply_kcal", "protein_supply",
-                                                     "fat_supply"))]
+                                                   c("food_supply_kcal", "protein_supply", "fat_supply"))]
 
       # fill NAs and NaNs
       noProcessingFB[is.na(noProcessingFB)]  <- 0
@@ -1467,7 +1464,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       massbalanceNoProcessing <- massbalanceNoProcessing[, , "", invert = TRUE]
 
       # we need to do a correction for livst_milk, as the FAOSTAT FBS domestic supply values are
-      # much higher than production than in SUA and trade data , so we will scale the uses in the FBS
+      # much higher than production than in SUA and trade data, so we will scale the uses in the FBS
       # by a global conversion factor, the ratio between global domestic supply and global production
       # which should normally be 1
       cells <- getCells(sua)
@@ -1507,12 +1504,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # domestic supply categories without the processing, which is double counting
       # multiplied to get dry matter contents
-      milkDems <- dimSums((milkSUA[, , c("food", "feed", "other_util",
-                                         "seed", "waste")] *
-                             milkConv), dim = 3.1)
+      milkDems <- dimSums(milkSUA[, , c("food", "feed", "other_util", "seed", "waste")] * milkConv, dim = 3.1)
       # ratio of demands scaled to production
-      milkDemCorrected <- milkDems / dimSums(milkDems, dim = c(1, 3)) *
-        dimSums(massbalanceNoProcessing[, , "livst_milk"][, , "dm"][, , "production"], dim = 1)
+      milkDemCorrected <- (milkDems
+                           / dimSums(milkDems, dim = c(1, 3))
+                           * dimSums(massbalanceNoProcessing[, , "livst_milk"][, , "dm"][, , "production"], dim = 1))
       milkDemCorrected <- collapseDim(milkDemCorrected, dim = c(3.3, 3.4))
       milkDemCorrected <- dimOrder(milkDemCorrected, perm = c(2, 1), dim = 3)
       # add domestic supply
