@@ -43,7 +43,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     relationmatrix <-  toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
 
     # give opening stocks to FB from SUA , by aggregating the SUA products, as stocks not in FB
-    openingStocks <- toolAggregate(sua[, , "opening_stocks"], rel = relationmatrix,
+    # need to remove the 3 objects in SUA that are not mapped to FB
+    openingStocks <- toolAggregate(sua[, , "opening_stocks"][, , 
+                                   c("1276|Industrial monocarboxylic fatty acids; acid oils from refining",
+                                     "1277|Residues of fatty substances", "254|Oil palm fruit"), invert = TRUE],
+                                   rel = relationmatrix,
                                    from = "post2010_SupplyUtilizationItem", to = "post2010_FoodBalanceItem",
                                    partrel = TRUE, dim = 3.1)
     fb <- mbind(fb, openingStocks)
@@ -248,6 +252,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # reduce the mapping to those in SUA, as there are so many SUA items
     relationmatrixS <- relationmatrix[which(relationmatrix$post2010_SupplyUtilizationItem %in%
                                               getItems(sua, dim = 3.1)), ]
+    prodAttributes <- prodAttributes[, , intersect(unique(relationmatrixS$k), getNames(prodAttributes, dim = 2))]
     prodAttributesSUA      <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
                                             to = "post2010_SupplyUtilizationItem", partrel = TRUE)
 
@@ -292,7 +297,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "distilling", "ethanol1", "distillers_grain1", "distillingloss",
                          "intermediate",
                          "households")
-
 
     # The SUA with disaggregated processed goods 'overaccounts' for processing, i.e. maiz into maiz germ
     # we are interested in how much maize becomes a processed good that is no longer 
@@ -350,7 +354,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # take the amount of brans produced in the SUA from the food category
     # as brans don't leave the cereal sector, i.e. remain in "Wheat and products"
     #  i.e . flour = fooddemandFB - bransProductionSUA
-    # cereals primary
+
+    #get primary cereals from both FB and SUA
     cerealFB <-  c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
                    "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
                    "2807|Rice and products", "2520|Cereals, Other", "2520|Cereals, Other", "2520|Cereals, Other",
@@ -360,8 +365,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                    "71|Rye", "75|Oats", "79|Millet", "83|Sorghum",
                    "27|Rice", "89|Buckwheat", "94|Fonio", "97|Triticale",
                    "103|Mixed grain", "108|Cereals nec")
-
-    cerealmap <- data.frame("FB" = cerealFB, "SUA" = cerealSUA)
+    #map FB to SUA simply heres
+    cerealmap <- data.frame(FB = cerealFB, SUA = cerealSUA)
 
     sua <- add_columns(sua, addnm = "foodFB", dim = 3.2, fill = 0)
 
@@ -1174,7 +1179,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                    "341|Cake, oilseeds nes")
       flowsCBC <- suaFlows
 
-
       # deal with starches and gluten here as the process is not included explicitly
       # subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
       # attribute end use (feed, other_util, food, to main crop)
@@ -1230,7 +1234,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , setdiff(getItems(flowsCBC, dim = 3.2), millingDimensions)][, , "19|Germ of wheat", drop = TRUE]
       # we combined wheat germ with brans in the above, so remove here
       flowsCBC <- flowsCBC[, , "19|Germ of wheat", invert = TRUE]
-      # FAO accoutns for brans as brans --> processing -- > gluten feed an meal --> feed
+      # FAO accounts for brans as brans --> processing -- > gluten feed an meal --> feed
       # so we assign brans --> processing directly to feed
       bransNoGerm <- brans[-which(brans == "19|Germ of wheat")]
       flowsCBC[, , bransNoGerm][, , "feed"] <- flowsCBC[, , bransNoGerm][, , "feed"] +
