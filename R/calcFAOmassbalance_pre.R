@@ -30,7 +30,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     pre2010 <- add_columns(pre2010, dim = 3.2, addnm = newdims, fill = 0)
 
     # we will make a hard break of using the new data in 2010.
-    pre2010 <- pre2010[, c(2010:2013), , invert = TRUE]
+    pre2010 <- pre2010[, 2010:2013, , invert = TRUE]
     massbalance <- mbind(pre2010, post2010)
 
   } else if (version == "post2010") {
@@ -249,8 +249,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                             %in% getItems(sua, dim = 3.1)), ]
     prodAttributes <- prodAttributes[, , intersect(unique(relationmatrixS$k),
                                                    getNames(prodAttributes, dim = 2))]
-    prodAttributesSUA      <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
-                                            to = "post2010_SupplyUtilizationItem", partrel = TRUE)
+    prodAttributesSUA <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
+                                       to = "post2010_SupplyUtilizationItem", partrel = TRUE)
 
     prodAttributes <- mbind(prodAttributesFB, prodAttributesSUA[, , setdiff(getItems(prodAttributesSUA, dim = 3.2),
                                                                             getItems(prodAttributesFB, dim = 3.2))])
@@ -348,9 +348,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # the brans also need a special treatment as we need to
     # take the amount of brans produced in the SUA from the food category
     # as brans don't leave the cereal sector, i.e. remain in "Wheat and products"
-    #  i.e . flour = fooddemandFB - bransProductionSUA
-
-    #get primary cereals from both FB and SUA
+    # i.e . flour = fooddemandFB - bransProductionSUA
+    # get primary cereals from both FB and SUA
     cerealFB <-  c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
                    "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
                    "2807|Rice and products", "2520|Cereals, Other", "2520|Cereals, Other", "2520|Cereals, Other",
