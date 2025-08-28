@@ -1,15 +1,16 @@
 #' @title calcFAOmassbalance_pre
-#' @description Calculates an extended version of the Food Balance Sheets. Makes explicit the conversion processes that
-#' convert one type of product into another. Includes processes like milling, distilling, extraction etc. Adds certain
-#'  byproducts like distillers grains or ethanol.
+#' @description Calculates an extended version of the Food Balance Sheets.
+#' Makes explicit the conversion processes that convert one type of product
+#' into another. Includes processes like milling, distilling, extraction etc.
+#' Adds certain byproducts like distillers grains or ethanol.
 #'
-#' @param years years to be estimated, if null, then all years in FAOharmonized are returned
-#' @param version whether to return the new post-2010 massbalance "post2010", the "pre2010" older sheets, or
-#' or join them at 2010 (replace old with new at 2010) "join2010"
-#'
+#' @param years years to be estimated, if NULL, then all years in FAOharmonized are returned
+#' @param version whether to return the new post-2010 massbalance "post2010",
+#' the older sheets "pre2010", or or join them at 2010 (replace old with new at 2010) "join2010"
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' This is an intermediary result, which is used e.g. for estimating the feed baskets. For most uses, it is more
 #' appropriate to use the FAOmasbalance instead of the FAOmassbalance_pre.
+#'
 #' @author Benjamin Leon Bodirsky, David M Chen
 #' @seealso
 #' [calcFAOmassbalance()]
@@ -17,11 +18,7 @@
 #' \dontrun{
 #' calcOutput("FAOmassbalance_pre")
 #' }
-#' @importFrom magclass getSets as.magpie complete_magpie
-#' @importFrom utils read.csv
-#' @importFrom withr local_options
-
-calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolint
+calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolint: object_name_linter, cyclocomp_linter.
 
   if (version == "join2010") {
 
@@ -113,19 +110,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # here we first add them to the primary product,
     # while subtracting them from the processing accounting.
     # extraction rates and conversion factors are ignored in these cases.
-    otherSecMapping <- toolGetMapping("FBSSUA_otherSecondary.csv", type = "sectoral",
-                                      where = "mrfaocore")
+    otherSecMapping <- toolGetMapping("FBSSUA_otherSecondary.csv", type = "sectoral", where = "mrfaocore")
     secMissing <- intersect(getItems(sua, dim = 3.1), otherSecMapping$Sec)
     suaSec <- toolAggregate(sua[, , secMissing], dim = 3.1, rel = otherSecMapping,
                             from = "Sec", to = "Prim", partrel = TRUE)
     # remove same amount  from processing, assuming 1:1 conversion, we will add these on at the end!
-    sua[, , getNames(suaSec, dim = 1)][, , "processed"] <-   sua[, , getNames(suaSec, dim = 1)][, , "processed"] -
-      dimSums(suaSec[, , c("food", "feed", "other_util", "waste")],
-              dim = 3.2)
+    sua[, , getNames(suaSec, dim = 1)][, , "processed"] <- sua[, , getNames(suaSec, dim = 1)][, , "processed"] -
+      dimSums(suaSec[, , c("food", "feed", "other_util", "waste")], dim = 3.2)
     sua[sua < 0] <- 0
 
-  # Below we get all the names and attributes for the processed and non-processed goods
-  # from the FB and SUA
+    # Below we get all the names and attributes for the processed and non-processed goods
+    # from the FB and SUA
     # helper function for SUA
     .getFAOitemsSUA <- function(magpieItems) {
       return(relationmatrix[relationmatrix$k %in% magpieItems, "post2010_SupplyUtilizationItem"])
@@ -204,22 +199,22 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
               "711|Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw",
               "720|Ginger, raw", "723|Other stimulant, spice and aromatic crops, nec", "564|Wine",
               "517|Cider and other fermented beverages",
-             "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
-             "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher",
-             "565|Vermouth and other wine of fresh grapes flavoured with plats or aromatic substances",
-             "886|Butter of cow milk", "887|Ghee from cow milk", "952|Butter of buffalo milk",
-             "953|Ghee from buffalo milk", "983|Butter and ghee of sheep milk", "885|Cream, fresh",
-             "1020|Raw milk of goats",
-             "1021|Cheese from milk of goats, fresh or processed", "1130|Raw milk of camel",
-             "882|Raw milk of cattle", "888|Skim milk of cows", "889|Whole milk, condensed", "890|Whey, condensed",
-             "891|Yoghurt", "894|Whole milk, evaporated", "895|Skim milk, evaporated", "896|Skim milk, condensed",
-             "897|Whole milk powder", "898|Skim milk and whey powder", "899|Buttermilk, dry", "900|Whey, dry",
-             "901|Cheese from whole cow milk", "904|Cheese from skimmed cow milk", "951|Raw milk of buffalo",
-             "955|Cheese from milk of buffalo, fresh or processed", "982|Raw milk of sheep",
-             "984|Cheese from milk of sheep, fresh or processed", "917|Casein",
-             "893|Buttermilk, curdled and acidified milk",
-             "903|Whey, fresh", "954|Skim milk of buffalo")
-
+              paste0("634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; ",
+                     "spirits, liqueurs and other spirituous beverages"),
+              "632|Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol or higher",
+              "565|Vermouth and other wine of fresh grapes flavoured with plats or aromatic substances",
+              "886|Butter of cow milk", "887|Ghee from cow milk", "952|Butter of buffalo milk",
+              "953|Ghee from buffalo milk", "983|Butter and ghee of sheep milk", "885|Cream, fresh",
+              "1020|Raw milk of goats",
+              "1021|Cheese from milk of goats, fresh or processed", "1130|Raw milk of camel",
+              "882|Raw milk of cattle", "888|Skim milk of cows", "889|Whole milk, condensed", "890|Whey, condensed",
+              "891|Yoghurt", "894|Whole milk, evaporated", "895|Skim milk, evaporated", "896|Skim milk, condensed",
+              "897|Whole milk powder", "898|Skim milk and whey powder", "899|Buttermilk, dry", "900|Whey, dry",
+              "901|Cheese from whole cow milk", "904|Cheese from skimmed cow milk", "951|Raw milk of buffalo",
+              "955|Cheese from milk of buffalo, fresh or processed", "982|Raw milk of sheep",
+              "984|Cheese from milk of sheep, fresh or processed", "917|Casein",
+              "893|Buttermilk, curdled and acidified milk",
+              "903|Whey, fresh", "954|Skim milk of buffalo")
 
     sua <- sua[, , intersect(getItems(sua, dim = 3.1), keep)]
 
@@ -241,15 +236,15 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # Map production attributes to FAO items
     relationmatrixF <-  relationmatrix[which(relationmatrix$post2010_FoodBalanceItem %in% getItems(fb, dim = 3.1)), ]
     relationmatrixF <- relationmatrixF[-which(relationmatrixF$post2010_FoodBalanceItem == ""), ]
-    prodAttributesFB      <- toolAggregate(x = prodAttributes, rel = relationmatrixF,
-                                           dim = 3.2, from = "k",
-                                           to = "post2010_FoodBalanceItem", partrel = TRUE)
+    prodAttributesFB <- toolAggregate(x = prodAttributes, rel = relationmatrixF,
+                                      dim = 3.2, from = "k",
+                                      to = "post2010_FoodBalanceItem", partrel = TRUE)
 
     # reduce the mapping to those in SUA, as there are so many SUA items
-    relationmatrixS <- relationmatrix[which(relationmatrix$post2010_SupplyUtilizationItem %in%
-                                              getItems(sua, dim = 3.1)), ]
-    prodAttributesSUA      <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
-                                            to = "post2010_SupplyUtilizationItem", partrel = TRUE)
+    relationmatrixS <- relationmatrix[which(relationmatrix$post2010_SupplyUtilizationItem
+                                            %in% getItems(sua, dim = 3.1)), ]
+    prodAttributesSUA <- toolAggregate(x = prodAttributes, rel = relationmatrixS, dim = 3.2, from = "k",
+                                       to = "post2010_SupplyUtilizationItem", partrel = TRUE)
 
     prodAttributes <- mbind(prodAttributesFB, prodAttributesSUA[, , setdiff(getItems(prodAttributesSUA, dim = 3.2),
                                                                             getItems(prodAttributesFB, dim = 3.2))])
@@ -259,7 +254,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     getSets(prodAttributesSUA) <- c("region", "year", "attributes", "ItemCodeItem")
 
     # change prod attributes from share of dm to share of wm
-    attributesWM <- (prodAttributes / dimSums(prodAttributes[, , "wm"], dim = "attributes"))
+    attributesWM <- prodAttributes / dimSums(prodAttributes[, , "wm"], dim = "attributes")
     # combine all attributes
     itemNames <- c(getNames(fb, dim = "ItemCodeItem"), getNames(sua, dim = "ItemCodeItem"))
     itemNamesAttributes <- getNames(attributesWM, dim = 2)
@@ -270,8 +265,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       sua <- sua[, , intersect(getNames(sua, dim = 1), itemNamesAttributes)]
     }
     if (!all(itemNamesAttributes %in% itemNames)) {
-      vcat(verbosity = 2, "For the following items there were entries in prodAttributes but no respective data,
-                         removed from prodAttributes ",
+      vcat(verbosity = 2, "For the following items there were entries in prodAttributes but no respective data, ",
+           "removed from prodAttributes ",
            paste(itemNamesAttributes[!(itemNamesAttributes %in% itemNames)], collapse = "\", \""))
       prodAttributes <- prodAttributes[, , itemNamesAttributes[itemNamesAttributes %in% itemNames]]
     }
@@ -293,9 +288,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                          "intermediate",
                          "households")
 
-
     # The SUA with disaggregated processed goods 'overaccounts' for processing, i.e. maiz into maiz germ
-    # we are interested in how much maize becomes a processed good that is no longer 
+    # we are interested in how much maize becomes a processed good that is no longer
     # categorized as maize in our mappings, i.e. maize into oil.
     # so want to use the amount processed from the food balances and not the supply utilization
     # in order to account for how much actually leaves the "maize sector", so we make a mapping here
@@ -337,19 +331,18 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                   c("post2010_FoodBalanceItem", "post2010_SupplyUtilizationItem")]
 
     # assign the processed to sua here
-    for (i in c(primFB)) {
-      suaprods <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
+    for (i in primFB) {
+      suaProds <- mapPrimSUA[which(mapPrimSUA$post2010_FoodBalanceItem %in% i), "post2010_SupplyUtilizationItem"]
       # for products that map to multiple food balance items, divide them based on their ratio in processing
-      suaRatio <- sua[, , "processed"][, , suaprods] /
-        dimSums(sua[, , "processed"][, , suaprods], dim = 3)
+      suaRatio <- sua[, , "processed"][, , suaProds] / dimSums(sua[, , "processed"][, , suaProds], dim = 3)
       suaRatio[is.na(suaRatio)] <- 1
-      sua[, , "processed"][, , suaprods] <- suaRatio * fb[, , i][, , "processed"]
+      sua[, , "processed"][, , suaProds] <- suaRatio * fb[, , i][, , "processed"]
     }
 
     # the brans also need a special treatment as we need to
     # take the amount of brans produced in the SUA from the food category
     # as brans don't leave the cereal sector, i.e. remain in "Wheat and products"
-    #  i.e . flour = fooddemandFB - bransProductionSUA
+    # i.e . flour = fooddemandFB - bransProductionSUA
     # cereals primary
     cerealFB <-  c("2511|Wheat and products", "2513|Barley and products", "2514|Maize and products",
                    "2515|Rye and products", "2516|Oats", "2517|Millet and products", "2518|Sorghum and products",
@@ -366,12 +359,12 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     sua <- add_columns(sua, addnm = "foodFB", dim = 3.2, fill = 0)
 
     for (i in unique(cerealFB)) {
-      suacereal <- cerealmap[which(cerealmap$FB == i), "SUA"]
-      # in the cereals case use total deomstic supply as the diasggregator of fb food of the cereal
-      cerRatio <- sua[, , "domestic_supply"][, , suacereal] /
-        dimSums(sua[, , "domestic_supply"][, , suacereal], dim = 3)
+      suaCereal <- cerealmap[which(cerealmap$FB == i), "SUA"]
+      # in the cereals case use total domestic supply as the disaggregator of fb food of the cereal
+      cerRatio <- sua[, , "domestic_supply"][, , suaCereal] /
+        dimSums(sua[, , "domestic_supply"][, , suaCereal], dim = 3)
       cerRatio[is.na(cerRatio)] <- 1
-      sua[, , "foodFB"][, , suacereal] <- cerRatio * fb[, , i][, , "food"]
+      sua[, , "foodFB"][, , suaCereal] <- cerRatio * fb[, , i][, , "food"]
     }
 
 
@@ -806,7 +799,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     .sugarProcessing <- function(object) {
 
       starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
-                 "119|Starch of potatoes")
+                    "119|Starch of potatoes")
 
       goodsIn <- c("156|Sugar cane", "157|Sugar beet")
       goodsOut <- c("164|Refined sugar", "165|Molasses", "163|Cane sugar, non-centrifugal")
@@ -1138,9 +1131,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       fermentationSUA <- c(.getFAOitemsSUA(c("tece", "rice_pro", "trce", "maiz")),
                            "51|Beer of barley, malted",
-                          "39|Rice-fermented beverages", "66|Beer of maize, malted",
-                          "26|Wheat-fermented beverages", "82|Beer of millet, malted",
-                          "86|Beer of sorghum, malted", "X004|Brewers_grain")
+                           "39|Rice-fermented beverages", "66|Beer of maize, malted",
+                           "26|Wheat-fermented beverages", "82|Beer of millet, malted",
+                           "86|Beer of sorghum, malted", "X004|Brewers_grain")
       fermentationSUA <- fermentationSUA[-grep("lour|Oat|Triticale|Fonio|Buckwheat|Mixed|Rye|nec",
                                                fermentationSUA)]
       fermentationSUA <- c(fermentationSUA, "634|Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol; spirits, liqueurs and other spirituous beverages", # nolint
@@ -1157,21 +1150,21 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       extracting1SUA <- c("257|Palm oil", "258|Oil of palm kernel",
                           "259|Cake of palm kernel", "X003|Palmoil_Kerneloil_Kernelcake")
       extracting2SUA <- c("236|Soya beans", "242|Groundnuts, excluding shelled", "267|Sunflower seed",
-                   "329|Cotton seed", "270|Rape or colza seed", "292|Mustard seed",
-                   "249|Coconuts, in shell", "289|Sesame seed", "311|Kapokseed in shell",
-                   "333|Linseed", "336|Hempseed",
-                   "339|Other oil seeds, nec", "260|Olives", "261|Olive oil",
-                   "237|Soya bean oil", "244|Groundnut oil", "268|Sunflower-seed oil, crude",
-                  "331|Cottonseed oil", "271|Rapeseed or canola oil, crude",
-                  "293|Mustard seed oil, crude",
-                  "252|Coconut oil", "290|Oil of sesame seed", "313|Oil of kapok",
-                  "334|Oil of linseed", "337|Oil of hempseed",
-                  "340|Other oil of vegetable origin, crude nec",
-                  "238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
-                   "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
-                   "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
-                   "335|Cake of  linseed",  "338|Cake of hempseed",
-                   "341|Cake, oilseeds nes")
+                          "329|Cotton seed", "270|Rape or colza seed", "292|Mustard seed",
+                          "249|Coconuts, in shell", "289|Sesame seed", "311|Kapokseed in shell",
+                          "333|Linseed", "336|Hempseed",
+                          "339|Other oil seeds, nec", "260|Olives", "261|Olive oil",
+                          "237|Soya bean oil", "244|Groundnut oil", "268|Sunflower-seed oil, crude",
+                          "331|Cottonseed oil", "271|Rapeseed or canola oil, crude",
+                          "293|Mustard seed oil, crude",
+                          "252|Coconut oil", "290|Oil of sesame seed", "313|Oil of kapok",
+                          "334|Oil of linseed", "337|Oil of hempseed",
+                          "340|Other oil of vegetable origin, crude nec",
+                          "238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
+                          "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
+                          "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                          "335|Cake of  linseed",  "338|Cake of hempseed",
+                          "341|Cake, oilseeds nes")
       flowsCBC <- suaFlows
 
 
@@ -1180,7 +1173,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # attribute end use (feed, other_util, food, to main crop)
       # subtract starch production from main crop processed
       starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
-                 "119|Starch of potatoes")
+                    "119|Starch of potatoes")
       names(starches) <- c("125|Cassava, fresh", "15|Wheat", "27|Rice", "56|Maize (corn)", "116|Potatoes")
       for (i in seq_along(starches)) {
         flowsCBC[, , list(names(starches)[[i]], "feed")] <-  flowsCBC[, , list(names(starches)[[i]], "feed")] +
@@ -1194,8 +1187,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # do the same for the glutens, in this case the processed glutens also go into feed, as
       # the processed glutens become "gluten feed and meal", a feed product
-     glutens <- c("24|Wheat gluten", "33|Rice, gluten", "63|Maize gluten")
-     names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
+      glutens <- c("24|Wheat gluten", "33|Rice, gluten", "63|Maize gluten")
+      names(glutens) <- c("15|Wheat", "27|Rice", "56|Maize (corn)")
       for (i in seq_along(glutens)) {
         flowsCBC[, , list(glutens[[i]], "feed")] <- flowsCBC[, , list(glutens[[i]], "feed")] +
           flowsCBC[, , list(glutens[[i]], "processed")]
@@ -1207,11 +1200,11 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
         flowsCBC[, , list(names(glutens)[[i]], "food")] <- flowsCBC[, , list(names(glutens)[[i]], "food")] +
           flowsCBC[, , list(glutens[[i]], "food")]
       }
-     
-   brans <- c("17|Bran of wheat", "59|Bran of maize", "81|Bran of millet", "85|Bran of sorghum",
-              "91|Bran of buckwheat", "112|Bran of cereals nec", "35|Bran of rice", "105|Bran of mixed grain",
-              "19|Germ of wheat", "73|Bran of rye", "47|Bran of barley",
-              "77|Bran of oats", "96|Bran of fonio", "99|Bran of triticale")
+
+      brans <- c("17|Bran of wheat", "59|Bran of maize", "81|Bran of millet", "85|Bran of sorghum",
+                 "91|Bran of buckwheat", "112|Bran of cereals nec", "35|Bran of rice", "105|Bran of mixed grain",
+                 "19|Germ of wheat", "73|Bran of rye", "47|Bran of barley",
+                 "77|Bran of oats", "96|Bran of fonio", "99|Bran of triticale")
 
       # here the main processings start
 
@@ -1400,14 +1393,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       cprods <-    intersect(getItems(fbFlows, dim = 3.1), getItems(processedFB, dim = 3.1))
 
       fbFlows[, , proc][, , cprods] <- processedFB[, , proc][, , cprods]
- 
+
       # ethanols, oilcakes, brans, and molasses are not part of FB so add all categories here
-  
+
       oilcakes <- c("238|Cake of  soya beans", "245|Cake of groundnuts", "269|Cake of sunflower seed",
-                   "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
-                   "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
-                   "335|Cake of  linseed",  "338|Cake of hempseed",
-                   "341|Cake, oilseeds nes")
+                    "332|Cake of cottonseed", "272|Cake of rapeseed", "294|Cake of mustard seed",
+                    "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                    "335|Cake of  linseed",  "338|Cake of hempseed",
+                    "341|Cake, oilseeds nes")
 
       replace <-  processedFB[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , proc, invert = TRUE]
       fbFlows[, , c(oilcakes, missingproducts, "165|Molasses", "2600|Brans")][, , getItems(replace, dim = 3)] <- replace
@@ -1487,7 +1480,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       milkConv[, , "887|Ghee from cow milk"] <- 0.8
       milkConv[, , "952|Butter of buffalo milk"] <- 0.8
       milkConv[, , "953|Ghee from buffalo milk"] <- 0.8
-      milkConv[, ,"983|Butter and ghee of sheep milk"] <- 0.8
+      milkConv[, , "983|Butter and ghee of sheep milk"] <- 0.8
       milkConv[, , "889|Whole milk, condensed"] <- 0.7
       milkConv[, , "890|Whey, condensed"] <- 0.7
       milkConv[, , "896|Skim milk, condensed"] <- 0.7
@@ -1529,7 +1522,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     #### Calculations ####
 
     # increase magclass sizelimit
-    local_options(magclass_sizeLimit = 2e9)
+    withr::local_options(magclass_sizeLimit = 2e9)
 
     # option without splitting years (in case of memory issues this can be done in year chunks)
     massbalanceNoProcessing <- .massbalanceNoProcessing(years)
@@ -2357,7 +2350,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     #### Calculations ####
 
     # increase magclass sizelimit
-    local_options(magclass_sizeLimit = 2e8)
+    withr::local_options(magclass_sizeLimit = 2e8)
 
     # option without splitting years (in case of memory issues this can be done in year chunks)
     massbalanceNoProcessing <- .massbalanceNoProcessing(years)
