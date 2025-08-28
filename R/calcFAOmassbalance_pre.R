@@ -359,7 +359,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                    "71|Rye", "75|Oats", "79|Millet", "83|Sorghum",
                    "27|Rice", "89|Buckwheat", "94|Fonio", "97|Triticale",
                    "103|Mixed grain", "108|Cereals nec")
-    #map FB to SUA simply heres
+    # map FB to SUA simply heres
     cerealmap <- data.frame(FB = cerealFB, SUA = cerealSUA)
 
     sua <- add_columns(sua, addnm = "foodFB", dim = 3.2, fill = 0)
@@ -1254,7 +1254,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                     "96|Bran of fonio", "99|Bran of triticale",
                     "112|Bran of cereals nec")
 
-      factor <- (dimSums(flowsCBC[, , list(unlist(teceIn), "brans1")], dim = c(1, 3.1, 3.2))
+      factor <- (dimSums(flowsCBC[, , list(teceIn, "brans1")], dim = c(1, 3.1, 3.2))
                  / dimSums(flowsCBC[, , list(teceIn, "milling")], dim = c(1, 3.1, 3.2)))
       flowsCBC[, , list(teceIn, "brans1")] <- factor * dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2)
       flowsCBC[, , list(teceIn, "flour1")] <- (dimSums(flowsCBC[, , list(teceIn, "milling")], dim = 3.2)
@@ -1295,14 +1295,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                        "249|Coconuts, in shell", "289|Sesame seed", "311|Kapokseed in shell",
                        "333|Linseed", "336|Hempseed",
                        "339|Other oil seeds, nec")
-      oilsOut <- list("271|Rapeseed or canola oil, crude",  "293|Mustard seed oil, crude",
-                      "252|Coconut oil", "290|Oil of sesame seed",  "313|Oil of kapok",
-                      "334|Oil of linseed", "337|Oil of hempseed",
-                      "340|Other oil of vegetable origin, crude nec")
-      cakesOut <- list("272|Cake of rapeseed",  "294|Cake of mustard seed",
-                       "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
-                       "335|Cake of  linseed", "338|Cake of hempseed",
-                       "341|Cake, oilseeds nes")
+      oilsOut <- c("271|Rapeseed or canola oil, crude",  "293|Mustard seed oil, crude",
+                   "252|Coconut oil", "290|Oil of sesame seed",  "313|Oil of kapok",
+                   "334|Oil of linseed", "337|Oil of hempseed",
+                   "340|Other oil of vegetable origin, crude nec")
+      cakesOut <- c("272|Cake of rapeseed",  "294|Cake of mustard seed",
+                    "253|Cake of copra", "291|Cake of sesame seed", "314|Cake of kapok",
+                    "335|Cake of  linseed", "338|Cake of hempseed",
+                    "341|Cake, oilseeds nes")
 
       for (from in c("oil1", "oilcakes1", "extractionloss")) {
         factor <- (dimSums(flowsCBC[, , list(unlist(goodsIn), from)], dim = c(1, 3.1, 3.2))
@@ -2250,14 +2250,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # harmonizing conversion factors within the rapeseed group
       goodsIn  <- list("2558|Rape and Mustardseed", "2560|Coconuts - Incl Copra", "2561|Sesame seed",
                        c("2570|Oilcrops, Other", "2563|Olives (including preserved)"))
-      oilsOut <- list("2574|Rape and Mustard Oil", "2578|Coconut Oil",
-                      "2579|Sesameseed Oil", "2586|Oilcrops Oil, Other")
-      cakesOut <- list("2593|Rape and Mustard Cake", "2596|Copra Cake", "2597|Sesameseed Cake",
-                       "2598|Oilseed Cakes, Other")
+      oilsOut <- c("2574|Rape and Mustard Oil", "2578|Coconut Oil",
+                   "2579|Sesameseed Oil", "2586|Oilcrops Oil, Other")
+      cakesOut <- c("2593|Rape and Mustard Cake", "2596|Copra Cake", "2597|Sesameseed Cake",
+                    "2598|Oilseed Cakes, Other")
 
       for (from in c("oil1", "oilcakes1", "extractionloss")) {
-        factor <- dimSums(flowsCBC[, , list(unlist(goodsIn), from)], dim = c(1, 3.1, 3.2)) /
-          dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")], dim = c(1, 3.1, 3.2))
+        factor <- (dimSums(flowsCBC[, , list(unlist(goodsIn), from)], dim = c(1, 3.1, 3.2))
+                   / dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")], dim = c(1, 3.1, 3.2)))
         flowsCBC[, , list(unlist(goodsIn), from)] <- factor * dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")],
                                                                       dim = 3.2)
         gc()
@@ -2335,9 +2335,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                      c("food_supply_kcal", "protein_supply",
                                                        "food_supply", "fat_supply"))]
 
-      # fill NAs and NaNs
+      # fill NAs
       noProcessingCBC[is.na(noProcessingCBC)]  <- 0
-      noProcessingCBC[is.nan(noProcessingCBC)] <- 0
 
       # add 'processed' to 'other_util' and remove obsolete dimensions
       noProcessingCBC[, , "other_util"] <- dimSums(noProcessingCBC[, , c("other_util", "processed")], dim = 3.2)

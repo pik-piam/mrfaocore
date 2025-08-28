@@ -17,7 +17,7 @@
 #' @importFrom madrat toolSubtypeSelect
 #' @importFrom tools file_ext
 #' @importFrom data.table fread
-#' @importFrom utils unzip
+#' @importFrom utils unzip read.csv
 #' @importFrom tools file_path_sans_ext
 #' @export
 

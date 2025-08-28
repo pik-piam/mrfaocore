@@ -4,14 +4,14 @@
 \alias{calcFAOharmonized}
 \title{calcFAOharmonized}
 \usage{
-calcFAOharmonized(source = "pre2010", return = "FB")
+calcFAOharmonized(src = "pre2010", output = "FB")
 }
 \arguments{
-\item{source}{"pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
+\item{src}{source "pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
 until 2013 (actually 2013, but gets effectively chopped to 2010 by massbalance). "post2010" combines
 the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards.}
 
-\item{return}{whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)}
+\item{output}{whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)}
 }
 \value{
 FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects

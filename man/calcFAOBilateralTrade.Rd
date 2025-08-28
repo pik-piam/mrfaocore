@@ -24,7 +24,7 @@ calcFAOBilateralTrade(
 default off as there are some big differences
 and perhaps using the import sheet is better overall i.e. more matching with massbal}
 
-\item{fiveYear}{only 5 year steps due to memory load}
+\item{fiveYear}{if TRUE calculate only 5 years (1995 to 2020, 5-year steps) to reduce memory load}
 }
 \value{
 List of magpie objects with results on bilateral country level,
