@@ -502,6 +502,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
     # call). The variable "process" specifies the process leading to the output product
     # "reportAs".
     # The calculated production quantity is also added to "goodOut.production_estimated".
+    # We require the new version (2) here as it accounts for when certain products already
+    # exist in the output flows i.e. for alcoholloss
     .extractGoodFromFlow2 <- function(object,
                                       objectO = NULL,      # original object for when processes are additive to original
                                       goodIn,              # FAO-defined input product, e.g. "2536|Sugar cane"
