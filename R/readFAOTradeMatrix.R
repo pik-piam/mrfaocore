@@ -17,7 +17,6 @@
 #' \dontrun{
 #' a <- readSource("FAOTradeMatrix", "import_value_kcr")
 #' }
-#' @importFrom data.table fread
 #' @importFrom tidyr pivot_longer starts_with unite
 #' @importFrom dplyr summarise filter group_by ungroup %>% distinct inner_join
 #' @importFrom magpiesets findset
@@ -44,15 +43,15 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   readcolClass[csvcolnames %in% c("Area", "Country", "Element", "Item", "Unit",
                                   "Months", "Reporter.Countries", "Partner.Countries")] <- "character"
   readcolClass[csvcolnames %in% c("Value", "Year")] <- NA
-  if (!long) readcolClass[grepl("Y[0-9]{4}$", csvcolnames)] <- NA
+  if (!long) {
+    readcolClass[grepl("Y[0-9]{4}$", csvcolnames)] <- NA
+  }
 
-  fao <- suppressWarnings(
-                          fread(input = file, header = FALSE, skip = 1, sep = ",",
-                            colClasses = readcolClass,
-                            col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
-                            quote = "\"",
-                            encoding = "Latin-1", showProgress = FALSE
-                          ))
+  fao <- data.table::fread(input = file, header = FALSE, skip = 1, sep = ",",
+                           colClasses = readcolClass,
+                           col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
+                           quote = "\"",
+                           encoding = "Latin-1", showProgress = FALSE)
   fao <- as.data.frame(fao)
   # from wide to long (move years from individual columns into one column)
   if (!long) {
@@ -119,8 +118,8 @@ readFAOTradeMatrix <- function(subtype) { # nolint
 
   if (length(grep("kforestry", subtype)) != 1) {
     # subset by both trade column and product column
-    mapping <- toolGetMapping("FAOitems_1124Update.csv", type = "sectoral", where = "mrfaocore")
-    mapping <- mapping[, c("FAOoriginalItem_fromWebsite", "k")]
+    mapping <- toolGetMapping("FAO_trade_k_mapping.csv", type = "sectoral", where = "mrfaocore")
+    mapping <- mapping[, c("post2010_FAOoriginalItem_fromWebsite", "k")]
     colnames(mapping)[1] <- "ItemCodeItem"
     mapping <- distinct(mapping)
 

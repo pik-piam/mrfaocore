@@ -4,10 +4,13 @@
 \alias{calcFAOmassbalance_pre}
 \title{calcFAOmassbalance_pre}
 \usage{
-calcFAOmassbalance_pre(years = NULL)
+calcFAOmassbalance_pre(version = "join2010", years = NULL)
 }
 \arguments{
-\item{years}{years to be estimated, if null, then all years in FAOharmonized are returned}
+\item{version}{whether to return the new post-2010 massbalance "post2010",
+the older sheets "pre2010", or or join them at 2010 (replace old with new at 2010) "join2010"}
+
+\item{years}{years to be estimated, if NULL, then all years in FAOharmonized are returned}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
@@ -15,9 +18,10 @@ This is an intermediary result, which is used e.g. for estimating the feed baske
 appropriate to use the FAOmasbalance instead of the FAOmassbalance_pre.
 }
 \description{
-Calculates an extended version of the Food Balance Sheets. Makes explicit the conversion processes that
-convert one type of product into another. Includes processes like milling, distilling, extraction etc. Adds certain
- byproducts like distillers grains or ethanol.
+Calculates an extended version of the Food Balance Sheets.
+Makes explicit the conversion processes that convert one type of product
+into another. Includes processes like milling, distilling, extraction etc.
+Adds certain byproducts like distillers grains or ethanol.
 }
 \examples{
 \dontrun{
@@ -28,5 +32,5 @@ calcOutput("FAOmassbalance_pre")
 [calcFAOmassbalance()]
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, David M Chen
 }

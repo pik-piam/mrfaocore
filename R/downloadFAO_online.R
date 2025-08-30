@@ -25,6 +25,7 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
     CBCrop                  = "CommodityBalances_Crops_E_All_Data_(Normalized).zip",
     CBLive                  = "CommodityBalances_LivestockFish_E_All_Data_(Normalized).zip",
     Crop                    = "Production_Crops_E_All_Data_(Normalized).zip",
+    CropLive2010            = c("Production_Crops_Livestock_E_All_Data_(Normalized).zip"),
     CropProc                = "Production_CropsProcessed_E_All_Data_(Normalized).zip",
     EmisAgBurnCropResid     = "Emissions_Agriculture_Burning_crop_residues_E_All_Data_(Normalized).zip",
     EmisAgBurnSavanna       = "Emissions_Agriculture_Burning_Savanna_E_All_Data_(Normalized).zip",
@@ -47,6 +48,9 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
     FSLive                  = "FoodSupply_LivestockFish_E_All_Data_(Normalized).zip",
     FbsHistoric             = "FoodBalanceSheetsHistoric_E_All_Data_(Normalized).zip",
     Fbs                     = "FoodBalanceSheets_E_All_Data_(Normalized).zip",
+    FB2010                  = c("FoodBalanceSheets_E_All_Data_(Normalized).zip"),
+    SUA2010                 = c("SUA_Crops_Livestock_E_All_Data_(Normalized).zip"),
+    CB2010                  = c("CommodityBalances_(non-food)_(2010-)_E_All_Data_(Normalized).zip"),
     Fertilizer              = "Environment_Fertilizers_E_All_Data_(Normalized).zip",
     FertilizerNutrients     = "Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip",
     FertilizerProducts      = "Inputs_FertilizersProduct_E_All_Data_(Normalized).zip",
@@ -70,7 +74,7 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
 
   # Download meta data (e.g. name, description, release date, file path) for all FAO data sets currently available
   faoMetaXmlFile <- "FAO_datasets_E.xml"
-  download.file(url = "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml",
+  download.file(url = "https://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml",
                 destfile = faoMetaXmlFile)
   faoMeta <- XML::xmlToDataFrame(faoMetaXmlFile, stringsAsFactors = FALSE)
   unlink(faoMetaXmlFile)
@@ -78,9 +82,13 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
   # extract the data set for the selected subtype by searching for the file name
   faoMeta <- faoMeta[grepl(pattern = file, faoMeta$FileLocation, fixed = TRUE), ]
 
-  # download the data
-  download.file(faoMeta$FileLocation, destfile = file, mode = "wb")
+  # download the data with a data update stamp
+  updateDate <- paste0(substring(faoMeta$DateUpdate, 3, 4), substring(faoMeta$DateUpdate, 6, 7),
+                       substring(faoMeta$DateUpdate, 9, 10))
+  destfile <- sub("\\.zip$", paste0("_", updateDate, ".zip"), file)
 
+  download.file(faoMeta$FileLocation, destfile = destfile, mode = "wb")
+ 
   # Compose meta data
   return(list(url           = faoMeta$FileLocation,
               doi           = "not available",
