@@ -2,8 +2,8 @@ Type: Package
 Package: mrfaocore
 Title: madrat-based package providing core FAO-related preprocessing
     functions
-Version: 1.4.0
-Date: 2025-08-15
+Version: 1.4.1
+Date: 2025-09-15
 Authors@R: c(
     person("David", "Chen", , "david.chen@pik-potsdam.de", role = c("aut", "cre")),
     person("Ulrich", "Kreidenweis", role = "aut"),
@@ -37,4 +37,4 @@ Suggests:
     testthat,
     XML
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
