@@ -19,7 +19,7 @@
 #' a <- readSource("FAO_online", "Crop", convert = TRUE)
 #' }
 #' @importFrom magclass magpiesort dimExists getItems
-#' @importFrom GDPuc toolConvertGDP
+#' @importFrom GDPuc convertGDP
 #'
 
 ## check why LivePrim has such strange Units such as (0_1Gr/An) and "Yield_(Hg)"
@@ -29,7 +29,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   # ---- Settings ----
 
   ## datasets that have only absolute values
-  absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "LiveHead",
+  absolute <- c("CBCrop", "CBLive", "CB2010", "CropProc", "Fertilizer", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs", "FbsHistoric",
                 "FertilizerProducts", "FertilizerNutrients", "Trade", "TradeMatrix")
 
@@ -49,6 +49,15 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                     "Yield_Carcass_Weight_(hg/An)",   # new FAO data
                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
                                     "Yield_(hg)")                     # new FAO data
+  relativeDelete[["CropLive2010"]] <- c("Yield_(100_g/ha)",
+                                        "Yield_Carcass_Weight_(Hg/An)",
+                                        "Yield_(100mg/An)",
+                                        "Yield_(No/An)",
+                                        "Yield_(100_mg/An)",               # new FAO data
+                                        "Yield_(100_g/An)",                  # new FAO data
+                                        "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
+                                        "Yield_Carcass_Weight_(0_1_g/An)", # new FAO data
+                                        "Yield_(100_g)")                     # new FAO data
   relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
                                 "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",
                                 "Share_in_Agricultural_land_(%)",
@@ -121,6 +130,15 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                             "protein_supply_g/cap/day",
                             "fat_supply_g/cap/day")
 
+  relative[["FB2010"]] <- c("Food_supply_quantity_(kg_capita_yr)_(kg/cap)",
+                            "Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                            "Protein_supply_quantity_(g_capita_day)_(g/cap/d)",
+                            "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
+
+  relative[["SUA2010"]] <- c("Food_supply_(kcal_capita_day)_(kcal/cap/d)",
+                             "Food_supply_quantity_(g_capita_day)_(g/cap/d)",
+                             "Protein_supply_quantity_(g_capita_day)_(g/cap/d)",
+                             "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
   # ---- Section for country specific treatment ----
 
   ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
@@ -210,9 +228,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
-    if (subtype != "Fbs") {
-      x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
-    }
+    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
       warning("The following elements could be relative: \n",
@@ -223,8 +239,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   } else if (!is.null(relativeDelete)) {
     x[is.na(x)] <- 0
     x <- x[, , relativeDelete, invert = TRUE]
-    if (subtype != "CapitalStock") {
-      # Capital Stock available starting from 1995 (no need for transitions)
+    if (!subtype %in% c("CapitalStock", "Fbs")) {
+      # Capital Stock and new Fbs available starting from 1995 and 2010 (no need for transitions)
       x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     }
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
@@ -296,7 +312,14 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     }
 
     # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
-  } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
+  } else if (any(subtype == c("CB2010", "FB2010", "SUA2010"))) {
+    # new dataset doesn't have country transitions,
+    # so we can fill all missing countries with 0's regardless of relative or absolute
+
+    x <- complete_magpie(x)
+    x <- toolCountryFill(x, fill = 0, verbosity = 2)
+
+  } else if (startsWith(subtype, "EmisAg") || startsWith(subtype, "EmisLu")) {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]
     }
@@ -335,14 +358,14 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
     if (subtype == "PricesProducerAnnual") {
-      x <- toolConvertGDP(x, unit_in = "current US$MER",
-                          unit_out = "constant 2017 US$MER",
-                          replace_NAs = "no_conversion")
+      x <- convertGDP(x, unit_in = "current US$MER",
+                      unit_out = "constant 2017 US$MER",
+                      replace_NAs = "no_conversion")
 
     } else if (subtype == "PricesProducerAnnualLCU") {
-      x <- toolConvertGDP(x, unit_in = "current LCU",
-                          unit_out = "constant 2017 LCU",
-                          replace_NAs = "no_conversion")
+      x <- convertGDP(x, unit_in = "current LCU",
+                      unit_out = "constant 2017 LCU",
+                      replace_NAs = "no_conversion")
     }
 
   } else {
@@ -350,21 +373,23 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   }
 
   if (subtype == "ValueOfProd") {
-    x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"]
+    x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_USD)"]
     x2 <- toolConvertGDP(x2, unit_in = "current US$MER",
                          unit_out = "constant 2017 US$MER",
                          replace_NAs = "no_conversion")
     getNames(x2, dim = 2) <- "Gross_Production_Value_(USDMER17)_(1000_US$)"
     x <- mbind(x, x2)
+    getNames(x, dim = 2) <- gsub("1000_USD", "1000_US$", getNames(x, dim = 2))
   }
+
 
   if (subtype == "FertilizerProducts") {
     currencyDims <- c("import_kUS$", "export_kUS$")
     xCurrentUSD <- x   # nolint
-    x[, , currencyDims] <- toolConvertGDP(x[, , currencyDims],
-                                          unit_in = "current US$MER",
-                                          unit_out = "constant 2017 US$MER",
-                                          replace_NAs = "no_conversion") * 1000
+    x[, , currencyDims] <- convertGDP(x[, , currencyDims],
+                                      unit_in = "current US$MER",
+                                      unit_out = "constant 2017 US$MER",
+                                      replace_NAs = "no_conversion") * 1000
     # for countries with missing conversion factors we assume no inflation:
     x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
@@ -376,10 +401,10 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   if (subtype == "Trade") {
     currencyDims <- c("import_kUS$", "export_kUS$")
     xCurrentUSD <- x   # nolint
-    x[, , currencyDims] <- toolConvertGDP(x[, , currencyDims],
-                                          unit_in = "current US$MER",
-                                          unit_out = "constant 2017 US$MER",
-                                          replace_NAs = "no_conversion") * 1000
+    x[, , currencyDims] <- convertGDP(x[, , currencyDims],
+                                      unit_in = "current US$MER",
+                                      unit_out = "constant 2017 US$MER",
+                                      replace_NAs = "no_conversion") * 1000
     # for countries with missing conversion factors we assume no inflation:
     x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
@@ -387,10 +412,12 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER17"
 
   }
-  # ---- Set negative values to 0 (except stock variation) ----
+  # ---- Set negative values to 0 (except stock variation and residuals) ----
 
   if (dimExists(3.2, x)) {
     novar <- setdiff(getItems(x, dim = 3.2), "stock_variation")
+    novar <- setdiff(novar, "Stock_Variation_(t)")
+    novar <- setdiff(novar, "Residuals_(t)")
     x[, , novar][x[, , novar] < 0] <- 0
   }
 

@@ -1,0 +1,60 @@
+Prim,Sec
+15|Wheat,"18|Uncooked pasta, not stuffed or otherwise prepared"
+15|Wheat,20|Bread
+15|Wheat,21|Bulgur
+15|Wheat,22|Pastry
+15|Wheat,23|Starch of wheat 
+15|Wheat,41|Breakfast cereals
+15|Wheat,"110|Communion wafers, empty cachets of a kind suitable for pharmaceutical use, sealing wafers, rice paper and similar products."
+15|Wheat,114|Mixes and doughs for the preparation of bakers' wares
+15|Wheat,"115|Food preparations of flour, meal or malt extract"
+27|Rice,"32|Rice, broken"
+116|Potatoes,"117|Flour, meal, powder, flakes, granules and pellets of potatoes"
+116|Potatoes,"118|Potatoes, frozen"
+116|Potatoes,121|Tapioca of potatoes
+"125|Cassava, fresh",126|Flour of cassava
+"125|Cassava, fresh",127|Tapioca of cassava
+"125|Cassava, fresh","128|Cassava, dried"
+"216|Brazil nuts, in shell","229|Brazil nuts, shelled"
+"217|Cashew nuts, in shell","230|Cashew nuts, shelled"
+"221|Almonds, in shell","231|Almonds, shelled"
+"222|Walnuts, in shell","232|Walnuts, shelled"
+"225|Hazelnuts, in shell","233|Hazelnuts, shelled"
+236|Soya beans,239|Soya sauce
+236|Soya beans,240|Soya paste
+236|Soya beans,241|Soya curd
+"242|Groundnuts, excluding shelled","243|Groundnuts, shelled"
+"242|Groundnuts, excluding shelled",246|Prepared groundnuts
+"242|Groundnuts, excluding shelled",247|Peanut butter
+388|Tomatoes,389|Tomato juice
+388|Tomatoes,390|Tomato juice
+388|Tomatoes,391|Paste of tomatoes
+388|Tomatoes,"392|Tomatoes, peeled (o/t vinegar)"
+490|Oranges,491|Orange juice
+490|Oranges,"492|Orange juice, concentrated"
+"495|Tangerines, mandarins, clementines",496|Juice of tangerine
+497|Lemons and limes,498|Juice of lemon
+497|Lemons and limes,"499|Lemon juice, concentrated"
+507|Pomelos and grapefruits,509|Grapefruit juice
+507|Pomelos and grapefruits,"510|Grapefruit juice, concentrated"
+"512|Other citrus fruit, nec",513|Juice of citrus fruit nec
+"512|Other citrus fruit, nec","514|Citrus juice, concentrated nec"
+515|Apples,518|Apple juice
+515|Apples,"519|Apple juice, concentrated"
+574|Pineapples,"575|Pineapples, otherwise prepared or preserved"
+574|Pineapples,576|Pineapple juice
+574|Pineapples,"580|Juice of pineapples, concentrated"
+560|Grapes,561|Raisins
+560|Grapes,562|Grape juice
+560|Grapes,563|Must of grape
+526|Apricots,"527|Apricots, dried"
+536|Plums and sloes,"537|Plums, dried"
+536|Plums and sloes,538|Juice of plum
+536|Plums and sloes,"539|Juice of plum, concentrated"
+569|Figs,"570|Figs, dried"
+"571|Mangoes, guavas and mangosteens",583|Juice of mango
+"571|Mangoes, guavas and mangosteens",584|Mango pulp
+"603|Other tropical fruits, nec","604|Other tropical fruit, dried"
+"619|Other fruits, nec","620|Other fruit nec, dried"
+"619|Other fruits, nec",622|Juice of fruits nec
+"619|Other fruits, nec",623|Fruit prepared nec
