@@ -244,7 +244,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                       dim = 3.2, from = "k",
                                       to = "post2010_FoodBalanceItem", partrel = TRUE)
 
-    # reduce the mapping to those in SUA, as there are so many SUA items
+    # reduce the mapping to those in SUA, as there are many SUA items
     relationmatrixS <- relationmatrix[which(relationmatrix$post2010_SupplyUtilizationItem
                                             %in% getItems(sua, dim = 3.1)), ]
     prodAttributes <- prodAttributes[, , intersect(unique(relationmatrixS$k),
@@ -261,6 +261,7 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
     # change prod attributes from share of dm to share of wm
     attributesWM <- prodAttributes / dimSums(prodAttributes[, , "wm"], dim = "attributes")
+
     # combine all attributes
     itemNames <- c(getNames(fb, dim = "ItemCodeItem"), getNames(sua, dim = "ItemCodeItem"))
     itemNamesAttributes <- getNames(attributesWM, dim = 2)
@@ -1175,9 +1176,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                           "341|Cake, oilseeds nes")
       flowsCBC <- suaFlows
 
-      # deal with starches and gluten here as the process is not included explicitly
-      # subtract starch (and maize gluten) production from main crop (processed) assuming same attributes
-      # attribute end use (feed, other_util, food, to main crop)
+     # deal with starches and gluten here as the process is not included explicitly
+      # attribute end use (feed, food to main crop, other_util will be attributed after 
+      # ethanol processing which uses the other_util as input)
       # subtract starch production from main crop processed
       starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
                     "119|Starch of potatoes")
@@ -1185,9 +1186,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       for (i in seq_along(starches)) {
         flowsCBC[, , list(names(starches)[[i]], "feed")] <- (flowsCBC[, , list(names(starches)[[i]], "feed")]
                                                              + flowsCBC[, , list(starches[[i]], "feed")])
-        flowsCBC[, , list(names(starches)[[i]], "other_util")] <- (flowsCBC[, , list(names(starches)[[i]],
-                                                                                     "other_util")]
-                                                                   + flowsCBC[, , list(starches[[i]], "other_util")])
         flowsCBC[, , list(names(starches)[[i]], "food")] <- (flowsCBC[, , list(names(starches)[[i]], "food")]
                                                              + flowsCBC[, , list(starches[[i]], "food")])
       }
@@ -1201,8 +1199,6 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                      + flowsCBC[, , list(glutens[[i]], "processed")])
         flowsCBC[, , list(names(glutens)[[i]], "feed")] <- (flowsCBC[, , list(names(glutens)[[i]], "feed")]
                                                             + flowsCBC[, , list(glutens[[i]], "feed")])
-        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- (flowsCBC[, , list(names(glutens)[[i]], "other_util")]
-                                                                  + flowsCBC[, , list(glutens[[i]], "other_util")])
         flowsCBC[, , list(names(glutens)[[i]], "food")] <- (flowsCBC[, , list(names(glutens)[[i]], "food")]
                                                             + flowsCBC[, , list(glutens[[i]], "food")])
       }
@@ -1238,7 +1234,17 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
 
       # remove starches now as based on FAO flowcharts starches processed
       # are used only to produce glucose and fructose and we accounted for this
+      # send starches other_util also to other util of the main crops
       # in sugar processing, to avoid double counting in other dimensions
+      for (i in seq_along(starches)) {
+        flowsCBC[, , list(names(starches)[[i]], "other_util")] <- (flowsCBC[, , list(names(starches)[[i]],
+                                                                                     "other_util")]
+                                                                   + flowsCBC[, , list(starches[[i]], "other_util")])
+      }
+      for (i in seq_along(glutens)) {
+        flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- (flowsCBC[, , list(names(glutens)[[i]], "other_util")]
+                                                                  + flowsCBC[, , list(glutens[[i]], "other_util")])
+      }
       flowsCBC <- flowsCBC[, , starches, invert = TRUE]
       # remove glutens
       flowsCBC <- flowsCBC[, , glutens, invert = TRUE]
