@@ -1176,9 +1176,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                           "341|Cake, oilseeds nes")
       flowsCBC <- suaFlows
 
-      # deal with starches and gluten here as the process is not included explicitly
-      # attribute end use (feed & food) to main cro
-      # other_util needs to be ascribed after ethanol processing
+     # deal with starches and gluten here as the process is not included explicitly
+      # attribute end use (feed, food to main crop, other_util will be attributed after 
+      # ethanol processing which uses the other_util as input)
       # subtract starch production from main crop processed
       starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
                     "119|Starch of potatoes")
