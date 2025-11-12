@@ -374,6 +374,14 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       sua[, , "foodFB"][, , suaCereal] <- cerRatio * fb[, , i][, , "food"]
     }
 
+    # Finally, some countries don't account for "other_util" in the FB, but do in the SUA of a
+    # processed product, this is currently only relevant for Maize, as this is our ethanol feedstock.
+    # for example, Canada reports Maize starch into other_util in SUA,
+    # but no Maize and products into other_util in FB. So here we give the main Maize product in the SUA
+    # the total other_util from Maize and products, to maintain consistent conversion factor for ethanol
+    # production.
+
+    sua[, , "56|Maize (corn)"][, , "other_util"] <- fb[, , "2514|Maize and products"][, , "other_util"]
 
     #### Definition of subfunctions #####
 
@@ -1176,8 +1184,8 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                           "341|Cake, oilseeds nes")
       flowsCBC <- suaFlows
 
-     # deal with starches and gluten here as the process is not included explicitly
-      # attribute end use (feed, food to main crop, other_util will be attributed after 
+      # deal with starches and gluten here as the process is not included explicitly
+      # attribute end use (feed, food to main crop, other_util will be attributed after
       # ethanol processing which uses the other_util as input)
       # subtract starch production from main crop processed
       starches <- c("129|Starch of cassava", "23|Starch of wheat", "34|Starch of rice", "64|Starch of maize",
@@ -1236,12 +1244,13 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
       # are used only to produce glucose and fructose and we accounted for this
       # send starches other_util also to other util of the main crops
       # in sugar processing, to avoid double counting in other dimensions
-      for (i in seq_along(starches)) {
+      # we don't send maize to other_util as its used for ethanol production
+      for (i in seq_along(starches[-which(starches == "64|Starch of maize")])) {
         flowsCBC[, , list(names(starches)[[i]], "other_util")] <- (flowsCBC[, , list(names(starches)[[i]],
                                                                                      "other_util")]
                                                                    + flowsCBC[, , list(starches[[i]], "other_util")])
       }
-      for (i in seq_along(glutens)) {
+      for (i in seq_along(glutens[-which(glutens == "63|Maize gluten")])) {
         flowsCBC[, , list(names(glutens)[[i]], "other_util")] <- (flowsCBC[, , list(names(glutens)[[i]], "other_util")]
                                                                   + flowsCBC[, , list(glutens[[i]], "other_util")])
       }
