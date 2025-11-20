@@ -4,7 +4,7 @@ type: software
 title: |-
   mrfaocore: madrat-based package providing core FAO-related preprocessing
       functions
-version: 1.4.5
+version: 1.4.6
 date-released: '2025-11-20'
 abstract: This madrat-based package provides core FAO-related preprocessing functions.
 authors:
