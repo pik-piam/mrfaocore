@@ -8,7 +8,7 @@
 #' @param subtype subsets of the detailed trade matrix to read in. Very large csv needs to be read in chunks
 #' separated by export/import quantities and values, as well as kcr, kli and kothers (not in kcr nor kli)
 #' Options are all combinations of c("import_value", "import_qty", "export_value",
-#' "export_quantity" X c("kcr", "kli", "kothers", "kforestry"))
+#' "export_qty" X c("kcr", "kli", "kothers", "kforestry"))
 #' import is import side reporting while export is export-sde reporting
 #' @return FAO data as MAgPIE object
 #' @author David C
@@ -72,9 +72,11 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   names(faoIsoFaoCode) <- as.character(faoIsoFaoCodeMapping$Country)
 
   fao$ReporterISO <- toolCountry2isocode(fao$ReporterCountries, mapping = faoIsoFaoCode)
-  fao$PartnerISO <- toolCountry2isocode(fao$PartnerCountries, mapping = faoIsoFaoCode)
+  fao$PartnerISO <- toolCountry2isocode(fao$PartnerCountries, mapping = faoIsoFaoCode,
+                                        ignoreCountries = c("Others (adjustment)", "Total FAO",
+                                                            "Unspecified Area"))
 
-  # remove countries with missing ISO code
+  # remove countries with missing ISO code if still any, but shouldn't be
   fao <- fao[!is.na(fao$ReporterISO), ]
   fao <- fao[!is.na(fao$PartnerISO), ]
 
