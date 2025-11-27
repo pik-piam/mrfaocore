@@ -16,8 +16,7 @@ convertFRA2025 <- function(x, subtype) {
   subtypeList <- c("forest_area", "deforestation", "growing_stock", "biomass_stock","carbon_stock", "management", 
                    "disturbance", "forest_fire", "expansion", "afforestation", "net_change")
   
-  if (subtype %in% c("forest_area", "deforestation", "growing_stock", "management",
-                     "disturbance", "forest_fire", "expansion", "afforestation", "net_change")) {
+  if (subtype %in% subtypeList) {
     x <- toolCountryFill(x, fill = 0)
     if (any(getNames(x) %in% grep(pattern = "gs_ha", x = getNames(x), value = TRUE))) {
       # gs_ha_ variables are already in m3/ha, no need for conversion

@@ -2,7 +2,8 @@
 #'
 #' Read-in an FRA (forest resource assessment) dataset from 2025. 
 #' Three subtypes are added compared to FRA2020: expansion, afforestation, net_change.
-#'
+#' Three files are required for running: FRA_Years_2025.csv, Annual_2025.csv and Intervals_2025.csv. 
+#' 
 #' @param subtype data subtype. Available subtypes: forest_area, deforestation, growing_stock, biomass_stock,
 #' carbon_stock, management, disturbance, forest_fire, expansion, afforestation, net_change
 #' @return Magpie object of the FRA 2025 data
@@ -17,11 +18,20 @@
 #' @export
 
 
-readFRA2025 <- function(subtype) { 
+readFRA2025 <- function(subtype) {
+  # Check if the files are available
+  required_files <- c("FRA_Years_2025.csv", "Annual_2025.csv", "Intervals_2025.csv")
+  missing_files <- required_files[!file.exists(required_files)]
+  if (length(missing_files) > 0) {
+    stop(
+      "The following required files are missing:\n  ",
+      paste(missing_files, collapse = "\n  "))
+  }
+  
   # Read data files and normalize column names
-  yearsData <- read.csv("FRA_Years_2025_11_13.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."), stringsAsFactors = FALSE)
-  annualData <- read.csv("Annual_2025_11_13.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."), stringsAsFactors = FALSE)
-  intervalsData <- read.csv("Intervals_2025_11_13.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."), stringsAsFactors = FALSE)
+  yearsData <- read.csv("FRA_Years_2025.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."), stringsAsFactors = FALSE)
+  annualData <- read.csv("Annual_2025.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."), stringsAsFactors = FALSE)
+  intervalsData <- read.csv("Intervals_2025.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."), stringsAsFactors = FALSE)
 
   colnames(yearsData) <- gsub("^X", "", colnames(yearsData))
   colnames(annualData) <- gsub("^X", "", colnames(annualData))
