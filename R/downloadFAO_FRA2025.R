@@ -5,9 +5,10 @@
 #' Removes month and date from the names of three main files
 #' (FRA_Years_2025, Intervals_2025 and Annual_2025.csv). 
 #' 
-downloadFRA2025 <- function(exdir = "FRA2025_data") {
+downloadFRA2025 <- function() {
   # Download the bulk data and unzip 
   url_bulk <- "https://fra-data.fao.org/api/file/bulk-download?assessmentName=fra&cycleName=2025&countryIso=WO"
+  exdir <- "FRA2025_data"
   zipfile <- file.path(exdir, "FRA2025_bulk.zip")
   if (!dir.exists(exdir)) dir.create(exdir, recursive = TRUE)
   message("Downloading FRA 2025 bulk zip...")
