@@ -99,7 +99,7 @@ readFAO_online <- function(subtype) { # nolint
     PricesProducerAnnual    = c("Prices_E_All_Data_(Normalized)_130225.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
     Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
-    ValueOfProd             = c("Value_of_Production_E_All_Data_(Normalized)_250203.zip"),
+    ValueOfProd             = c("Value_of_Production_E_All_Data_(Normalized)_260209.zip"),
     ValueShares             = c("Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip")
   )
 
@@ -309,10 +309,10 @@ readFAO_online <- function(subtype) { # nolint
   # despite all other characteristics being the same
   # this leads to duplicate rows when converting to magclass, sum these up first below
   if (subtype == "Trade") {
-    tmp <- fao %>%
-      filter(.data$ItemCodeItem == "1848|Other food") %>% # nolint: object_usage_linter
-      group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
-      summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
+    tmp <- fao |>
+      filter(.data$ItemCodeItem == "1848|Other food") |> # nolint: object_usage_linter
+      group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) |>
+      summarise("Value" = sum(.data$Value, na.rm = TRUE)) |>
       ungroup()
     fao <-  fao[which(fao[, "ItemCodeItem"] != "1848|Other food"),
                 c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")]
