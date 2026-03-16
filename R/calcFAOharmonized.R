@@ -8,7 +8,7 @@
 #' @param output whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)
 #' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
 #'
-#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens
+#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens, Patrick Rein
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("FAOharmonized")
@@ -73,7 +73,6 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
     areaHarvested <- toolAggregate(prod, rel = aggregation, from = "ProductionItem", to = "FoodBalanceItem",
                                    dim = 3.1, partrel = TRUE)[, , "area_harvested"]
-
     commonyears <- intersect(getYears(areaHarvested), getYears(faoData))
 
     faoData <- mbind(faoData[, commonyears, ], areaHarvested[, commonyears, ])
@@ -144,9 +143,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       mapping <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
 
       # rename and create columns so identical between fb and SUA
-      fb <- add_columns(fb, addnm = "Processed_(t)", dim = 3.2)
-      fb[, , "Processed_(t)"] <- fb[, , "Processing_(t)"]
-      fb <- fb[, , "Processing_(t)", invert = TRUE]
+      getItems(fb, 3.2)[getItems(fb, 3.2) == "Processing_(t)"] <- "Processed_(t)"
       out <- complete_magpie(mbind(fb, cb), fill = 0)
 
       # remove the relative food supplys kcal/cap/d and kg/cap
@@ -161,24 +158,16 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       sua <- readSource("FAO_online", subtype = "SUA2010")
       sua[is.na(sua)] <- 0
 
-      sua <- add_columns(sua, addnm = "Food_supply_(kcal)_(Kcal)", dim = 3.2)
-      sua[, , "Food_supply_(kcal)_(Kcal)"] <- sua[, , "Calories_Year_(Kcal)"]
-
-      sua <- add_columns(sua, addnm = "Protein_supply_quantity_(t)_(t)", dim = 3.2)
-      sua[, , "Protein_supply_quantity_(t)_(t)"] <- sua[, , "Proteins_Year_(t)"]
-
-      sua <- add_columns(sua, addnm = "Fat_supply_quantity_(t)_(t)", dim = 3.2)
-      sua[, , "Fat_supply_quantity_(t)_(t)"] <- sua[, , "Fats_Year_(t)"]
-
-      sua <- add_columns(sua, addnm = "Losses_(t)", dim = 3.2)
-      sua[, , "Losses_(t)"] <- sua[, , "Loss_(t)"]
-
-      sua <- add_columns(sua, addnm = "Food_(t)", dim = 3.2)
-      sua[, , "Food_(t)"] <- sua[, , "Food_supply_quantity_(tonnes)_(t)"]
-
-      sua <- sua[, , c("Food_supply_quantity_(tonnes)_(t)", "Fats_Year_(t)",
-                       "Loss_(t)", "Proteins_Year_(t)", "Calories_Year_(Kcal)"),
-                 invert = TRUE]
+      suaNameMapping <- list( # Mapping from oldName to newName
+        "Calories_Year_(Kcal)" = "Food_supply_(kcal)_(Kcal)",
+        "Proteins_Year_(t)" = "Protein_supply_quantity_(t)_(t)",
+        "Fats_Year_(t)" = "Fat_supply_quantity_(t)_(t)",
+        "Loss_(t)" = "Losses_(t)",
+        "Food_supply_quantity_(tonnes)_(t)" = "Food_(t)"
+      )
+      for (oldName in names(suaNameMapping)) {
+        getItems(sua, 3.2)[getItems(sua, 3.2) == oldName] <- suaNameMapping[oldName]
+      }
 
       # remove the relative food supplys kcal/cap/d and kg/cap
       sua <- sua[, , c("Food_supply_quantity_(g_capita_day)_(g/cap/d)",
@@ -229,31 +218,10 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     faoData <- faoData / 1e6
     faoData <- complete_magpie(faoData)
 
-    kcal <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
-                       years = getItems(faoData, dim = 2),
-                       names = paste0(getItems(faoData, dim = 3.1), ".food_supply_kcal"))
-    kcal[, ,  "food_supply_kcal"] <- faoData[, ,  "food_supply"]
-    faoData <- mbind(faoData, kcal)
-    # remove
-    faoData <- faoData[, , "food_supply", invert = TRUE]
-
-    other <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
-                        years = getItems(faoData, dim = 2),
-                        names = paste0(getItems(faoData, dim = 3.1), ".other_util"))
-    other[, ,  "other_util"] <- faoData[, ,  "other_uses"]
-    faoData <- mbind(faoData, other)
-    # remove
-    faoData <- faoData[, , "other_uses", invert = TRUE]
-
-
-    waste <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
-                        years = getItems(faoData, dim = 2),
-                        names = paste0(getItems(faoData, dim = 3.1), ".waste"))
-    waste[, , "waste"] <- faoData[, , "losses"]
-    faoData <- mbind(faoData, waste)
-    # remove
-    faoData <- faoData[, , "losses", invert = TRUE]
-
+    # Rename food_supply, other_util, losses
+    getItems(faoData, 3.2)[getItems(faoData, 3.2) == "food_supply"] <- "food_supply_kcal"
+    getItems(faoData, 3.2)[getItems(faoData, 3.2) == "other_uses"] <- "other_util"
+    getItems(faoData, 3.2)[getItems(faoData, 3.2) == "losses"] <- "waste"
 
     # add tourist consumption to food - but note that this creates a small mismatch in food_supply_kcal,
     # to live with for now.
@@ -271,14 +239,12 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "post2010_ProductionItem",
                                         to = "post2010_FoodBalanceItem", dim = 3.1, partrel = TRUE)
       cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
-     # change units from tonnes to Mt, hectares to Mha
+      # change units from tonnes to Mt, hectares to Mha
       fodderAggregated <- fodderAggregated / 1e6
 
       faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
       rm(fodder, fodderAggregated)
       gc()
-
-
 
       # get the brans, oilcakes, molasses  post 2010 from SUA
       sua <- calcOutput("FAOharmonized", src = "post2010", output = "SUA",
@@ -320,18 +286,18 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       suab <- dimSums(suab, dim = 3.1)
       suab <- add_dimension(suab, dim = 3.1, add = "ItemCodeItem", nm = "2600|Brans")
 
-      faoData <- mbind(faoData, suab[, , getNames(faoData, dim = 2)])
+      commonNames <- intersect(getNames(faoData, dim = 2), getNames(suab, dim = 2))
+      faoData <- mbind(faoData, suab[, , commonNames])
       faoData <- mbind(faoData, sua[, ,  cakes])
-      faoData[, , "165|Molasses"] <- sua[, , "165|Molasses"]
+      # Replace Molasses data with SUA Molasses data
+      faoData <- mbind(faoData[,, "165|Molasses", invert = TRUE], sua[, , "165|Molasses"])
       faoData <- complete_magpie(faoData)
-
     }
 
     faoData[is.na(faoData)] <- 0
 
     ## check if there is data without an element name
     faoData <- faoData[, , "", invert = TRUE]
-
 
     if (any(getNames(faoData) == "remaining.production")) {
       remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
