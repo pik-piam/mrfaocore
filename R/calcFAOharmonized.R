@@ -36,16 +36,13 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     getNames(fs, dim = 2) <- "food_supply"
     post <- mbind(post, fs)
 
-
     pre <- complete_magpie(pre)
     post <- complete_magpie(post)
     names <- intersect(getNames(pre, dim = 1), getNames(post, dim = 1))
 
-
     faoData <- mbind(pre[, , names], post[, , names])
 
     faoData[is.na(faoData)] <- 0
-
 
   } else if (src == "pre2010") { # nolint
     # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
@@ -80,13 +77,12 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     rm(areaHarvested)
 
     ### add Fodder data ###
-
-    fodder <- readSource("FAO", "Fodder")
-    fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
-    fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
-    fodder[, , "domestic_supply"] <- fodder[, , "feed"]
-    fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "ProductionItem",
-                                      to = "FoodBalanceItem", dim = 3.1, partrel = TRUE)
+    fodderAggregated <- .faoHarmonizedFodder(
+      endYear = max(getYears(faoData, as.integer = TRUE)),
+      aggregation = aggregation,
+      from = "ProductionItem",
+      to = "FoodBalanceItem"
+    )
     cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
     faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
     rm(fodder, fodderAggregated)
@@ -232,18 +228,17 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     ### add Fodder data and add brans, oilcakes, and molasses (not in FB but in SUA) if at FB level ###
 
     if (output == "FB") {
-      fodder <- readSource("FAO", "Fodder")
-      fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
-      fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
-      fodder[, , "domestic_supply"] <- fodder[, , "feed"]
-      fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "post2010_ProductionItem",
-                                        to = "post2010_FoodBalanceItem", dim = 3.1, partrel = TRUE)
-      cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
+      fodderAggregated <- .faoHarmonizedFodder(
+        endYear = max(getYears(faoData, as.integer = TRUE)),
+        aggregation = aggregation,
+        from = "post2010_ProductionItem",
+        to = "post2010_FoodBalanceItem"
+      )
       # change units from tonnes to Mt, hectares to Mha
       fodderAggregated <- fodderAggregated / 1e6
-
+      cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
       faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
-      rm(fodder, fodderAggregated)
+      rm(fodderAggregated)
       gc()
 
       # get the brans, oilcakes, molasses  post 2010 from SUA
@@ -326,4 +321,14 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
               description = "FAO Commodity Balance and Food Supply data",
               unit = "Unit in Mt/yr, for area Mha, calories in 10^12 kcal/yr",
               note = "food_supply_kcal, protein_supply and fat_supply were calculated from per capita per day values"))
+}
+
+.faoHarmonizedFodder <- function(endYear, aggregation, from, to) {
+  fodder <- readSource("FAO", "Fodder")
+  fodder <- toolExtrapolateFodder(fodder, endyear = endYear)
+  fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
+  fodder[, , "domestic_supply"] <- fodder[, , "feed"]
+  fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = from,
+                                    to = to, dim = 3.1, partrel = TRUE)
+  return(fodderAggregated)
 }
