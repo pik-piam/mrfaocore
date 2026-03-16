@@ -239,7 +239,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       faoData <- mbind(faoData, suab[, , commonNames])
       faoData <- mbind(faoData, sua[, ,  cakes])
       # Replace Molasses data with SUA Molasses data
-      faoData <- mbind(faoData[,, "165|Molasses", invert = TRUE], sua[, , "165|Molasses"])
+      faoData <- mbind(faoData[, , "165|Molasses", invert = TRUE], sua[, , "165|Molasses"])
       faoData <- complete_magpie(faoData)
     }
 
