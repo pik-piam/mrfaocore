@@ -2,13 +2,14 @@
 #' @description Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas
 #'              are taken from ProdSTAT. This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
 #'
-#' @param src source "pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
+#' @param src source "pre2010", "post2010", or "join2010". "pre2010" returns the FAO sheet that runs
 #' until 2013 (actually 2013, but gets effectively chopped to 2010 by massbalance). "post2010" combines
-#' the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards.
+#' the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards. "join2010" joins pre2010 and
+#' post2010 data, taking new values from 2010 onwards.
 #' @param output whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)
 #' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
 #'
-#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens
+#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens, Patrick Rein
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("FAOharmonized")
@@ -36,16 +37,13 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     getNames(fs, dim = 2) <- "food_supply"
     post <- mbind(post, fs)
 
-
     pre <- complete_magpie(pre)
     post <- complete_magpie(post)
     names <- intersect(getNames(pre, dim = 1), getNames(post, dim = 1))
 
-
     faoData <- mbind(pre[, , names], post[, , names])
 
     faoData[is.na(faoData)] <- 0
-
 
   } else if (src == "pre2010") { # nolint
     # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
@@ -61,37 +59,21 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     faoData <- mbind(cb, fs)
 
     ## in addition harvested area from Crops Primary
-
-    prod <- readSource("FAO_online", "Crop", convert = TRUE)
-
-    ## aggregate Prod to CB units
     aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
-
-    # remove  aggregate categories
-    remove <- setdiff(getNames(prod, dim = 1), aggregation$ProductionItem)
-    prod <- prod[, , remove, invert = TRUE]
-
-    areaHarvested <- toolAggregate(prod, rel = aggregation, from = "ProductionItem", to = "FoodBalanceItem",
-                                   dim = 3.1, partrel = TRUE)[, , "area_harvested"]
-
+    areaHarvested <- .aggregateAreaHarvested("Crop", aggregation, "ProductionItem", "FoodBalanceItem")
     commonyears <- intersect(getYears(areaHarvested), getYears(faoData))
-
     faoData <- mbind(faoData[, commonyears, ], areaHarvested[, commonyears, ])
 
-    rm(areaHarvested)
-
     ### add Fodder data ###
-
-    fodder <- readSource("FAO", "Fodder")
-    fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
-    fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
-    fodder[, , "domestic_supply"] <- fodder[, , "feed"]
-    fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "ProductionItem",
-                                      to = "FoodBalanceItem", dim = 3.1, partrel = TRUE)
+    fodderAggregated <- .faoHarmonizedFodder(
+      endYear = max(getYears(faoData, as.integer = TRUE)),
+      aggregation = aggregation,
+      from = "ProductionItem",
+      to = "FoodBalanceItem"
+    )
     cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
     faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
-    rm(fodder, fodderAggregated)
-    gc()
+    rm(fodderAggregated)
 
     faoData[is.na(faoData)] <- 0
 
@@ -108,25 +90,11 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       }
     }
 
-    if (any(getNames(faoData) == "remaining.production")) {
-      remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "production"], dim = 3), dim = 1))
-      if (remainProd > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. Production is ",
-             round(remainProd, digits = 3) * 100, "% of total")
-      }
-    }
-    if (any(getNames(faoData) == "remaining.area_harvested")) {
-      remainArea <- mean(dimSums(faoData[, , "remaining.area_harvested"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "area_harvested"], dim = 3), dim = 1))
-      if (remainArea > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. The area harvested is ",
-             round(remainArea, digits = 3) * 100, "% of total")
-      }
-    }
+    .warnIfLargeRemaining(faoData, "production", "Production")
+    .warnIfLargeRemaining(faoData, "area_harvested", "The area harvested")
 
     # conversion from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
-    faoData <- faoData / 10^6
+    faoData <- faoData / 1e6
 
   } else if (src == "post2010") { # nolint
 
@@ -144,9 +112,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       mapping <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
 
       # rename and create columns so identical between fb and SUA
-      fb <- add_columns(fb, addnm = "Processed_(t)", dim = 3.2)
-      fb[, , "Processed_(t)"] <- fb[, , "Processing_(t)"]
-      fb <- fb[, , "Processing_(t)", invert = TRUE]
+      getItems(fb, 3.2)[getItems(fb, 3.2) == "Processing_(t)"] <- "Processed_(t)"
       out <- complete_magpie(mbind(fb, cb), fill = 0)
 
       # remove the relative food supplys kcal/cap/d and kg/cap
@@ -161,24 +127,16 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       sua <- readSource("FAO_online", subtype = "SUA2010")
       sua[is.na(sua)] <- 0
 
-      sua <- add_columns(sua, addnm = "Food_supply_(kcal)_(Kcal)", dim = 3.2)
-      sua[, , "Food_supply_(kcal)_(Kcal)"] <- sua[, , "Calories_Year_(Kcal)"]
-
-      sua <- add_columns(sua, addnm = "Protein_supply_quantity_(t)_(t)", dim = 3.2)
-      sua[, , "Protein_supply_quantity_(t)_(t)"] <- sua[, , "Proteins_Year_(t)"]
-
-      sua <- add_columns(sua, addnm = "Fat_supply_quantity_(t)_(t)", dim = 3.2)
-      sua[, , "Fat_supply_quantity_(t)_(t)"] <- sua[, , "Fats_Year_(t)"]
-
-      sua <- add_columns(sua, addnm = "Losses_(t)", dim = 3.2)
-      sua[, , "Losses_(t)"] <- sua[, , "Loss_(t)"]
-
-      sua <- add_columns(sua, addnm = "Food_(t)", dim = 3.2)
-      sua[, , "Food_(t)"] <- sua[, , "Food_supply_quantity_(tonnes)_(t)"]
-
-      sua <- sua[, , c("Food_supply_quantity_(tonnes)_(t)", "Fats_Year_(t)",
-                       "Loss_(t)", "Proteins_Year_(t)", "Calories_Year_(Kcal)"),
-                 invert = TRUE]
+      suaNameMapping <- list( # Mapping from oldName to newName
+        "Calories_Year_(Kcal)" = "Food_supply_(kcal)_(Kcal)",
+        "Proteins_Year_(t)" = "Protein_supply_quantity_(t)_(t)",
+        "Fats_Year_(t)" = "Fat_supply_quantity_(t)_(t)",
+        "Loss_(t)" = "Losses_(t)",
+        "Food_supply_quantity_(tonnes)_(t)" = "Food_(t)"
+      )
+      for (oldName in names(suaNameMapping)) {
+        getItems(sua, 3.2)[getItems(sua, 3.2) == oldName] <- suaNameMapping[oldName]
+      }
 
       # remove the relative food supplys kcal/cap/d and kg/cap
       sua <- sua[, , c("Food_supply_quantity_(g_capita_day)_(g/cap/d)",
@@ -197,29 +155,11 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
 
     ## in addition harvested area from Crops Primary
-
-    prod <- readSource("FAO_online", "CropLive2010", convert = TRUE)
-
-    ## aggregate Prod to CB units
     aggregation <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
-
-    # remove  aggregate categories
-    remove <- setdiff(getNames(prod, dim = 1), aggregation$post2010_ProductionItem)
-    prod <- prod[, , remove, invert = TRUE]
-
-    if (output == "FB") {
-      toCol <- "post2010_FoodBalanceItem"
-    } else if (output == "SUA") {
-      toCol <- "post2010_SupplyUtilizationItem"
-    }
-    areaHarvested <- toolAggregate(prod, rel = aggregation, from = "post2010_ProductionItem", to = toCol,
-                                   dim = 3.1, partrel = TRUE)[, , "area_harvested"]
-
+    toCol <- if (output == "FB") "post2010_FoodBalanceItem" else "post2010_SupplyUtilizationItem"
+    areaHarvested <- .aggregateAreaHarvested("CropLive2010", aggregation, "post2010_ProductionItem", toCol)
     commonyears <- intersect(getYears(areaHarvested), getYears(out))
-
     faoData <- mbind(out[, commonyears, ], areaHarvested[, commonyears, ])
-
-    rm(areaHarvested)
 
     # change names to old convention
 
@@ -229,31 +169,10 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     faoData <- faoData / 1e6
     faoData <- complete_magpie(faoData)
 
-    kcal <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
-                       years = getItems(faoData, dim = 2),
-                       names = paste0(getItems(faoData, dim = 3.1), ".food_supply_kcal"))
-    kcal[, ,  "food_supply_kcal"] <- faoData[, ,  "food_supply"]
-    faoData <- mbind(faoData, kcal)
-    # remove
-    faoData <- faoData[, , "food_supply", invert = TRUE]
-
-    other <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
-                        years = getItems(faoData, dim = 2),
-                        names = paste0(getItems(faoData, dim = 3.1), ".other_util"))
-    other[, ,  "other_util"] <- faoData[, ,  "other_uses"]
-    faoData <- mbind(faoData, other)
-    # remove
-    faoData <- faoData[, , "other_uses", invert = TRUE]
-
-
-    waste <- new.magpie(cells_and_regions = getItems(faoData, dim = 1),
-                        years = getItems(faoData, dim = 2),
-                        names = paste0(getItems(faoData, dim = 3.1), ".waste"))
-    waste[, , "waste"] <- faoData[, , "losses"]
-    faoData <- mbind(faoData, waste)
-    # remove
-    faoData <- faoData[, , "losses", invert = TRUE]
-
+    # Rename food_supply, other_util, losses
+    getItems(faoData, 3.2)[getItems(faoData, 3.2) == "food_supply"] <- "food_supply_kcal"
+    getItems(faoData, 3.2)[getItems(faoData, 3.2) == "other_uses"] <- "other_util"
+    getItems(faoData, 3.2)[getItems(faoData, 3.2) == "losses"] <- "waste"
 
     # add tourist consumption to food - but note that this creates a small mismatch in food_supply_kcal,
     # to live with for now.
@@ -264,21 +183,17 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     ### add Fodder data and add brans, oilcakes, and molasses (not in FB but in SUA) if at FB level ###
 
     if (output == "FB") {
-      fodder <- readSource("FAO", "Fodder")
-      fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
-      fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
-      fodder[, , "domestic_supply"] <- fodder[, , "feed"]
-      fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "post2010_ProductionItem",
-                                        to = "post2010_FoodBalanceItem", dim = 3.1, partrel = TRUE)
-      cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
-     # change units from tonnes to Mt, hectares to Mha
+      fodderAggregated <- .faoHarmonizedFodder(
+        endYear = max(getYears(faoData, as.integer = TRUE)),
+        aggregation = aggregation,
+        from = "post2010_ProductionItem",
+        to = "post2010_FoodBalanceItem"
+      )
+      # change units from tonnes to Mt, hectares to Mha
       fodderAggregated <- fodderAggregated / 1e6
-
+      cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
       faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
-      rm(fodder, fodderAggregated)
-      gc()
-
-
+      rm(fodderAggregated)
 
       # get the brans, oilcakes, molasses  post 2010 from SUA
       sua <- calcOutput("FAOharmonized", src = "post2010", output = "SUA",
@@ -320,11 +235,12 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       suab <- dimSums(suab, dim = 3.1)
       suab <- add_dimension(suab, dim = 3.1, add = "ItemCodeItem", nm = "2600|Brans")
 
-      faoData <- mbind(faoData, suab[, , getNames(faoData, dim = 2)])
+      commonNames <- intersect(getNames(faoData, dim = 2), getNames(suab, dim = 2))
+      faoData <- mbind(faoData, suab[, , commonNames])
       faoData <- mbind(faoData, sua[, ,  cakes])
-      faoData[, , "165|Molasses"] <- sua[, , "165|Molasses"]
+      # Replace Molasses data with SUA Molasses data
+      faoData <- mbind(faoData[,, "165|Molasses", invert = TRUE], sua[, , "165|Molasses"])
       faoData <- complete_magpie(faoData)
-
     }
 
     faoData[is.na(faoData)] <- 0
@@ -332,23 +248,9 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     ## check if there is data without an element name
     faoData <- faoData[, , "", invert = TRUE]
 
-
-    if (any(getNames(faoData) == "remaining.production")) {
-      remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "production"], dim = 3), dim = 1))
-      if (remainProd > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. Production is ",
-             round(remainProd, digits = 3) * 100, "% of total")
-      }
-    }
-    if (any(getNames(faoData) == "remaining.area_harvested")) {
-      remainArea <- mean(dimSums(faoData[, , "remaining.area_harvested"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "area_harvested"], dim = 3), dim = 1))
-      if (remainArea > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. The area harvested is ",
-             round(remainArea, digits = 3) * 100, "% of total")
-      }
-    }
+    # Final checks
+    .warnIfLargeRemaining(faoData, "production", "Production")
+    .warnIfLargeRemaining(faoData, "area_harvested", "The area harvested")
 
     # remove population item
     faoData <- faoData[, , "total_population_both_sexes", invert = TRUE]
@@ -360,4 +262,34 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
               description = "FAO Commodity Balance and Food Supply data",
               unit = "Unit in Mt/yr, for area Mha, calories in 10^12 kcal/yr",
               note = "food_supply_kcal, protein_supply and fat_supply were calculated from per capita per day values"))
+}
+
+.warnIfLargeRemaining <- function(faoData, element, label) {
+  fullName <- paste0("remaining.", element)
+  if (any(getNames(faoData) == fullName)) {
+    ratio <- mean(dimSums(faoData[, , fullName], dim = 1) /
+                    dimSums(dimSums(faoData[, , element], dim = 3), dim = 1))
+    if (ratio > 0.02) {
+      vcat(1, "Aggregation created a 'remaining' category. ", label, " is ",
+           round(ratio, digits = 3) * 100, "% of total")
+    }
+  }
+}
+
+.aggregateAreaHarvested <- function(subtype, mapping, fromCol, toCol) {
+  prod <- readSource("FAO_online", subtype, convert = TRUE)
+  remove <- setdiff(getNames(prod, dim = 1), mapping[[fromCol]])
+  prod <- prod[, , remove, invert = TRUE]
+  toolAggregate(prod, rel = mapping, from = fromCol, to = toCol,
+                dim = 3.1, partrel = TRUE)[, , "area_harvested"]
+}
+
+.faoHarmonizedFodder <- function(endYear, aggregation, from, to) {
+  fodder <- readSource("FAO", "Fodder")
+  fodder <- toolExtrapolateFodder(fodder, endyear = endYear)
+  fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
+  fodder[, , "domestic_supply"] <- fodder[, , "feed"]
+  fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = from,
+                                    to = to, dim = 3.1, partrel = TRUE)
+  return(fodderAggregated)
 }
