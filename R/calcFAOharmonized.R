@@ -2,9 +2,10 @@
 #' @description Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas
 #'              are taken from ProdSTAT. This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
 #'
-#' @param src source "pre2010" or "post2010" "pre2010" returns the FAO sheet that runs
+#' @param src source "pre2010", "post2010", or "join2010". "pre2010" returns the FAO sheet that runs
 #' until 2013 (actually 2013, but gets effectively chopped to 2010 by massbalance). "post2010" combines
-#' the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards.
+#' the new FAO FB, SUA, and CB sheets that were re-done for 2010 onwards. "join2010" joins pre2010 and
+#' post2010 data, taking new values from 2010 onwards.
 #' @param output whether to return FB (Food balance sheet) or SUA (SUpply Utilization Accounts)
 #' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
 #'
@@ -58,23 +59,10 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     faoData <- mbind(cb, fs)
 
     ## in addition harvested area from Crops Primary
-
-    prod <- readSource("FAO_online", "Crop", convert = TRUE)
-
-    ## aggregate Prod to CB units
     aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
-
-    # remove  aggregate categories
-    remove <- setdiff(getNames(prod, dim = 1), aggregation$ProductionItem)
-    prod <- prod[, , remove, invert = TRUE]
-
-    areaHarvested <- toolAggregate(prod, rel = aggregation, from = "ProductionItem", to = "FoodBalanceItem",
-                                   dim = 3.1, partrel = TRUE)[, , "area_harvested"]
+    areaHarvested <- .aggregateAreaHarvested("Crop", aggregation, "ProductionItem", "FoodBalanceItem")
     commonyears <- intersect(getYears(areaHarvested), getYears(faoData))
-
     faoData <- mbind(faoData[, commonyears, ], areaHarvested[, commonyears, ])
-
-    rm(areaHarvested)
 
     ### add Fodder data ###
     fodderAggregated <- .faoHarmonizedFodder(
@@ -85,8 +73,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     )
     cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
     faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
-    rm(fodder, fodderAggregated)
-    gc()
+    rm(fodderAggregated)
 
     faoData[is.na(faoData)] <- 0
 
@@ -103,25 +90,11 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       }
     }
 
-    if (any(getNames(faoData) == "remaining.production")) {
-      remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "production"], dim = 3), dim = 1))
-      if (remainProd > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. Production is ",
-             round(remainProd, digits = 3) * 100, "% of total")
-      }
-    }
-    if (any(getNames(faoData) == "remaining.area_harvested")) {
-      remainArea <- mean(dimSums(faoData[, , "remaining.area_harvested"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "area_harvested"], dim = 3), dim = 1))
-      if (remainArea > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. The area harvested is ",
-             round(remainArea, digits = 3) * 100, "% of total")
-      }
-    }
+    .warnIfLargeRemaining(faoData, "production", "Production")
+    .warnIfLargeRemaining(faoData, "area_harvested", "The area harvested")
 
     # conversion from tonnes to Mt, hectares to Mha and 10^6kcal to 10^12kcal.
-    faoData <- faoData / 10^6
+    faoData <- faoData / 1e6
 
   } else if (src == "post2010") { # nolint
 
@@ -182,29 +155,11 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
 
     ## in addition harvested area from Crops Primary
-
-    prod <- readSource("FAO_online", "CropLive2010", convert = TRUE)
-
-    ## aggregate Prod to CB units
     aggregation <- toolGetMapping("FAOitems_online_2010update.csv", type = "sectoral", where = "mrfaocore")
-
-    # remove  aggregate categories
-    remove <- setdiff(getNames(prod, dim = 1), aggregation$post2010_ProductionItem)
-    prod <- prod[, , remove, invert = TRUE]
-
-    if (output == "FB") {
-      toCol <- "post2010_FoodBalanceItem"
-    } else if (output == "SUA") {
-      toCol <- "post2010_SupplyUtilizationItem"
-    }
-    areaHarvested <- toolAggregate(prod, rel = aggregation, from = "post2010_ProductionItem", to = toCol,
-                                   dim = 3.1, partrel = TRUE)[, , "area_harvested"]
-
+    toCol <- if (output == "FB") "post2010_FoodBalanceItem" else "post2010_SupplyUtilizationItem"
+    areaHarvested <- .aggregateAreaHarvested("CropLive2010", aggregation, "post2010_ProductionItem", toCol)
     commonyears <- intersect(getYears(areaHarvested), getYears(out))
-
     faoData <- mbind(out[, commonyears, ], areaHarvested[, commonyears, ])
-
-    rm(areaHarvested)
 
     # change names to old convention
 
@@ -239,7 +194,6 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
       cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
       faoData <- mbind(faoData[, cyears, ], fodderAggregated[, cyears, ])
       rm(fodderAggregated)
-      gc()
 
       # get the brans, oilcakes, molasses  post 2010 from SUA
       sua <- calcOutput("FAOharmonized", src = "post2010", output = "SUA",
@@ -294,22 +248,9 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     ## check if there is data without an element name
     faoData <- faoData[, , "", invert = TRUE]
 
-    if (any(getNames(faoData) == "remaining.production")) {
-      remainProd <- mean(dimSums(faoData[, , "remaining.production"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "production"], dim = 3), dim = 1))
-      if (remainProd > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. Production is ",
-             round(remainProd, digits = 3) * 100, "% of total")
-      }
-    }
-    if (any(getNames(faoData) == "remaining.area_harvested")) {
-      remainArea <- mean(dimSums(faoData[, , "remaining.area_harvested"], dim = 1) /
-                           dimSums(dimSums(faoData[, , "area_harvested"], dim = 3), dim = 1))
-      if (remainArea > 0.02) {
-        vcat(1, "Aggregation created a 'remaining' category. The area harvested is ",
-             round(remainArea, digits = 3) * 100, "% of total")
-      }
-    }
+    # Final checks
+    .warnIfLargeRemaining(faoData, "production", "Production")
+    .warnIfLargeRemaining(faoData, "area_harvested", "The area harvested")
 
     # remove population item
     faoData <- faoData[, , "total_population_both_sexes", invert = TRUE]
@@ -321,6 +262,26 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
               description = "FAO Commodity Balance and Food Supply data",
               unit = "Unit in Mt/yr, for area Mha, calories in 10^12 kcal/yr",
               note = "food_supply_kcal, protein_supply and fat_supply were calculated from per capita per day values"))
+}
+
+.warnIfLargeRemaining <- function(faoData, element, label) {
+  fullName <- paste0("remaining.", element)
+  if (any(getNames(faoData) == fullName)) {
+    ratio <- mean(dimSums(faoData[, , fullName], dim = 1) /
+                    dimSums(dimSums(faoData[, , element], dim = 3), dim = 1))
+    if (ratio > 0.02) {
+      vcat(1, "Aggregation created a 'remaining' category. ", label, " is ",
+           round(ratio, digits = 3) * 100, "% of total")
+    }
+  }
+}
+
+.aggregateAreaHarvested <- function(subtype, mapping, fromCol, toCol) {
+  prod <- readSource("FAO_online", subtype, convert = TRUE)
+  remove <- setdiff(getNames(prod, dim = 1), mapping[[fromCol]])
+  prod <- prod[, , remove, invert = TRUE]
+  toolAggregate(prod, rel = mapping, from = fromCol, to = toCol,
+                dim = 3.1, partrel = TRUE)[, , "area_harvested"]
 }
 
 .faoHarmonizedFodder <- function(endYear, aggregation, from, to) {
