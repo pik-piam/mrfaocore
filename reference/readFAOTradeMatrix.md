@@ -1,0 +1,44 @@
+# Read FAOTradeMatrix
+
+Read in FAOSTAT detail trade matrix. FAOSTAT does not balance or
+harmonize the import/export side reporting. Furthermore, in terms of
+trade value, exporters are "usuallY" reporting FOB, while importers
+report CIF. Difference in value, given identical qty, is thus the
+transport margin and any unharmonized reporting combined.
+
+## Usage
+
+``` r
+readFAOTradeMatrix(subtype)
+```
+
+## Arguments
+
+- subtype:
+
+  subsets of the detailed trade matrix to read in. Very large csv needs
+  to be read in chunks separated by export/import quantities and values,
+  as well as kcr, kli and kothers (not in kcr nor kli) Options are all
+  combinations of c("import_value", "import_qty", "export_value",
+  "export_qty" X c("kcr", "kli", "kothers", "kforestry")) import is
+  import side reporting while export is export-sde reporting
+
+## Value
+
+FAO data as MAgPIE object
+
+## See also
+
+\[readSource()\]
+
+## Author
+
+David C
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+a <- readSource("FAOTradeMatrix", "import_value_kcr")
+} # }
+```
