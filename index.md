@@ -1,9 +1,7 @@
 # madrat-based package providing core FAO-related preprocessing functions
 
-R package **mrfaocore**, version **1.7.0**
+R package **mrfaocore**, version **1.8.0**
 
-[![CRAN
-status](https://www.r-pkg.org/badges/version/mrfaocore)](https://cran.r-project.org/package=mrfaocore)
 [![R build
 status](https://github.com/pik-piam/mrfaocore/workflows/check/badge.svg)](https://github.com/pik-piam/mrfaocore/actions)
 [![codecov](https://codecov.io/gh/pik-piam/mrfaocore/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrfaocore)
@@ -53,7 +51,7 @@ To cite package **mrfaocore** in publications use:
 Chen D, Kreidenweis U, Mishra A, Karstens K, Leon Bodirsky B, Leip D,
 Stevanovic M, Leon Bodrisky B, Klein D, Molina Bacca E (2026).
 “mrfaocore: madrat-based package providing core FAO-related
-preprocessing functions.” Version: 1.7.0,
+preprocessing functions.” Version: 1.8.0,
 <https://github.com/pik-piam/mrfaocore>.
 
 A BibTeX entry for LaTeX users is
@@ -63,9 +61,9 @@ A BibTeX entry for LaTeX users is
  title = {mrfaocore: madrat-based package providing core FAO-related preprocessing
    functions},
  author = {David Chen and Ulrich Kreidenweis and Abhijeet Mishra and Kristine Karstens and Benjamin {Leon Bodirsky} and Debbora Leip and Mishko Stevanovic and Benjamin {Leon Bodrisky} and David Klein and Edna {Molina Bacca}},
- date = {2026-03-31},
+ date = {2026-05-29},
  year = {2026},
  url = {https://github.com/pik-piam/mrfaocore},
- note = {Version: 1.7.0},
+ note = {Version: 1.8.0},
 }
 ```
