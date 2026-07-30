@@ -15,6 +15,8 @@ Useful links:
 
 Authors:
 
+- David Chen <david.chen@pik-potsdam.de>
+
 - Ulrich Kreidenweis
 
 - Abhijeet Mishra
