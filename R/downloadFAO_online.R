@@ -63,8 +63,8 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
     LiveHead                = "Production_Livestock_E_All_Data_(Normalized).zip",
     LivePrim                = "Production_LivestockPrimary_E_All_Data_(Normalized).zip",
     LiveProc                = "Production_LivestockProcessed_E_All_Data_(Normalized).zip",
-    # FAO merged LiveHead/LivePrim/LiveProc into Production_Crops_Livestock in 2024;
-    # use LiveHead2024/LivePrim2024/LiveProc2024 for the new format
+    # FAOSTAT QCL (Production: Crops and livestock products), which carries the livestock
+    # data that LiveHead/LivePrim/LiveProc read from FAO's discontinued separate files
     LiveHead2024            = "Production_Crops_Livestock_E_All_Data_(Normalized).zip",
     LivePrim2024            = "Production_Crops_Livestock_E_All_Data_(Normalized).zip",
     LiveProc2024            = "Production_Crops_Livestock_E_All_Data_(Normalized).zip",
