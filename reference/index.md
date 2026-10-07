@@ -3,6 +3,7 @@
 ## All functions
 
 - [`calcAttributes()`](calcAttributes.md) : calcAttributes
+- [`calcCombineFodder()`](calcCombineFodder.md) : calcCombineFodder
 - [`calcFAOBilateralTrade()`](calcFAOBilateralTrade.md) :
   calcFAOBilateralTrade
 - [`calcFAOLand()`](calcFAOLand.md) : calcFAOLand
@@ -23,6 +24,8 @@
 - [`convertFAO_online()`](convertFAO_online.md) : Convert FAO data
 - [`convertFRA2020()`](convertFRA2020.md) : Convert FRA 2020 data
 - [`convertFRA2025()`](convertFRA2025.md) : Convert FRA2025 data
+- [`convertFodder2010()`](convertFodder2010.md) : Convert Fodder2010
+  data
 - [`correctFAO()`](correctFAO.md) : correctFAO
 - [`correctFAO_online()`](correctFAO_online.md) : correctFAO_online
 - [`downloadFAO_online()`](downloadFAO_online.md) : Download FAO data
@@ -36,6 +39,7 @@
 - [`readFRA2020()`](readFRA2020.md) : Read FRA2020
 - [`readFRA2025()`](readFRA2025.md) : Read FRA2025
 - [`readFishstatJ_FAO()`](readFishstatJ_FAO.md) : readFishstatJ_FAO
+- [`readFodder2010()`](readFodder2010.md) : Read Fodder2010
 - [`readProductAttributes()`](readProductAttributes.md) : Read product
   attributes
 - [`toolExtrapolateFodder()`](toolExtrapolateFodder.md) :
