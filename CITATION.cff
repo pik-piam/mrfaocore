@@ -4,8 +4,8 @@ type: software
 title: |-
   mrfaocore: madrat-based package providing core FAO-related preprocessing
       functions
-version: 1.8.2
-date-released: '2026-08-14'
+version: 1.9.0
+date-released: '2026-10-07'
 abstract: This madrat-based package provides core FAO-related preprocessing functions.
 authors:
 - family-names: Chen
@@ -17,8 +17,8 @@ authors:
   given-names: Abhijeet
 - family-names: Karstens
   given-names: Kristine
-- family-names: Leon Bodirsky
-  given-names: Benjamin
+- family-names: Bodirsky
+  given-names: Benjamin Leon
 - family-names: Leip
   given-names: Debbora
 - family-names: Stevanovic
