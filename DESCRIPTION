@@ -2,14 +2,14 @@ Type: Package
 Package: mrfaocore
 Title: madrat-based package providing core FAO-related preprocessing
     functions
-Version: 1.6.1
-Date: 2026-02-20
+Version: 1.8.2
+Date: 2026-08-14
 Authors@R: c(
     person("David", "Chen", , "david.chen@pik-potsdam.de", role = c("aut", "cre")),
     person("Ulrich", "Kreidenweis", role = "aut"),
     person("Abhijeet", "Mishra", role = "aut"),
     person("Kristine", "Karstens", role = "aut"),
-    person("Benjamin", "Leon Bodirsky", role = "aut"),
+    person("Benjamin Leon", "Bodirsky", role = "aut"),
     person("Debbora", "Leip", role = "aut"),
     person("Mishko", "Stevanovic", role = "aut"),
     person("Benjamin", "Leon Bodrisky", role = "aut"),
@@ -37,4 +37,5 @@ Suggests:
     testthat,
     XML
 Encoding: UTF-8
-RoxygenNote: 7.3.3
+Config/Needs/website: tidyverse/tidytemplate
+Config/roxygen2/version: 8.0.0

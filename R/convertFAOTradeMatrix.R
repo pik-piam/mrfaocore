@@ -19,13 +19,15 @@
 
 convertFAOTradeMatrix <- function(x, subtype) { # nolint
 
-  gc()
   # ---- Section for country specific treatment ----
   # make a set name for dim 1.2
-  getSets(x)[1] <- "ISO.Partner"
+  getSets(x, fulldim = FALSE)[1] <- "ISO.Partner"
 
   ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
   ## to make toolISOhistorical work
+  ## Everything below matches cells by name, and the object is sorted once at the very end, so the
+  ## added cells are bound in a single mbind per block and the intermediate magpiesort is skipped:
+  ## each of those sorts is a full permutation copy of the (multi GB) object.
   if (any(getItems(x, dim = 1.1) == "XET") && any(getItems(x, dim = 1.1) == "ETH") &&
         !any(getItems(x, dim = 1.1) == "ERI")) {
     xERI <- x[list("ISO" = c("ETH")), , ]
@@ -34,19 +36,17 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
     missingC <- paste0("ERI.",
                        setdiff(getItems(x, dim = 1.2), getItems(xERI, dim = 1.2)))
     fillC <- new.magpie(cells_and_regions = missingC, years = getYears(x), names = getNames(x), fill = 0)
-    xERI <- mbind(xERI, fillC)
-    x <- magpiesort(mbind(x, xERI))
+    x <- mbind(x, xERI, fillC)
   }
   if (any(getItems(x, dim = 1.2) == "XET") && any(getItems(x, dim = 1.2) == "ETH") &&
         !any(getItems(x, dim = 1.2) == "ERI")) {
     xERI <- x[list("Partner" = c("ETH")), , ]
     xERI[, , ] <- 0
     getItems(xERI, dim = 1.2) <- "ERI"
-    missingC <- paste0(".ERI",
-                       setdiff(getItems(x, dim = 1.1), getItems(xERI, dim = 1.1)))
+    missingC <- paste0(setdiff(getItems(x, dim = 1.1), getItems(xERI, dim = 1.1)),
+                       ".ERI")
     fillC <- new.magpie(cells_and_regions = missingC, years = getYears(x), names = getNames(x), fill = 0)
-    xERI <- mbind(xERI, fillC)
-    x <- magpiesort(mbind(x, xERI))
+    x <- mbind(x, xERI, fillC)
   }
 
   if (any(getItems(x, dim = 1.1) == "XSD") && any(getItems(x, dim = 1.1) == "SDN") &&
@@ -56,8 +56,8 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
     getItems(xSSD, dim = 1.1) <- "SSD"
     missingC <- paste0("SSD.",
                        setdiff(getItems(x, dim = 1.2), getItems(xSSD, dim = 1.2)))
-    xSSD <- mbind(xSSD, fillC)
-    x <- magpiesort(mbind(x, xSSD))
+    fillC <- new.magpie(cells_and_regions = missingC, years = getYears(x), names = getNames(x), fill = 0)
+    x <- mbind(x, xSSD, fillC)
   }
 
   if (any(getItems(x, dim = 1.2) == "XSD") && any(getItems(x, dim = 1.2) == "SDN") &&
@@ -65,10 +65,10 @@ convertFAOTradeMatrix <- function(x, subtype) { # nolint
     xSSD <- x[list("Partner" = c("SDN")), , ]
     xSSD[, , ] <- 0
     getItems(xSSD, dim = 1.2) <- "SSD"
-    missingC <- paste0(".SSD",
-                       setdiff(getItems(x, dim = 1.1), getItems(xSSD, dim = 1.1)))
-    xSSD <- mbind(xSSD, fillC)
-    x <- magpiesort(mbind(x, xSSD))
+    missingC <- paste0(setdiff(getItems(x, dim = 1.1), getItems(xSSD, dim = 1.1)),
+                       ".SSD")
+    fillC <- new.magpie(cells_and_regions = missingC, years = getYears(x), names = getNames(x), fill = 0)
+    x <- mbind(x, xSSD, fillC)
   }
 
   ## add additional mappings

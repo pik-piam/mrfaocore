@@ -5,8 +5,7 @@
 #'              an old equivalent are aggregated into the old item codes (see
 #'              FodderItemMapping.csv). Old items without a new equivalent (648 Carrots
 #'              for fodder, global production < 0.01 Mt) are set to 0 after the last old
-#'              year. Gaps in the new
-#'              data (zero production) are filled by carrying the last available value forward.
+#'              year. Gaps in the newdata (zero production) are filled by carrying the last available value forward.
 #'
 #' @return Combined fodder data in tonnes (production, feed, domestic_supply) and ha
 #'         (area_harvested) as a list with MAgPIE object, weight, unit, and description
