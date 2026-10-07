@@ -82,10 +82,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
 
     ### add Fodder data ###
 
-    fodder <- readSource("FAO", "Fodder")
-    fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
-    fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
-    fodder[, , "domestic_supply"] <- fodder[, , "feed"]
+    fodder <- calcOutput("CombineFodder", aggregate = FALSE)
     fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "ProductionItem",
                                       to = "FoodBalanceItem", dim = 3.1, partrel = TRUE)
     cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
@@ -264,10 +261,7 @@ calcFAOharmonized <- function(src = "pre2010", output = "FB") {
     ### add Fodder data and add brans, oilcakes, and molasses (not in FB but in SUA) if at FB level ###
 
     if (output == "FB") {
-      fodder <- readSource("FAO", "Fodder")
-      fodder <- toolExtrapolateFodder(fodder, endyear = max(getYears(faoData, as.integer = TRUE)))
-      fodder <- add_columns(x = fodder, addnm = "domestic_supply", dim = 3.2)
-      fodder[, , "domestic_supply"] <- fodder[, , "feed"]
+      fodder <- calcOutput("CombineFodder", aggregate = FALSE)
       fodderAggregated <- toolAggregate(fodder, rel = aggregation, from = "post2010_ProductionItem",
                                         to = "post2010_FoodBalanceItem", dim = 3.1, partrel = TRUE)
       cyears <- intersect(getYears(faoData), getYears(fodderAggregated))
