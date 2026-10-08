@@ -4,6 +4,8 @@
 #'
 #' @param subtype Type of FAO data that should be read.
 #'
+#' @author Debbora Leip, David Chen, Bin Lin
+#'
 #' @importFrom utils download.file unzip person
 
 downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
@@ -61,6 +63,11 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
     LiveHead                = "Production_Livestock_E_All_Data_(Normalized).zip",
     LivePrim                = "Production_LivestockPrimary_E_All_Data_(Normalized).zip",
     LiveProc                = "Production_LivestockProcessed_E_All_Data_(Normalized).zip",
+    # FAOSTAT QCL (Production: Crops and livestock products), which carries the livestock
+    # data that LiveHead/LivePrim/LiveProc read from FAO's discontinued separate files
+    LiveHead2024            = "Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+    LivePrim2024            = "Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+    LiveProc2024            = "Production_Crops_Livestock_E_All_Data_(Normalized).zip",
     Pop                     = "Population_E_All_Data_(Normalized).zip",
     PricesProducerAnnual    = "Prices_E_All_Data_(Normalized).zip",
     PricesProducerAnnualLCU = "Prices_E_All_Data_(Normalized).zip",
@@ -81,16 +88,21 @@ downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
 
   # extract the data set for the selected subtype by searching for the file name
   faoMeta <- faoMeta[grepl(pattern = file, faoMeta$FileLocation, fixed = TRUE), ]
+  if (nrow(faoMeta) > 1) {
+    faoMeta <- faoMeta[which.max(as.character(faoMeta$DateUpdate)), , drop = FALSE]
+  }
+  if (nrow(faoMeta) == 0) stop("No FAO metadata entry found for file: ", file)
 
   # download the data with a data update stamp
-  updateDate <- paste0(substring(faoMeta$DateUpdate, 3, 4), substring(faoMeta$DateUpdate, 6, 7),
-                       substring(faoMeta$DateUpdate, 9, 10))
+  fileLocation <- as.character(faoMeta$FileLocation)[1]
+  updateDate   <- paste0(substring(faoMeta$DateUpdate, 3, 4), substring(faoMeta$DateUpdate, 6, 7),
+                         substring(faoMeta$DateUpdate, 9, 10))
   destfile <- sub("\\.zip$", paste0("_", updateDate, ".zip"), file)
 
-  download.file(faoMeta$FileLocation, destfile = destfile, mode = "wb")
- 
+  download.file(fileLocation, destfile = destfile, mode = "wb")
+
   # Compose meta data
-  return(list(url           = faoMeta$FileLocation,
+  return(list(url           = fileLocation,
               doi           = "not available",
               title         = faoMeta$DatasetName,
               author        = person(faoMeta$Contact, email = faoMeta$Email),

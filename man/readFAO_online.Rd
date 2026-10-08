@@ -29,6 +29,8 @@ Production-Crops. These datasets have been added together to a "Fodder.csv" file
 \item `LiveHead`: Production Live Animals ("Production_Livestock_E_All_Data.zip")
 \item `LivePrim`: Production Livestock Primary ("Production_LivestockPrimary_E_All_Data.zip")
 \item `LiveProc`: Production Livestock Processed ("Production_LivestockProcessed_E_All_Data.zip")
+\item `LiveHead2024`, `LivePrim2024`, `LiveProc2024`: livestock data from Production: Crops and
+  livestock products (QCL, "Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip")
 \item `Pop`: Population ("Population_E_All_Data.zip")
 \item `ForestProdTrade`: Forestry Production and Trade ("Forestry_E_All_Data_(Normalized).zip")
 \item `PricesProducerAnnual`: Producer Prices - Annual ("Prices_E_All_Data.zip")
@@ -57,5 +59,5 @@ a <- readSource("FAO_online", "Crop")
 [readSource()]
 }
 \author{
-Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
+Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca, Bin Lin
 }
