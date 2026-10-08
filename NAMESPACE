@@ -35,11 +35,16 @@ importFrom(madrat,
   toolSubtypeSelect
 )
 importFrom(magclass,
+  "getSets<-",
+  add_columns,
   as.magpie,
+  collapseNames,
+  complete_magpie,
   dimExists,
   dimSums,
   getItems,
   getNames,
+  getSets,
   getYears,
   magpiesort,
   read.magpie

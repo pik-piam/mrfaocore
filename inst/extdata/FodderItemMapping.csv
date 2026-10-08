@@ -1,0 +1,21 @@
+OldItemCode,OldItemName,NewItemCodeItem,Notes
+636,"Forage and silage, maize","01911|Maize for forage and silage",Direct match
+637,"Forage and silage, sorghum","0191901|Sorghum, for forage",Direct match
+638,"Forage and silage, rye grass","0191902|Rye grass, for forage",Direct match
+639,"Forage and silage, grasses nes","0191991|Other grasses, for forage",Direct match
+640,"Forage and silage, clover","0191903|Clover, for forage",Direct match
+641,"Forage and silage, alfalfa","01912|Alfalfa for forage and silage",Direct match
+642,"Forage and silage, green oilseeds","0191994|Other oilseeds, for forage",Direct match
+643,"Forage and silage, legumes","0191992|Other legumes, for forage",Direct match
+644,Cabbage for fodder,"0191904|Cabbage, for forage",Direct match
+645,Pumpkins for Fodder,,Removed in correctFAO - no new equivalent
+646,Turnips for fodder,"0191905|Turnips, for forage",Direct match
+647,Beets for fodder,"0191906|Beet, for forage",Direct match
+648,Carrots for fodder,,No equivalent in new data
+649,Swedes for fodder,"0191908|Swedes, for forage",Direct match
+651,Forage products,"0191996|Other forage products, nec",Direct match
+655,Vegetables and roots fodder,"0191995|Other forage crops, nec",Direct match
+639,"Forage and silage, grasses nes","0191993|Mixed grass and legumes, for forage",New item - maps to grasses nes
+639,"Forage and silage, grasses nes","0191909|Hay for forage, from grasses",New item - maps to grasses nes
+643,"Forage and silage, legumes","0191910|Hay for forage, from legumes",New item - maps to legumes
+651,Forage products,"0191911|Hay for forage, from other crops nec",New item - maps to forage products
