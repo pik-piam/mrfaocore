@@ -13,5 +13,5 @@ downloadFAO_online(subtype)
 Downloads the latest data and meta data form the FAOStat website.
 }
 \author{
-Bin Lin
+Debbora Leip, David Chen, Bin Lin
 }
