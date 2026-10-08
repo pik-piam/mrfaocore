@@ -28,6 +28,8 @@
 #' \item `LiveHead`: Production Live Animals ("Production_Livestock_E_All_Data.zip")
 #' \item `LivePrim`: Production Livestock Primary ("Production_LivestockPrimary_E_All_Data.zip")
 #' \item `LiveProc`: Production Livestock Processed ("Production_LivestockProcessed_E_All_Data.zip")
+#' \item `LiveHead2024`, `LivePrim2024`, `LiveProc2024`: livestock data from Production: Crops and
+#'   livestock products (QCL, "Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip")
 #' \item `Pop`: Population ("Population_E_All_Data.zip")
 #' \item `ForestProdTrade`: Forestry Production and Trade ("Forestry_E_All_Data_(Normalized).zip")
 #' \item `PricesProducerAnnual`: Producer Prices - Annual ("Prices_E_All_Data.zip")
@@ -97,14 +99,14 @@ readFAO_online <- function(subtype) { # nolint
     LiveProc                = c("Production_LivestockProcessed_E_All_Data.zip"),
     # FAOSTAT QCL (Production: Crops and livestock products), which carries the livestock
     # data that LiveHead/LivePrim/LiveProc read from FAO's discontinued separate files
-    LiveHead2024            = c("Production_Crops_Livestock_E_All_Data_(Normalized).zip"),
-    LivePrim2024            = c("Production_Crops_Livestock_E_All_Data_(Normalized).zip"),
-    LiveProc2024            = c("Production_Crops_Livestock_E_All_Data_(Normalized).zip"),
+    LiveHead2024            = c("Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip"),
+    LivePrim2024            = c("Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip"),
+    LiveProc2024            = c("Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip"),
     Pop                     = c("Population_E_All_Data.zip"),
-    PricesProducerAnnual    = c("Prices_E_All_Data_(Normalized).zip"),
+    PricesProducerAnnual    = c("Prices_E_All_Data_(Normalized)_130225.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
     Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
-    ValueOfProd             = c("Value_of_Production_E_All_Data_(Normalized).zip"),
+    ValueOfProd             = c("Value_of_Production_E_All_Data_(Normalized)_260209.zip"),
     ValueShares             = c("Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip")
   )
 
@@ -135,26 +137,15 @@ readFAO_online <- function(subtype) { # nolint
     if (file.exists(csvName)) {
       file <- csvName
       break
-    } else if (extension == "zip") {
-      # Prefer the most recent date-stamped file (e.g. _260209.zip) over
-      # the non-date-stamped version, since FAO updates replace content.
-      stamped <- Sys.glob(paste0(file_path_sans_ext(file), "_[0-9][0-9][0-9][0-9][0-9][0-9].zip"))
-      if (length(stamped) > 0) {
-        stamped <- sort(stamped, decreasing = TRUE)[1]  # use most recent
-        tempfolder <- local_tempdir()
-        tryCatch(unzip(stamped, exdir = tempfolder), warning = stop)
-        file <- file.path(tempfolder, csvName)
-        break
-      } else if (file.exists(file)) {
-        tempfolder <- local_tempdir()
-        tryCatch(
-                 {
-                   unzip(file, exdir = tempfolder)
-                 },
-                 warning = stop)
-        file <- file.path(tempfolder, csvName)
-        break
-      }
+    } else if (extension == "zip" && file.exists(file)) {
+      tempfolder <- local_tempdir()
+      tryCatch(
+               {
+                 unzip(file, exdir = tempfolder)
+               },
+               warning = stop)
+      file <- file.path(tempfolder, csvName)
+      break
     }
   }
 

@@ -4,7 +4,7 @@
 #'
 #' @param subtype Type of FAO data that should be read.
 #'
-#' @author Bin Lin
+#' @author Debbora Leip, David Chen, Bin Lin
 #'
 #' @importFrom utils download.file unzip person
 
