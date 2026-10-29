@@ -30,6 +30,7 @@ Authors:
   \item Benjamin Leon Bodrisky
   \item David Klein
   \item Edna Molina Bacca
+  \item Bin Lin
 }
 
 }

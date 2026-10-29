@@ -28,6 +28,15 @@
 #' \item `LiveHead`: Production Live Animals ("Production_Livestock_E_All_Data.zip")
 #' \item `LivePrim`: Production Livestock Primary ("Production_LivestockPrimary_E_All_Data.zip")
 #' \item `LiveProc`: Production Livestock Processed ("Production_LivestockProcessed_E_All_Data.zip")
+#'   `LiveHead`, `LivePrim` and `LiveProc` are deprecated: FAOSTAT discontinued these files and
+#'   their data end in 2019. They are kept so that existing code keeps working; use
+#'   `CropLive` instead.
+#' \item `CropLive`: Production: Crops and livestock products (QCL,
+#'   "Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip"), pinned to that release.
+#'   FAO merged its separate crop and livestock files into this one, so it carries the live
+#'   animal numbers, the primary and the processed production that `Crop`, `LiveHead`,
+#'   `LivePrim` and `LiveProc` used to hold. `CropLive2010` is the same dataset without the
+#'   pin and is kept for `mrcommons::calcLivestockProductivity()`.
 #' \item `Pop`: Population ("Population_E_All_Data.zip")
 #' \item `ForestProdTrade`: Forestry Production and Trade ("Forestry_E_All_Data_(Normalized).zip")
 #' \item `PricesProducerAnnual`: Producer Prices - Annual ("Prices_E_All_Data.zip")
@@ -37,7 +46,7 @@
 #' \item `Trade`: Trade quantities and values
 #' }
 #' @return FAO data as MAgPIE object
-#' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
+#' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca, Bin Lin
 #' @seealso [readSource()]
 #' @examples
 #' \dontrun{
@@ -95,6 +104,9 @@ readFAO_online <- function(subtype) { # nolint
     LiveHead                = c("Production_Livestock_E_All_Data.zip"),
     LivePrim                = c("Production_LivestockPrimary_E_All_Data.zip"),
     LiveProc                = c("Production_LivestockProcessed_E_All_Data.zip"),
+    # FAOSTAT QCL (Production: Crops and livestock products), which carries the livestock
+    # data that LiveHead/LivePrim/LiveProc read from FAO's discontinued separate files
+    CropLive                = c("Production_Crops_Livestock_E_All_Data_(Normalized)_251231.zip"),
     Pop                     = c("Population_E_All_Data.zip"),
     PricesProducerAnnual    = c("Prices_E_All_Data_(Normalized)_130225.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
@@ -124,11 +136,13 @@ readFAO_online <- function(subtype) { # nolint
 
   # look for data in normalized (i.e. long) format first before looking for the wide format
   # decompress if it is zipped
+  found <- FALSE
   for (file in tryFiles) {
     extension <- file_ext(basename(file))
     csvName <- paste0(file_path_sans_ext(file), ".csv")
     if (file.exists(csvName)) {
       file <- csvName
+      found <- TRUE
       break
     } else if (extension == "zip" && file.exists(file)) {
       tempfolder <- local_tempdir()
@@ -138,8 +152,20 @@ readFAO_online <- function(subtype) { # nolint
                },
                warning = stop)
       file <- file.path(tempfolder, csvName)
+      found <- TRUE
       break
     }
+  }
+
+  # without this the loop leaves a file name that does not exist and read.table() fails with
+  # a bare "cannot open file", which says nothing about the missing source
+  if (!found) {
+    stop("No source file of subtype \"", subtype, "\" found in ",
+         normalizePath(".", winslash = "/"), ". Expected one of: ",
+         paste(tryFiles, collapse = ", "),
+         ". Run madrat::downloadSource(\"FAO_online\", \"", subtype, "\") on a machine with ",
+         "internet access (cluster compute nodes have none), or update the pinned file name ",
+         "in readFAO_online() if FAO has published a newer release.")
   }
 
   if (grepl("_[0-9]{6}(?=\\.[a-zA-Z0-9]+$)", file, perl = TRUE)) {

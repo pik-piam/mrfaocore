@@ -57,7 +57,12 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                                         "Yield_(100_g/An)",                  # new FAO data
                                         "Yield_Carcass_Weight_(100_g/An)",   # new FAO data
                                         "Yield_Carcass_Weight_(0_1_g/An)", # new FAO data
-                                        "Yield_(100_g)")                     # new FAO data
+                                        "Yield_(100_g)",                     # new FAO data
+                                        "Yield_(kg/ha)",
+                                        "Yield_Carcass_Weight_(g/An)",
+                                        "Yield_Carcass_Weight_(kg/An)")
+  # CropLive is the same FAOSTAT QCL dataset as CropLive2010, pinned to a release
+  relativeDelete[["CropLive"]] <- relativeDelete[["CropLive2010"]]
   relativeDelete[["Land"]] <- c("Share_in_Land_area_(%)",
                                 "Value_of_agricultural_production_(Int_$)_per_Area_(USD_PPP/ha)",
                                 "Share_in_Agricultural_land_(%)",
@@ -141,75 +146,9 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                              "Fat_supply_quantity_(g_capita_day)_(g/cap/d)")
   # ---- Section for country specific treatment ----
 
-  ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
-  ## to make toolISOhistorical work
-  if (any(getItems(x, dim = 1.1) == "XET") &&
-        any(getItems(x, dim = 1.1) == "ETH") &&
-        !any(getItems(x, dim = 1.1) == "ERI")) {
-    xERI <- x["ETH", , ]
-    xERI[, , ] <- 0
-    getItems(xERI, dim = 1) <- "ERI"
-    x <- magpiesort(mbind(x, xERI))
-  }
-
-  if (any(getItems(x, dim = 1.1) == "XSD") &&
-        any(getItems(x, dim = 1.1) == "SDN") &&
-        !any(getItems(x, dim = 1.1) == "SSD")) {
-    xSSD <- x["SDN", , ]
-    xSSD[, , ] <- 0
-    getItems(xSSD, dim = 1) <- "SSD"
-    x <- magpiesort(mbind(x, xSSD))
-  }
-
-
-  ## add additional mappings
-  additionalMapping <- list()
-
-  # Eritrea ERI and Ethiopia ETH
-  if (all(c("XET", "ETH", "ERI") %in% getItems(x, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("XET", "ETH", "y1992"), c("XET", "ERI", "y1992")))
-  }
-
-  # Belgium-Luxemburg
-  if (all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
-  } else if (("XBL" %in% getItems(x, dim = 1.1)) && !("BEL" %in% getItems(x, dim = 1.1))) {
-    getCells(x)[getItems(x, dim = 1.1) == "XBL"] <- "BEL"
-  }
-
-  # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
-  if (all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("XSD", "SSD", "y2011"), c("XSD", "SDN", "y2011")))
-  } else if ("XSD" %in% getItems(x, dim = 1.1) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
-    getCells(x)[getItems(x, dim = 1.1) == "XSD"] <- "SDN"
-  }
-
-  ## if XCN exists, replace CHN with XCN.
-  if ("XCN" %in% getItems(x, dim = 1.1)) {
-    if ("CHN" %in% getItems(x, dim = 1.1)) x <- x["CHN", , , invert = TRUE]
-    getItems(x, dim = 1)[getItems(x, dim = 1) == "XCN"] <- "CHN"
-  }
-
-  ## data for the Netherlands Antilles is currently removed because currently no
-  ## information for its successors SXM, CUW, ABW is available as input for toolISOhistorical
-  if (any(getItems(x, dim = 1.1) == "ANT")) {
-    x <- x["ANT", , , invert = TRUE]
-  }
-
-  ## data for PCI split up into:
-  # Marshall Islands (MH, MHL, 584)
-  # Micronesia, Federated States of (FM, FSM, 583)
-  # Northern Mariana Islands (MP, MNP, 580)
-  # Palau (PW, PLW, 585)
-  if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getItems(x, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("PCI", "MHL", "y1991"),
-                                                        c("PCI", "FSM", "y1991"),
-                                                        c("PCI", "MNP", "y1991"),
-                                                        c("PCI", "PLW", "y1991")))
-  } else if ("PCI" %in% getItems(x, dim = 1.1)) {
-    x <- x["PCI", , invert = TRUE]
-  }
-
+  prep <- toolFAOcountryPrep(x)
+  x <- prep$x
+  additionalMapping <- prep$additionalMapping
 
   ### For certain subtypes: if some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG), Serbia and
   # Montenegro (SCG) are missing add them with values of 0
