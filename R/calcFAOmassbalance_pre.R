@@ -784,8 +784,9 @@ calcFAOmassbalance_pre <- function(version = "join2010", years = NULL) { # nolin
                                                                      prodAttributes = prodAttributes)
 
 
-      # liter yield for non-centrifugal sugar
-      ethanolYieldLiterPerTonSugar <- 0.5
+      # liter yield for non-centrifugal sugar, per t dry matter: 0.789 * 570 / 1000 = 0.45 t ethanol per t sugar
+      # (sucrose yields at most 0.54 t/t)
+      ethanolYieldLiterPerTonSugar <- 570
 
       # liter yield converted to dm (-> extraction factor)
       extractionQuantitySugar <- 0.789 * ethanolYieldLiterPerTonSugar / 1000
